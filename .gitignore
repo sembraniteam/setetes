@@ -1,1 +1,5 @@
 .idea
+docker/postgres/password
+migrations/
+
+atlas.hcl
