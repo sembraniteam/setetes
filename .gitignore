@@ -3,3 +3,4 @@ docker/postgres/password
 migrations/
 
 atlas.hcl
+config.yml

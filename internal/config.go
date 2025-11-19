@@ -1,6 +1,11 @@
 package internal
 
-import "time"
+import (
+	"time"
+
+	"github.com/fsnotify/fsnotify"
+	"github.com/spf13/viper"
+)
 
 type Config struct {
 	Postgres struct {
@@ -16,4 +21,31 @@ type Config struct {
 		ConnectionMaxLifetime time.Duration `mapstructure:"connection_max_lifetime"`
 		ConnectionMaxIdleTime time.Duration `mapstructure:"connection_max_idle_time"`
 	} `mapstructure:"postgres"`
+}
+
+func LoadConfig(path string) (*Config, error) {
+	viper.SetConfigType("yml")
+	viper.SetConfigFile(path)
+
+	if err := viper.ReadInConfig(); err != nil {
+		return nil, err
+	}
+
+	var config Config
+	if err := viper.Unmarshal(&config); err != nil {
+		return nil, err
+	}
+
+	viper.OnConfigChange(func(e fsnotify.Event) {
+		var newConfig Config
+		if err := viper.Unmarshal(&newConfig); err != nil {
+			panic(err)
+		}
+
+		config = newConfig
+	})
+
+	viper.WatchConfig()
+
+	return &config, nil
 }

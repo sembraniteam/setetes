@@ -1,17 +1,19 @@
-package database
+package postgres
 
 import (
+	"fmt"
 	"net/url"
 	"time"
 
 	"entgo.io/ent/dialect"
 	entsql "entgo.io/ent/dialect/sql"
+	_ "github.com/jackc/pgx/v5/stdlib"
 	"github.com/megalodev/setetes/internal"
 	"github.com/megalodev/setetes/internal/ent"
 )
 
 type (
-	connector struct {
+	client struct {
 		config internal.Config
 	}
 
@@ -21,13 +23,13 @@ type (
 )
 
 func NewPostgres(config internal.Config) Postgres {
-	return connector{config: config}
+	return client{config: config}
 }
 
-func (c connector) Connect() (*ent.Client, error) {
+func (c client) Connect() (*ent.Client, error) {
 	postgres := c.config.Postgres
 
-	drv, err := entsql.Open(dialect.Postgres, c.dsn())
+	drv, err := entsql.Open("pgx", c.dsn())
 	if err != nil {
 		return nil, err
 	}
@@ -35,13 +37,13 @@ func (c connector) Connect() (*ent.Client, error) {
 	db := drv.DB()
 	db.SetMaxIdleConns(postgres.MaxIdleConnections)
 	db.SetMaxOpenConns(postgres.MaxOpenConnections)
-	db.SetConnMaxLifetime(postgres.ConnectionMaxLifetime * time.Hour)
-	db.SetConnMaxIdleTime(postgres.ConnectionMaxIdleTime * time.Hour)
+	db.SetConnMaxLifetime(postgres.ConnectionMaxLifetime * time.Minute)
+	db.SetConnMaxIdleTime(postgres.ConnectionMaxIdleTime * time.Minute)
 
 	return ent.NewClient(ent.Driver(drv)), nil
 }
 
-func (c connector) dsn() string {
+func (c client) dsn() string {
 	q := url.Values{}
 	postgres := c.config.Postgres
 	q.Add("sslmode", postgres.SSLMode)
@@ -53,7 +55,7 @@ func (c connector) dsn() string {
 	u := &url.URL{
 		Scheme:   dialect.Postgres,
 		User:     url.UserPassword(postgres.Username, postgres.Password),
-		Host:     postgres.Host,
+		Host:     fmt.Sprintf("%s:%s", postgres.Host, postgres.Port),
 		Path:     postgres.Database,
 		RawQuery: q.Encode(),
 	}

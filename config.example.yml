@@ -1,0 +1,12 @@
+postgres:
+  host: localhost
+  port: 13579
+  username: setetes_app
+  password: YOUR_PASSWORD_HERE
+  database: setetes
+  sslmode: verify-full
+  sslcert: /path/to/cert/server.crt
+  max_open_connections: 25
+  max_idle_connections: 5
+  connection_max_lifetime: 10 # in minutes
+  connection_max_idle_time: 15 # in minutes
