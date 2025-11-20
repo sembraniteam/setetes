@@ -8,9 +8,15 @@ import (
 )
 
 type Config struct {
+	App struct {
+		Mode string `mapstructure:"mode"`
+		Host string `mapstructure:"host"`
+		Port int    `mapstructure:"port"`
+	} `mapstructure:"app"`
+
 	Postgres struct {
 		Host                  string        `mapstructure:"host"`
-		Port                  string        `mapstructure:"port"`
+		Port                  int           `mapstructure:"port"`
 		Username              string        `mapstructure:"username"`
 		Password              string        `mapstructure:"password"`
 		Database              string        `mapstructure:"database"`
