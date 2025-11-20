@@ -1,0 +1,149 @@
+package middleware
+
+import (
+	"sync"
+	"time"
+)
+
+type (
+	TokenInfo struct {
+		RemainingTokens int32
+		Expiry          time.Time
+	}
+
+	TokenBucket struct {
+		threshold     int32
+		ttl           time.Duration
+		tokens        map[string]TokenInfo
+		mx            sync.RWMutex
+		cleanupTicker *time.Ticker
+		stopCleanup   chan bool
+	}
+)
+
+func NewTokenBucket(threshold int32, ttl time.Duration) *TokenBucket {
+	tb := &TokenBucket{
+		threshold:     threshold,
+		ttl:           ttl,
+		tokens:        make(map[string]TokenInfo),
+		cleanupTicker: time.NewTicker(ttl),
+		stopCleanup:   make(chan bool),
+	}
+
+	go tb.cleanupExpiredTokens()
+
+	return tb
+}
+
+func Default() *TokenBucket {
+	return NewTokenBucket(20, 1*time.Minute)
+}
+
+func (t *TokenBucket) Allow(key string) bool {
+	t.mx.Lock()
+	defer t.mx.Unlock()
+
+	now := time.Now()
+	info, ok := t.tokens[key]
+	if ok && now.After(info.Expiry) {
+		info = TokenInfo{
+			RemainingTokens: t.threshold - 1,
+			Expiry:          now.Add(t.ttl),
+		}
+
+		t.tokens[key] = info
+		return true
+	}
+
+	if !ok {
+		info = TokenInfo{
+			RemainingTokens: t.threshold - 1,
+			Expiry:          now.Add(t.ttl),
+		}
+
+		t.tokens[key] = info
+		return true
+	}
+
+	if info.RemainingTokens > 0 {
+		info.RemainingTokens--
+		t.tokens[key] = info
+
+		return true
+	}
+
+	return false
+}
+
+func (t *TokenBucket) cleanupExpiredTokens() {
+	for {
+		select {
+		case <-t.cleanupTicker.C:
+			t.mx.Lock()
+			now := time.Now()
+			for key, info := range t.tokens {
+				if now.After(info.Expiry) {
+					delete(t.tokens, key)
+				}
+			}
+			t.mx.Unlock()
+		case <-t.stopCleanup:
+			t.cleanupTicker.Stop()
+			return
+		}
+	}
+}
+
+func (t *TokenBucket) Stop() {
+	close(t.stopCleanup)
+}
+
+func (t *TokenBucket) GetTokenInfo(key string) (remaining int32, expiry time.Time, limit int32) {
+	t.mx.RLock()
+	defer t.mx.RUnlock()
+
+	now := time.Now()
+	info, ok := t.tokens[key]
+
+	if !ok || now.After(info.Expiry) {
+		return t.threshold, now.Add(t.ttl), t.threshold
+	}
+
+	return info.RemainingTokens, info.Expiry, t.threshold
+}
+
+func (t *TokenBucket) AllowAndGetInfo(key string) (allowed bool, remaining int32, expiry time.Time, limit int32, used int32) {
+	t.mx.Lock()
+	defer t.mx.Unlock()
+
+	now := time.Now()
+	info, ok := t.tokens[key]
+
+	if ok && now.After(info.Expiry) {
+		info = TokenInfo{
+			RemainingTokens: t.threshold - 1,
+			Expiry:          now.Add(t.ttl),
+		}
+		t.tokens[key] = info
+		return true, info.RemainingTokens, info.Expiry, t.threshold, 1
+	}
+
+	if !ok {
+		info = TokenInfo{
+			RemainingTokens: t.threshold - 1,
+			Expiry:          now.Add(t.ttl),
+		}
+		t.tokens[key] = info
+		return true, info.RemainingTokens, info.Expiry, t.threshold, 1
+	}
+
+	if info.RemainingTokens > 0 {
+		info.RemainingTokens--
+		t.tokens[key] = info
+		usedTokens := t.threshold - info.RemainingTokens
+		return true, info.RemainingTokens, info.Expiry, t.threshold, usedTokens
+	}
+
+	usedTokens := t.threshold - info.RemainingTokens
+	return false, 0, info.Expiry, t.threshold, usedTokens
+}
