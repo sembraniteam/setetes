@@ -31,7 +31,7 @@ func StartCmd() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVar(&path, "config", "", "path to the Setetes config file")
+	cmd.Flags().StringVar(&path, "config", "", "path to the Setetes config file. Must be '.yml' or '.yaml' file.")
 	if err := cmd.MarkFlagRequired("config"); err != nil {
 		panic(err)
 	}
