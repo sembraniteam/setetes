@@ -30,34 +30,6 @@ services:
       - ./docker/postgres/users.sql:/docker-entrypoint-initdb.d/00-users.sql:ro
       - ./docker/postgres/extension.sql:/docker-entrypoint-initdb.d/01-extension.sql:ro
 
-#  postgres:
-#    image: postgres:alpine
-#    restart: always
-#    command: postgres -c config_file=/etc/postgresql/postgres.conf
-#    secrets:
-#      - sec-postgres
-#    ports:
-#      - "13579:13579"
-#    networks:
-#      - net-postgres
-#    healthcheck:
-#      test: pg_isready -d setetes -U healthcheck -p 13579
-#      interval: 60s
-#      timeout: 55s
-#      retries: 5
-#    environment:
-#      POSTGRES_DB: setetes
-#      POSTGRES_USER: setetes_app
-#      POSTGRES_PASSWORD_FILE: /run/secrets/sec-postgres
-#      POSTGRES_INITDB_ARGS: "--data-checksums"
-#      TZ: Asia/Jakarta
-#      PGTZ: Asia/Jakarta
-#    volumes:
-#      - ./docker/postgres/postgres.conf:/etc/postgresql/postgres.conf:ro
-#      - ./docker/postgres/pg_hba.conf:/var/lib/postgresql/data/pg_hba.conf:ro
-#      - ./docker/postgres/users.sql:/docker-entrypoint-initdb.d/00-users.sql:ro
-#      - ./docker/postgres/extension.sql:/docker-entrypoint-initdb.d/01-extension.sql:ro
-
 secrets:
   sec-postgres:
     file: ./docker/postgres/password
