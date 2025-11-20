@@ -1,4 +1,4 @@
-package postgres
+package postgresx
 
 import (
 	"fmt"
@@ -22,7 +22,7 @@ type (
 	}
 )
 
-func NewPostgres(config internal.Config) Postgres {
+func New(config internal.Config) Postgres {
 	return client{config: config}
 }
 
@@ -55,7 +55,7 @@ func (c client) dsn() string {
 	u := &url.URL{
 		Scheme:   dialect.Postgres,
 		User:     url.UserPassword(postgres.Username, postgres.Password),
-		Host:     fmt.Sprintf("%s:%s", postgres.Host, postgres.Port),
+		Host:     fmt.Sprintf("%s:%d", postgres.Host, postgres.Port),
 		Path:     postgres.Database,
 		RawQuery: q.Encode(),
 	}
