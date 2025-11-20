@@ -5,8 +5,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/megalodev/setetes/internal"
-	"github.com/megalodev/setetes/internal/database/postgres"
+	"github.com/megalodev/setetes/internal/bootstrap"
 	"github.com/spf13/cobra"
 )
 
@@ -24,16 +23,9 @@ func StartCmd() *cobra.Command {
 				os.Exit(1)
 			}
 
-			config, err := internal.LoadConfig(absPath)
-			if err != nil {
-				fmt.Printf("failed to load config file: %v\n", err)
-				os.Exit(1)
-			}
-
-			db := postgres.NewPostgres(*config)
-			_, err = db.Connect()
-			if err != nil {
-				fmt.Printf("failed to connect to database: %v\n", err)
+			boots := bootstrap.New(absPath)
+			if err := boots.Init(); err != nil {
+				fmt.Printf("failed to initialize: %v\n", err)
 				os.Exit(1)
 			}
 		},
