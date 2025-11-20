@@ -7,6 +7,7 @@ var (
 	MsgPong                = NewMessage("PONG", "PONG", nil)
 	MsgUnauthorized        = NewMessage("UNAUTHORIZED", "Unauthorized", nil)
 	MsgInvalidBody         = NewMessage("INVALID_BODY", "Invalid request body", nil)
+	MsgInvalidRequestID    = NewMessage("INVALID_X_REQUEST_ID", "Invalid header value", nil)
 )
 
 type (
@@ -17,9 +18,10 @@ type (
 	}
 
 	Base struct {
-		Code    int16    `json:"code"`
-		Message *Message `json:"message"`
-		Result  any      `json:"result"`
+		Code      int16    `json:"code"`
+		RequestID string   `json:"request_id"`
+		Message   *Message `json:"message"`
+		Result    any      `json:"result"`
 	}
 
 	BaseEntries[T any] struct {
@@ -35,6 +37,12 @@ func NewMessage(key, description string, field *string) *Message {
 		Description: description,
 		Field:       field,
 	}
+}
+
+func (m *Message) WithField(s string) *Message {
+	cp := *m
+	cp.Field = &s
+	return &cp
 }
 
 func Entries[T any](entries []T, hasReachedMax bool, totalPages int64) *BaseEntries[T] {

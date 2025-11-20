@@ -39,6 +39,7 @@ func exceeded(ctx *gin.Context, t *TokenBucket, key string) {
 		ctx.Header(headerRetryAfter, fmt.Sprintf("%d", retryAfter))
 		ctx.Abort()
 		response.ToManyRequest(ctx)
+		return
 	}
 
 	ctx.Next()

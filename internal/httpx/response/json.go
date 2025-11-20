@@ -46,5 +46,6 @@ func Error(c *gin.Context, errParam any) {
 }
 
 func json(c *gin.Context, status int, code int16, message *Message, result any) {
-	c.JSON(status, Base{Code: code, Message: message, Result: result})
+	w := httpx.NewContext(c)
+	c.JSON(status, Base{Code: code, RequestID: w.GetRequestID().String(), Message: message, Result: result})
 }

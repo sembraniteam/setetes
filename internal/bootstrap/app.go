@@ -52,6 +52,7 @@ func (a App) Init() error {
 			gzip.Gzip(gzip.DefaultCompression),
 			middleware.Timeout(),
 			middleware.RateLimitByIP(rateLimiter),
+			middleware.RequestID(),
 		),
 		httpx.UseRouter(web.Routes),
 	)
