@@ -22,32 +22,6 @@ type CityCreate struct {
 	hooks    []Hook
 }
 
-// SetCreatedAt sets the "created_at" field.
-func (_c *CityCreate) SetCreatedAt(v int64) *CityCreate {
-	_c.mutation.SetCreatedAt(v)
-	return _c
-}
-
-// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
-func (_c *CityCreate) SetNillableCreatedAt(v *int64) *CityCreate {
-	if v != nil {
-		_c.SetCreatedAt(*v)
-	}
-	return _c
-}
-
-// SetUpdatedAt sets the "updated_at" field.
-func (_c *CityCreate) SetUpdatedAt(v int64) *CityCreate {
-	_c.mutation.SetUpdatedAt(v)
-	return _c
-}
-
-// SetDeletedAt sets the "deleted_at" field.
-func (_c *CityCreate) SetDeletedAt(v int64) *CityCreate {
-	_c.mutation.SetDeletedAt(v)
-	return _c
-}
-
 // SetBpsCode sets the "bps_code" field.
 func (_c *CityCreate) SetBpsCode(v string) *CityCreate {
 	_c.mutation.SetBpsCode(v)
@@ -99,7 +73,6 @@ func (_c *CityCreate) Mutation() *CityMutation {
 
 // Save creates the City in the database.
 func (_c *CityCreate) Save(ctx context.Context) (*City, error) {
-	_c.defaults()
 	return withHooks(ctx, _c.sqlSave, _c.mutation, _c.hooks)
 }
 
@@ -125,40 +98,8 @@ func (_c *CityCreate) ExecX(ctx context.Context) {
 	}
 }
 
-// defaults sets the default values of the builder before save.
-func (_c *CityCreate) defaults() {
-	if _, ok := _c.mutation.CreatedAt(); !ok {
-		v := city.DefaultCreatedAt
-		_c.mutation.SetCreatedAt(v)
-	}
-}
-
 // check runs all checks and user-defined validators on the builder.
 func (_c *CityCreate) check() error {
-	if _, ok := _c.mutation.CreatedAt(); !ok {
-		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "City.created_at"`)}
-	}
-	if v, ok := _c.mutation.CreatedAt(); ok {
-		if err := city.CreatedAtValidator(v); err != nil {
-			return &ValidationError{Name: "created_at", err: fmt.Errorf(`ent: validator failed for field "City.created_at": %w`, err)}
-		}
-	}
-	if _, ok := _c.mutation.UpdatedAt(); !ok {
-		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "City.updated_at"`)}
-	}
-	if v, ok := _c.mutation.UpdatedAt(); ok {
-		if err := city.UpdatedAtValidator(v); err != nil {
-			return &ValidationError{Name: "updated_at", err: fmt.Errorf(`ent: validator failed for field "City.updated_at": %w`, err)}
-		}
-	}
-	if _, ok := _c.mutation.DeletedAt(); !ok {
-		return &ValidationError{Name: "deleted_at", err: errors.New(`ent: missing required field "City.deleted_at"`)}
-	}
-	if v, ok := _c.mutation.DeletedAt(); ok {
-		if err := city.DeletedAtValidator(v); err != nil {
-			return &ValidationError{Name: "deleted_at", err: fmt.Errorf(`ent: validator failed for field "City.deleted_at": %w`, err)}
-		}
-	}
 	if _, ok := _c.mutation.BpsCode(); !ok {
 		return &ValidationError{Name: "bps_code", err: errors.New(`ent: missing required field "City.bps_code"`)}
 	}
@@ -207,18 +148,6 @@ func (_c *CityCreate) createSpec() (*City, *sqlgraph.CreateSpec) {
 	if id, ok := _c.mutation.ID(); ok {
 		_node.ID = id
 		_spec.ID.Value = &id
-	}
-	if value, ok := _c.mutation.CreatedAt(); ok {
-		_spec.SetField(city.FieldCreatedAt, field.TypeInt64, value)
-		_node.CreatedAt = value
-	}
-	if value, ok := _c.mutation.UpdatedAt(); ok {
-		_spec.SetField(city.FieldUpdatedAt, field.TypeInt64, value)
-		_node.UpdatedAt = &value
-	}
-	if value, ok := _c.mutation.DeletedAt(); ok {
-		_spec.SetField(city.FieldDeletedAt, field.TypeInt64, value)
-		_node.DeletedAt = &value
 	}
 	if value, ok := _c.mutation.BpsCode(); ok {
 		_spec.SetField(city.FieldBpsCode, field.TypeString, value)
@@ -282,7 +211,6 @@ func (_c *CityCreateBulk) Save(ctx context.Context) ([]*City, error) {
 	for i := range _c.builders {
 		func(i int, root context.Context) {
 			builder := _c.builders[i]
-			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 				mutation, ok := m.(*CityMutation)
 				if !ok {

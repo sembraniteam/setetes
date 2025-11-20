@@ -704,21 +704,21 @@ func TempLockedAtLTE(v int64) predicate.Account {
 	return predicate.Account(sql.FieldLTE(FieldTempLockedAt, v))
 }
 
-// HasBlood applies the HasEdge predicate on the "blood" edge.
-func HasBlood() predicate.Account {
+// HasBloodType applies the HasEdge predicate on the "blood_type" edge.
+func HasBloodType() predicate.Account {
 	return predicate.Account(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.O2O, false, BloodTable, BloodColumn),
+			sqlgraph.Edge(sqlgraph.O2O, false, BloodTypeTable, BloodTypeColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
 }
 
-// HasBloodWith applies the HasEdge predicate on the "blood" edge with a given conditions (other predicates).
-func HasBloodWith(preds ...predicate.Blood) predicate.Account {
+// HasBloodTypeWith applies the HasEdge predicate on the "blood_type" edge with a given conditions (other predicates).
+func HasBloodTypeWith(preds ...predicate.BloodType) predicate.Account {
 	return predicate.Account(func(s *sql.Selector) {
-		step := newBloodStep()
+		step := newBloodTypeStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)

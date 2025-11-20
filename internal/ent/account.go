@@ -10,7 +10,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"github.com/google/uuid"
 	"github.com/megalodev/setetes/internal/ent/account"
-	"github.com/megalodev/setetes/internal/ent/blood"
+	"github.com/megalodev/setetes/internal/ent/bloodtype"
 	"github.com/megalodev/setetes/internal/ent/password"
 )
 
@@ -53,8 +53,8 @@ type Account struct {
 
 // AccountEdges holds the relations/edges for other nodes in the graph.
 type AccountEdges struct {
-	// Blood holds the value of the blood edge.
-	Blood *Blood `json:"blood,omitempty"`
+	// BloodType holds the value of the blood_type edge.
+	BloodType *BloodType `json:"blood_type,omitempty"`
 	// Password holds the value of the password edge.
 	Password *Password `json:"password,omitempty"`
 	// loadedTypes holds the information for reporting if a
@@ -62,15 +62,15 @@ type AccountEdges struct {
 	loadedTypes [2]bool
 }
 
-// BloodOrErr returns the Blood value or an error if the edge
+// BloodTypeOrErr returns the BloodType value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
-func (e AccountEdges) BloodOrErr() (*Blood, error) {
-	if e.Blood != nil {
-		return e.Blood, nil
+func (e AccountEdges) BloodTypeOrErr() (*BloodType, error) {
+	if e.BloodType != nil {
+		return e.BloodType, nil
 	} else if e.loadedTypes[0] {
-		return nil, &NotFoundError{label: blood.Label}
+		return nil, &NotFoundError{label: bloodtype.Label}
 	}
-	return nil, &NotLoadedError{edge: "blood"}
+	return nil, &NotLoadedError{edge: "blood_type"}
 }
 
 // PasswordOrErr returns the Password value or an error if the edge
@@ -212,9 +212,9 @@ func (_m *Account) Value(name string) (ent.Value, error) {
 	return _m.selectValues.Get(name)
 }
 
-// QueryBlood queries the "blood" edge of the Account entity.
-func (_m *Account) QueryBlood() *BloodQuery {
-	return NewAccountClient(_m.config).QueryBlood(_m)
+// QueryBloodType queries the "blood_type" edge of the Account entity.
+func (_m *Account) QueryBloodType() *BloodTypeQuery {
+	return NewAccountClient(_m.config).QueryBloodType(_m)
 }
 
 // QueryPassword queries the "password" edge of the Account entity.

@@ -337,12 +337,12 @@ func (_q *DistrictQuery) WithSubdistrict(opts ...func(*SubdistrictQuery)) *Distr
 // Example:
 //
 //	var v []struct {
-//		CreatedAt int64 `json:"created_at"`
+//		BpsCode string `json:"bps_code"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
 //	client.District.Query().
-//		GroupBy(district.FieldCreatedAt).
+//		GroupBy(district.FieldBpsCode).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 func (_q *DistrictQuery) GroupBy(field string, fields ...string) *DistrictGroupBy {
@@ -360,11 +360,11 @@ func (_q *DistrictQuery) GroupBy(field string, fields ...string) *DistrictGroupB
 // Example:
 //
 //	var v []struct {
-//		CreatedAt int64 `json:"created_at"`
+//		BpsCode string `json:"bps_code"`
 //	}
 //
 //	client.District.Query().
-//		Select(district.FieldCreatedAt).
+//		Select(district.FieldBpsCode).
 //		Scan(ctx, &v)
 func (_q *DistrictQuery) Select(fields ...string) *DistrictSelect {
 	_q.ctx.Fields = append(_q.ctx.Fields, fields...)

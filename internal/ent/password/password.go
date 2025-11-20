@@ -64,8 +64,6 @@ func ValidColumn(column string) bool {
 }
 
 var (
-	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
-	DefaultCreatedAt int64
 	// CreatedAtValidator is a validator for the "created_at" field. It is called by the builders before save.
 	CreatedAtValidator func(int64) error
 	// UpdateDefaultUpdatedAt holds the default value on update for the "updated_at" field.

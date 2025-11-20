@@ -337,12 +337,12 @@ func (_q *SubdistrictQuery) WithPmiLocation(opts ...func(*PMILocationQuery)) *Su
 // Example:
 //
 //	var v []struct {
-//		CreatedAt int64 `json:"created_at"`
+//		BpsCode string `json:"bps_code"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
 //	client.Subdistrict.Query().
-//		GroupBy(subdistrict.FieldCreatedAt).
+//		GroupBy(subdistrict.FieldBpsCode).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 func (_q *SubdistrictQuery) GroupBy(field string, fields ...string) *SubdistrictGroupBy {
@@ -360,11 +360,11 @@ func (_q *SubdistrictQuery) GroupBy(field string, fields ...string) *Subdistrict
 // Example:
 //
 //	var v []struct {
-//		CreatedAt int64 `json:"created_at"`
+//		BpsCode string `json:"bps_code"`
 //	}
 //
 //	client.Subdistrict.Query().
-//		Select(subdistrict.FieldCreatedAt).
+//		Select(subdistrict.FieldBpsCode).
 //		Scan(ctx, &v)
 func (_q *SubdistrictQuery) Select(fields ...string) *SubdistrictSelect {
 	_q.ctx.Fields = append(_q.ctx.Fields, fields...)

@@ -27,14 +27,6 @@ func (_c *PasswordCreate) SetCreatedAt(v int64) *PasswordCreate {
 	return _c
 }
 
-// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
-func (_c *PasswordCreate) SetNillableCreatedAt(v *int64) *PasswordCreate {
-	if v != nil {
-		_c.SetCreatedAt(*v)
-	}
-	return _c
-}
-
 // SetUpdatedAt sets the "updated_at" field.
 func (_c *PasswordCreate) SetUpdatedAt(v int64) *PasswordCreate {
 	_c.mutation.SetUpdatedAt(v)
@@ -77,7 +69,6 @@ func (_c *PasswordCreate) Mutation() *PasswordMutation {
 
 // Save creates the Password in the database.
 func (_c *PasswordCreate) Save(ctx context.Context) (*Password, error) {
-	_c.defaults()
 	return withHooks(ctx, _c.sqlSave, _c.mutation, _c.hooks)
 }
 
@@ -103,19 +94,8 @@ func (_c *PasswordCreate) ExecX(ctx context.Context) {
 	}
 }
 
-// defaults sets the default values of the builder before save.
-func (_c *PasswordCreate) defaults() {
-	if _, ok := _c.mutation.CreatedAt(); !ok {
-		v := password.DefaultCreatedAt
-		_c.mutation.SetCreatedAt(v)
-	}
-}
-
 // check runs all checks and user-defined validators on the builder.
 func (_c *PasswordCreate) check() error {
-	if _, ok := _c.mutation.CreatedAt(); !ok {
-		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "Password.created_at"`)}
-	}
 	if v, ok := _c.mutation.CreatedAt(); ok {
 		if err := password.CreatedAtValidator(v); err != nil {
 			return &ValidationError{Name: "created_at", err: fmt.Errorf(`ent: validator failed for field "Password.created_at": %w`, err)}
@@ -232,7 +212,6 @@ func (_c *PasswordCreateBulk) Save(ctx context.Context) ([]*Password, error) {
 	for i := range _c.builders {
 		func(i int, root context.Context) {
 			builder := _c.builders[i]
-			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 				mutation, ok := m.(*PasswordMutation)
 				if !ok {

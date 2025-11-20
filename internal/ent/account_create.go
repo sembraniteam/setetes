@@ -11,7 +11,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
 	"github.com/megalodev/setetes/internal/ent/account"
-	"github.com/megalodev/setetes/internal/ent/blood"
+	"github.com/megalodev/setetes/internal/ent/bloodtype"
 	"github.com/megalodev/setetes/internal/ent/password"
 )
 
@@ -25,14 +25,6 @@ type AccountCreate struct {
 // SetCreatedAt sets the "created_at" field.
 func (_c *AccountCreate) SetCreatedAt(v int64) *AccountCreate {
 	_c.mutation.SetCreatedAt(v)
-	return _c
-}
-
-// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
-func (_c *AccountCreate) SetNillableCreatedAt(v *int64) *AccountCreate {
-	if v != nil {
-		_c.SetCreatedAt(*v)
-	}
 	return _c
 }
 
@@ -130,23 +122,23 @@ func (_c *AccountCreate) SetID(v uuid.UUID) *AccountCreate {
 	return _c
 }
 
-// SetBloodID sets the "blood" edge to the Blood entity by ID.
-func (_c *AccountCreate) SetBloodID(id uuid.UUID) *AccountCreate {
-	_c.mutation.SetBloodID(id)
+// SetBloodTypeID sets the "blood_type" edge to the BloodType entity by ID.
+func (_c *AccountCreate) SetBloodTypeID(id uuid.UUID) *AccountCreate {
+	_c.mutation.SetBloodTypeID(id)
 	return _c
 }
 
-// SetNillableBloodID sets the "blood" edge to the Blood entity by ID if the given value is not nil.
-func (_c *AccountCreate) SetNillableBloodID(id *uuid.UUID) *AccountCreate {
+// SetNillableBloodTypeID sets the "blood_type" edge to the BloodType entity by ID if the given value is not nil.
+func (_c *AccountCreate) SetNillableBloodTypeID(id *uuid.UUID) *AccountCreate {
 	if id != nil {
-		_c = _c.SetBloodID(*id)
+		_c = _c.SetBloodTypeID(*id)
 	}
 	return _c
 }
 
-// SetBlood sets the "blood" edge to the Blood entity.
-func (_c *AccountCreate) SetBlood(v *Blood) *AccountCreate {
-	return _c.SetBloodID(v.ID)
+// SetBloodType sets the "blood_type" edge to the BloodType entity.
+func (_c *AccountCreate) SetBloodType(v *BloodType) *AccountCreate {
+	return _c.SetBloodTypeID(v.ID)
 }
 
 // SetPasswordID sets the "password" edge to the Password entity by ID.
@@ -203,10 +195,6 @@ func (_c *AccountCreate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (_c *AccountCreate) defaults() {
-	if _, ok := _c.mutation.CreatedAt(); !ok {
-		v := account.DefaultCreatedAt
-		_c.mutation.SetCreatedAt(v)
-	}
 	if _, ok := _c.mutation.Activated(); !ok {
 		v := account.DefaultActivated
 		_c.mutation.SetActivated(v)
@@ -219,9 +207,6 @@ func (_c *AccountCreate) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (_c *AccountCreate) check() error {
-	if _, ok := _c.mutation.CreatedAt(); !ok {
-		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "Account.created_at"`)}
-	}
 	if v, ok := _c.mutation.CreatedAt(); ok {
 		if err := account.CreatedAtValidator(v); err != nil {
 			return &ValidationError{Name: "created_at", err: fmt.Errorf(`ent: validator failed for field "Account.created_at": %w`, err)}
@@ -395,15 +380,15 @@ func (_c *AccountCreate) createSpec() (*Account, *sqlgraph.CreateSpec) {
 		_spec.SetField(account.FieldTempLockedAt, field.TypeInt64, value)
 		_node.TempLockedAt = &value
 	}
-	if nodes := _c.mutation.BloodIDs(); len(nodes) > 0 {
+	if nodes := _c.mutation.BloodTypeIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2O,
 			Inverse: false,
-			Table:   account.BloodTable,
-			Columns: []string{account.BloodColumn},
+			Table:   account.BloodTypeTable,
+			Columns: []string{account.BloodTypeColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(blood.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(bloodtype.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {

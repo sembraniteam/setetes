@@ -6,11 +6,14 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 
+	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
 	"github.com/megalodev/setetes/internal/ent/pmilocation"
+	"github.com/megalodev/setetes/internal/ent/schema"
 	"github.com/megalodev/setetes/internal/ent/subdistrict"
 )
 
@@ -24,14 +27,6 @@ type PMILocationCreate struct {
 // SetCreatedAt sets the "created_at" field.
 func (_c *PMILocationCreate) SetCreatedAt(v int64) *PMILocationCreate {
 	_c.mutation.SetCreatedAt(v)
-	return _c
-}
-
-// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
-func (_c *PMILocationCreate) SetNillableCreatedAt(v *int64) *PMILocationCreate {
-	if v != nil {
-		_c.SetCreatedAt(*v)
-	}
 	return _c
 }
 
@@ -54,28 +49,22 @@ func (_c *PMILocationCreate) SetName(v string) *PMILocationCreate {
 }
 
 // SetBedCapacities sets the "bed_capacities" field.
-func (_c *PMILocationCreate) SetBedCapacities(v int) *PMILocationCreate {
+func (_c *PMILocationCreate) SetBedCapacities(v int16) *PMILocationCreate {
 	_c.mutation.SetBedCapacities(v)
 	return _c
 }
 
 // SetNillableBedCapacities sets the "bed_capacities" field if the given value is not nil.
-func (_c *PMILocationCreate) SetNillableBedCapacities(v *int) *PMILocationCreate {
+func (_c *PMILocationCreate) SetNillableBedCapacities(v *int16) *PMILocationCreate {
 	if v != nil {
 		_c.SetBedCapacities(*v)
 	}
 	return _c
 }
 
-// SetLat sets the "lat" field.
-func (_c *PMILocationCreate) SetLat(v float64) *PMILocationCreate {
-	_c.mutation.SetLat(v)
-	return _c
-}
-
-// SetLng sets the "lng" field.
-func (_c *PMILocationCreate) SetLng(v float64) *PMILocationCreate {
-	_c.mutation.SetLng(v)
+// SetLatLng sets the "lat_lng" field.
+func (_c *PMILocationCreate) SetLatLng(v *schema.GeoPoint) *PMILocationCreate {
+	_c.mutation.SetLatLng(v)
 	return _c
 }
 
@@ -91,6 +80,12 @@ func (_c *PMILocationCreate) SetEmail(v string) *PMILocationCreate {
 	return _c
 }
 
+// SetDialCode sets the "dial_code" field.
+func (_c *PMILocationCreate) SetDialCode(v string) *PMILocationCreate {
+	_c.mutation.SetDialCode(v)
+	return _c
+}
+
 // SetPhoneNumber sets the "phone_number" field.
 func (_c *PMILocationCreate) SetPhoneNumber(v string) *PMILocationCreate {
 	_c.mutation.SetPhoneNumber(v)
@@ -98,13 +93,13 @@ func (_c *PMILocationCreate) SetPhoneNumber(v string) *PMILocationCreate {
 }
 
 // SetOpensAt sets the "opens_at" field.
-func (_c *PMILocationCreate) SetOpensAt(v int) *PMILocationCreate {
+func (_c *PMILocationCreate) SetOpensAt(v time.Time) *PMILocationCreate {
 	_c.mutation.SetOpensAt(v)
 	return _c
 }
 
 // SetClosesAt sets the "closes_at" field.
-func (_c *PMILocationCreate) SetClosesAt(v int) *PMILocationCreate {
+func (_c *PMILocationCreate) SetClosesAt(v time.Time) *PMILocationCreate {
 	_c.mutation.SetClosesAt(v)
 	return _c
 }
@@ -165,10 +160,6 @@ func (_c *PMILocationCreate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (_c *PMILocationCreate) defaults() {
-	if _, ok := _c.mutation.CreatedAt(); !ok {
-		v := pmilocation.DefaultCreatedAt
-		_c.mutation.SetCreatedAt(v)
-	}
 	if _, ok := _c.mutation.BedCapacities(); !ok {
 		v := pmilocation.DefaultBedCapacities
 		_c.mutation.SetBedCapacities(v)
@@ -177,9 +168,6 @@ func (_c *PMILocationCreate) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (_c *PMILocationCreate) check() error {
-	if _, ok := _c.mutation.CreatedAt(); !ok {
-		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "PMILocation.created_at"`)}
-	}
 	if v, ok := _c.mutation.CreatedAt(); ok {
 		if err := pmilocation.CreatedAtValidator(v); err != nil {
 			return &ValidationError{Name: "created_at", err: fmt.Errorf(`ent: validator failed for field "PMILocation.created_at": %w`, err)}
@@ -209,19 +197,19 @@ func (_c *PMILocationCreate) check() error {
 			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "PMILocation.name": %w`, err)}
 		}
 	}
-	if _, ok := _c.mutation.BedCapacities(); !ok {
-		return &ValidationError{Name: "bed_capacities", err: errors.New(`ent: missing required field "PMILocation.bed_capacities"`)}
+	switch _c.driver.Dialect() {
+	case dialect.MySQL, dialect.SQLite:
+		if _, ok := _c.mutation.BedCapacities(); !ok {
+			return &ValidationError{Name: "bed_capacities", err: errors.New(`ent: missing required field "PMILocation.bed_capacities"`)}
+		}
 	}
 	if v, ok := _c.mutation.BedCapacities(); ok {
 		if err := pmilocation.BedCapacitiesValidator(v); err != nil {
 			return &ValidationError{Name: "bed_capacities", err: fmt.Errorf(`ent: validator failed for field "PMILocation.bed_capacities": %w`, err)}
 		}
 	}
-	if _, ok := _c.mutation.Lat(); !ok {
-		return &ValidationError{Name: "lat", err: errors.New(`ent: missing required field "PMILocation.lat"`)}
-	}
-	if _, ok := _c.mutation.Lng(); !ok {
-		return &ValidationError{Name: "lng", err: errors.New(`ent: missing required field "PMILocation.lng"`)}
+	if _, ok := _c.mutation.LatLng(); !ok {
+		return &ValidationError{Name: "lat_lng", err: errors.New(`ent: missing required field "PMILocation.lat_lng"`)}
 	}
 	if _, ok := _c.mutation.Street(); !ok {
 		return &ValidationError{Name: "street", err: errors.New(`ent: missing required field "PMILocation.street"`)}
@@ -239,6 +227,9 @@ func (_c *PMILocationCreate) check() error {
 			return &ValidationError{Name: "email", err: fmt.Errorf(`ent: validator failed for field "PMILocation.email": %w`, err)}
 		}
 	}
+	if _, ok := _c.mutation.DialCode(); !ok {
+		return &ValidationError{Name: "dial_code", err: errors.New(`ent: missing required field "PMILocation.dial_code"`)}
+	}
 	if _, ok := _c.mutation.PhoneNumber(); !ok {
 		return &ValidationError{Name: "phone_number", err: errors.New(`ent: missing required field "PMILocation.phone_number"`)}
 	}
@@ -250,18 +241,8 @@ func (_c *PMILocationCreate) check() error {
 	if _, ok := _c.mutation.OpensAt(); !ok {
 		return &ValidationError{Name: "opens_at", err: errors.New(`ent: missing required field "PMILocation.opens_at"`)}
 	}
-	if v, ok := _c.mutation.OpensAt(); ok {
-		if err := pmilocation.OpensAtValidator(v); err != nil {
-			return &ValidationError{Name: "opens_at", err: fmt.Errorf(`ent: validator failed for field "PMILocation.opens_at": %w`, err)}
-		}
-	}
 	if _, ok := _c.mutation.ClosesAt(); !ok {
 		return &ValidationError{Name: "closes_at", err: errors.New(`ent: missing required field "PMILocation.closes_at"`)}
-	}
-	if v, ok := _c.mutation.ClosesAt(); ok {
-		if err := pmilocation.ClosesAtValidator(v); err != nil {
-			return &ValidationError{Name: "closes_at", err: fmt.Errorf(`ent: validator failed for field "PMILocation.closes_at": %w`, err)}
-		}
 	}
 	return nil
 }
@@ -315,16 +296,12 @@ func (_c *PMILocationCreate) createSpec() (*PMILocation, *sqlgraph.CreateSpec) {
 		_node.Name = value
 	}
 	if value, ok := _c.mutation.BedCapacities(); ok {
-		_spec.SetField(pmilocation.FieldBedCapacities, field.TypeInt, value)
+		_spec.SetField(pmilocation.FieldBedCapacities, field.TypeInt16, value)
 		_node.BedCapacities = value
 	}
-	if value, ok := _c.mutation.Lat(); ok {
-		_spec.SetField(pmilocation.FieldLat, field.TypeFloat64, value)
-		_node.Lat = value
-	}
-	if value, ok := _c.mutation.Lng(); ok {
-		_spec.SetField(pmilocation.FieldLng, field.TypeFloat64, value)
-		_node.Lng = value
+	if value, ok := _c.mutation.LatLng(); ok {
+		_spec.SetField(pmilocation.FieldLatLng, field.TypeOther, value)
+		_node.LatLng = value
 	}
 	if value, ok := _c.mutation.Street(); ok {
 		_spec.SetField(pmilocation.FieldStreet, field.TypeString, value)
@@ -334,16 +311,20 @@ func (_c *PMILocationCreate) createSpec() (*PMILocation, *sqlgraph.CreateSpec) {
 		_spec.SetField(pmilocation.FieldEmail, field.TypeString, value)
 		_node.Email = &value
 	}
+	if value, ok := _c.mutation.DialCode(); ok {
+		_spec.SetField(pmilocation.FieldDialCode, field.TypeString, value)
+		_node.DialCode = value
+	}
 	if value, ok := _c.mutation.PhoneNumber(); ok {
 		_spec.SetField(pmilocation.FieldPhoneNumber, field.TypeString, value)
 		_node.PhoneNumber = value
 	}
 	if value, ok := _c.mutation.OpensAt(); ok {
-		_spec.SetField(pmilocation.FieldOpensAt, field.TypeInt, value)
+		_spec.SetField(pmilocation.FieldOpensAt, field.TypeTime, value)
 		_node.OpensAt = value
 	}
 	if value, ok := _c.mutation.ClosesAt(); ok {
-		_spec.SetField(pmilocation.FieldClosesAt, field.TypeInt, value)
+		_spec.SetField(pmilocation.FieldClosesAt, field.TypeTime, value)
 		_node.ClosesAt = value
 	}
 	if nodes := _c.mutation.SubdistrictIDs(); len(nodes) > 0 {

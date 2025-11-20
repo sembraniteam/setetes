@@ -30,40 +30,6 @@ func (_u *DistrictUpdate) Where(ps ...predicate.District) *DistrictUpdate {
 	return _u
 }
 
-// SetUpdatedAt sets the "updated_at" field.
-func (_u *DistrictUpdate) SetUpdatedAt(v int64) *DistrictUpdate {
-	_u.mutation.ResetUpdatedAt()
-	_u.mutation.SetUpdatedAt(v)
-	return _u
-}
-
-// AddUpdatedAt adds value to the "updated_at" field.
-func (_u *DistrictUpdate) AddUpdatedAt(v int64) *DistrictUpdate {
-	_u.mutation.AddUpdatedAt(v)
-	return _u
-}
-
-// SetDeletedAt sets the "deleted_at" field.
-func (_u *DistrictUpdate) SetDeletedAt(v int64) *DistrictUpdate {
-	_u.mutation.ResetDeletedAt()
-	_u.mutation.SetDeletedAt(v)
-	return _u
-}
-
-// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
-func (_u *DistrictUpdate) SetNillableDeletedAt(v *int64) *DistrictUpdate {
-	if v != nil {
-		_u.SetDeletedAt(*v)
-	}
-	return _u
-}
-
-// AddDeletedAt adds value to the "deleted_at" field.
-func (_u *DistrictUpdate) AddDeletedAt(v int64) *DistrictUpdate {
-	_u.mutation.AddDeletedAt(v)
-	return _u
-}
-
 // SetBpsCode sets the "bps_code" field.
 func (_u *DistrictUpdate) SetBpsCode(v string) *DistrictUpdate {
 	_u.mutation.SetBpsCode(v)
@@ -152,7 +118,6 @@ func (_u *DistrictUpdate) ClearSubdistrict() *DistrictUpdate {
 
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (_u *DistrictUpdate) Save(ctx context.Context) (int, error) {
-	_u.defaults()
 	return withHooks(ctx, _u.sqlSave, _u.mutation, _u.hooks)
 }
 
@@ -178,26 +143,8 @@ func (_u *DistrictUpdate) ExecX(ctx context.Context) {
 	}
 }
 
-// defaults sets the default values of the builder before save.
-func (_u *DistrictUpdate) defaults() {
-	if _, ok := _u.mutation.UpdatedAt(); !ok {
-		v := district.UpdateDefaultUpdatedAt()
-		_u.mutation.SetUpdatedAt(v)
-	}
-}
-
 // check runs all checks and user-defined validators on the builder.
 func (_u *DistrictUpdate) check() error {
-	if v, ok := _u.mutation.UpdatedAt(); ok {
-		if err := district.UpdatedAtValidator(v); err != nil {
-			return &ValidationError{Name: "updated_at", err: fmt.Errorf(`ent: validator failed for field "District.updated_at": %w`, err)}
-		}
-	}
-	if v, ok := _u.mutation.DeletedAt(); ok {
-		if err := district.DeletedAtValidator(v); err != nil {
-			return &ValidationError{Name: "deleted_at", err: fmt.Errorf(`ent: validator failed for field "District.deleted_at": %w`, err)}
-		}
-	}
 	if v, ok := _u.mutation.BpsCode(); ok {
 		if err := district.BpsCodeValidator(v); err != nil {
 			return &ValidationError{Name: "bps_code", err: fmt.Errorf(`ent: validator failed for field "District.bps_code": %w`, err)}
@@ -220,18 +167,6 @@ func (_u *DistrictUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 				ps[i](selector)
 			}
 		}
-	}
-	if value, ok := _u.mutation.UpdatedAt(); ok {
-		_spec.SetField(district.FieldUpdatedAt, field.TypeInt64, value)
-	}
-	if value, ok := _u.mutation.AddedUpdatedAt(); ok {
-		_spec.AddField(district.FieldUpdatedAt, field.TypeInt64, value)
-	}
-	if value, ok := _u.mutation.DeletedAt(); ok {
-		_spec.SetField(district.FieldDeletedAt, field.TypeInt64, value)
-	}
-	if value, ok := _u.mutation.AddedDeletedAt(); ok {
-		_spec.AddField(district.FieldDeletedAt, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.BpsCode(); ok {
 		_spec.SetField(district.FieldBpsCode, field.TypeString, value)
@@ -331,40 +266,6 @@ type DistrictUpdateOne struct {
 	fields   []string
 	hooks    []Hook
 	mutation *DistrictMutation
-}
-
-// SetUpdatedAt sets the "updated_at" field.
-func (_u *DistrictUpdateOne) SetUpdatedAt(v int64) *DistrictUpdateOne {
-	_u.mutation.ResetUpdatedAt()
-	_u.mutation.SetUpdatedAt(v)
-	return _u
-}
-
-// AddUpdatedAt adds value to the "updated_at" field.
-func (_u *DistrictUpdateOne) AddUpdatedAt(v int64) *DistrictUpdateOne {
-	_u.mutation.AddUpdatedAt(v)
-	return _u
-}
-
-// SetDeletedAt sets the "deleted_at" field.
-func (_u *DistrictUpdateOne) SetDeletedAt(v int64) *DistrictUpdateOne {
-	_u.mutation.ResetDeletedAt()
-	_u.mutation.SetDeletedAt(v)
-	return _u
-}
-
-// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
-func (_u *DistrictUpdateOne) SetNillableDeletedAt(v *int64) *DistrictUpdateOne {
-	if v != nil {
-		_u.SetDeletedAt(*v)
-	}
-	return _u
-}
-
-// AddDeletedAt adds value to the "deleted_at" field.
-func (_u *DistrictUpdateOne) AddDeletedAt(v int64) *DistrictUpdateOne {
-	_u.mutation.AddDeletedAt(v)
-	return _u
 }
 
 // SetBpsCode sets the "bps_code" field.
@@ -468,7 +369,6 @@ func (_u *DistrictUpdateOne) Select(field string, fields ...string) *DistrictUpd
 
 // Save executes the query and returns the updated District entity.
 func (_u *DistrictUpdateOne) Save(ctx context.Context) (*District, error) {
-	_u.defaults()
 	return withHooks(ctx, _u.sqlSave, _u.mutation, _u.hooks)
 }
 
@@ -494,26 +394,8 @@ func (_u *DistrictUpdateOne) ExecX(ctx context.Context) {
 	}
 }
 
-// defaults sets the default values of the builder before save.
-func (_u *DistrictUpdateOne) defaults() {
-	if _, ok := _u.mutation.UpdatedAt(); !ok {
-		v := district.UpdateDefaultUpdatedAt()
-		_u.mutation.SetUpdatedAt(v)
-	}
-}
-
 // check runs all checks and user-defined validators on the builder.
 func (_u *DistrictUpdateOne) check() error {
-	if v, ok := _u.mutation.UpdatedAt(); ok {
-		if err := district.UpdatedAtValidator(v); err != nil {
-			return &ValidationError{Name: "updated_at", err: fmt.Errorf(`ent: validator failed for field "District.updated_at": %w`, err)}
-		}
-	}
-	if v, ok := _u.mutation.DeletedAt(); ok {
-		if err := district.DeletedAtValidator(v); err != nil {
-			return &ValidationError{Name: "deleted_at", err: fmt.Errorf(`ent: validator failed for field "District.deleted_at": %w`, err)}
-		}
-	}
 	if v, ok := _u.mutation.BpsCode(); ok {
 		if err := district.BpsCodeValidator(v); err != nil {
 			return &ValidationError{Name: "bps_code", err: fmt.Errorf(`ent: validator failed for field "District.bps_code": %w`, err)}
@@ -553,18 +435,6 @@ func (_u *DistrictUpdateOne) sqlSave(ctx context.Context) (_node *District, err 
 				ps[i](selector)
 			}
 		}
-	}
-	if value, ok := _u.mutation.UpdatedAt(); ok {
-		_spec.SetField(district.FieldUpdatedAt, field.TypeInt64, value)
-	}
-	if value, ok := _u.mutation.AddedUpdatedAt(); ok {
-		_spec.AddField(district.FieldUpdatedAt, field.TypeInt64, value)
-	}
-	if value, ok := _u.mutation.DeletedAt(); ok {
-		_spec.SetField(district.FieldDeletedAt, field.TypeInt64, value)
-	}
-	if value, ok := _u.mutation.AddedDeletedAt(); ok {
-		_spec.AddField(district.FieldDeletedAt, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.BpsCode(); ok {
 		_spec.SetField(district.FieldBpsCode, field.TypeString, value)

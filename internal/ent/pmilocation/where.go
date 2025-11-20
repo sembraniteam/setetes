@@ -3,10 +3,13 @@
 package pmilocation
 
 import (
+	"time"
+
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"github.com/google/uuid"
 	"github.com/megalodev/setetes/internal/ent/predicate"
+	"github.com/megalodev/setetes/internal/ent/schema"
 )
 
 // ID filters vertices based on their ID field.
@@ -75,18 +78,13 @@ func Name(v string) predicate.PMILocation {
 }
 
 // BedCapacities applies equality check predicate on the "bed_capacities" field. It's identical to BedCapacitiesEQ.
-func BedCapacities(v int) predicate.PMILocation {
+func BedCapacities(v int16) predicate.PMILocation {
 	return predicate.PMILocation(sql.FieldEQ(FieldBedCapacities, v))
 }
 
-// Lat applies equality check predicate on the "lat" field. It's identical to LatEQ.
-func Lat(v float64) predicate.PMILocation {
-	return predicate.PMILocation(sql.FieldEQ(FieldLat, v))
-}
-
-// Lng applies equality check predicate on the "lng" field. It's identical to LngEQ.
-func Lng(v float64) predicate.PMILocation {
-	return predicate.PMILocation(sql.FieldEQ(FieldLng, v))
+// LatLng applies equality check predicate on the "lat_lng" field. It's identical to LatLngEQ.
+func LatLng(v *schema.GeoPoint) predicate.PMILocation {
+	return predicate.PMILocation(sql.FieldEQ(FieldLatLng, v))
 }
 
 // Street applies equality check predicate on the "street" field. It's identical to StreetEQ.
@@ -99,18 +97,23 @@ func Email(v string) predicate.PMILocation {
 	return predicate.PMILocation(sql.FieldEQ(FieldEmail, v))
 }
 
+// DialCode applies equality check predicate on the "dial_code" field. It's identical to DialCodeEQ.
+func DialCode(v string) predicate.PMILocation {
+	return predicate.PMILocation(sql.FieldEQ(FieldDialCode, v))
+}
+
 // PhoneNumber applies equality check predicate on the "phone_number" field. It's identical to PhoneNumberEQ.
 func PhoneNumber(v string) predicate.PMILocation {
 	return predicate.PMILocation(sql.FieldEQ(FieldPhoneNumber, v))
 }
 
 // OpensAt applies equality check predicate on the "opens_at" field. It's identical to OpensAtEQ.
-func OpensAt(v int) predicate.PMILocation {
+func OpensAt(v time.Time) predicate.PMILocation {
 	return predicate.PMILocation(sql.FieldEQ(FieldOpensAt, v))
 }
 
 // ClosesAt applies equality check predicate on the "closes_at" field. It's identical to ClosesAtEQ.
-func ClosesAt(v int) predicate.PMILocation {
+func ClosesAt(v time.Time) predicate.PMILocation {
 	return predicate.PMILocation(sql.FieldEQ(FieldClosesAt, v))
 }
 
@@ -300,123 +303,83 @@ func NameContainsFold(v string) predicate.PMILocation {
 }
 
 // BedCapacitiesEQ applies the EQ predicate on the "bed_capacities" field.
-func BedCapacitiesEQ(v int) predicate.PMILocation {
+func BedCapacitiesEQ(v int16) predicate.PMILocation {
 	return predicate.PMILocation(sql.FieldEQ(FieldBedCapacities, v))
 }
 
 // BedCapacitiesNEQ applies the NEQ predicate on the "bed_capacities" field.
-func BedCapacitiesNEQ(v int) predicate.PMILocation {
+func BedCapacitiesNEQ(v int16) predicate.PMILocation {
 	return predicate.PMILocation(sql.FieldNEQ(FieldBedCapacities, v))
 }
 
 // BedCapacitiesIn applies the In predicate on the "bed_capacities" field.
-func BedCapacitiesIn(vs ...int) predicate.PMILocation {
+func BedCapacitiesIn(vs ...int16) predicate.PMILocation {
 	return predicate.PMILocation(sql.FieldIn(FieldBedCapacities, vs...))
 }
 
 // BedCapacitiesNotIn applies the NotIn predicate on the "bed_capacities" field.
-func BedCapacitiesNotIn(vs ...int) predicate.PMILocation {
+func BedCapacitiesNotIn(vs ...int16) predicate.PMILocation {
 	return predicate.PMILocation(sql.FieldNotIn(FieldBedCapacities, vs...))
 }
 
 // BedCapacitiesGT applies the GT predicate on the "bed_capacities" field.
-func BedCapacitiesGT(v int) predicate.PMILocation {
+func BedCapacitiesGT(v int16) predicate.PMILocation {
 	return predicate.PMILocation(sql.FieldGT(FieldBedCapacities, v))
 }
 
 // BedCapacitiesGTE applies the GTE predicate on the "bed_capacities" field.
-func BedCapacitiesGTE(v int) predicate.PMILocation {
+func BedCapacitiesGTE(v int16) predicate.PMILocation {
 	return predicate.PMILocation(sql.FieldGTE(FieldBedCapacities, v))
 }
 
 // BedCapacitiesLT applies the LT predicate on the "bed_capacities" field.
-func BedCapacitiesLT(v int) predicate.PMILocation {
+func BedCapacitiesLT(v int16) predicate.PMILocation {
 	return predicate.PMILocation(sql.FieldLT(FieldBedCapacities, v))
 }
 
 // BedCapacitiesLTE applies the LTE predicate on the "bed_capacities" field.
-func BedCapacitiesLTE(v int) predicate.PMILocation {
+func BedCapacitiesLTE(v int16) predicate.PMILocation {
 	return predicate.PMILocation(sql.FieldLTE(FieldBedCapacities, v))
 }
 
-// LatEQ applies the EQ predicate on the "lat" field.
-func LatEQ(v float64) predicate.PMILocation {
-	return predicate.PMILocation(sql.FieldEQ(FieldLat, v))
+// LatLngEQ applies the EQ predicate on the "lat_lng" field.
+func LatLngEQ(v *schema.GeoPoint) predicate.PMILocation {
+	return predicate.PMILocation(sql.FieldEQ(FieldLatLng, v))
 }
 
-// LatNEQ applies the NEQ predicate on the "lat" field.
-func LatNEQ(v float64) predicate.PMILocation {
-	return predicate.PMILocation(sql.FieldNEQ(FieldLat, v))
+// LatLngNEQ applies the NEQ predicate on the "lat_lng" field.
+func LatLngNEQ(v *schema.GeoPoint) predicate.PMILocation {
+	return predicate.PMILocation(sql.FieldNEQ(FieldLatLng, v))
 }
 
-// LatIn applies the In predicate on the "lat" field.
-func LatIn(vs ...float64) predicate.PMILocation {
-	return predicate.PMILocation(sql.FieldIn(FieldLat, vs...))
+// LatLngIn applies the In predicate on the "lat_lng" field.
+func LatLngIn(vs ...*schema.GeoPoint) predicate.PMILocation {
+	return predicate.PMILocation(sql.FieldIn(FieldLatLng, vs...))
 }
 
-// LatNotIn applies the NotIn predicate on the "lat" field.
-func LatNotIn(vs ...float64) predicate.PMILocation {
-	return predicate.PMILocation(sql.FieldNotIn(FieldLat, vs...))
+// LatLngNotIn applies the NotIn predicate on the "lat_lng" field.
+func LatLngNotIn(vs ...*schema.GeoPoint) predicate.PMILocation {
+	return predicate.PMILocation(sql.FieldNotIn(FieldLatLng, vs...))
 }
 
-// LatGT applies the GT predicate on the "lat" field.
-func LatGT(v float64) predicate.PMILocation {
-	return predicate.PMILocation(sql.FieldGT(FieldLat, v))
+// LatLngGT applies the GT predicate on the "lat_lng" field.
+func LatLngGT(v *schema.GeoPoint) predicate.PMILocation {
+	return predicate.PMILocation(sql.FieldGT(FieldLatLng, v))
 }
 
-// LatGTE applies the GTE predicate on the "lat" field.
-func LatGTE(v float64) predicate.PMILocation {
-	return predicate.PMILocation(sql.FieldGTE(FieldLat, v))
+// LatLngGTE applies the GTE predicate on the "lat_lng" field.
+func LatLngGTE(v *schema.GeoPoint) predicate.PMILocation {
+	return predicate.PMILocation(sql.FieldGTE(FieldLatLng, v))
 }
 
-// LatLT applies the LT predicate on the "lat" field.
-func LatLT(v float64) predicate.PMILocation {
-	return predicate.PMILocation(sql.FieldLT(FieldLat, v))
+// LatLngLT applies the LT predicate on the "lat_lng" field.
+func LatLngLT(v *schema.GeoPoint) predicate.PMILocation {
+	return predicate.PMILocation(sql.FieldLT(FieldLatLng, v))
 }
 
-// LatLTE applies the LTE predicate on the "lat" field.
-func LatLTE(v float64) predicate.PMILocation {
-	return predicate.PMILocation(sql.FieldLTE(FieldLat, v))
-}
-
-// LngEQ applies the EQ predicate on the "lng" field.
-func LngEQ(v float64) predicate.PMILocation {
-	return predicate.PMILocation(sql.FieldEQ(FieldLng, v))
-}
-
-// LngNEQ applies the NEQ predicate on the "lng" field.
-func LngNEQ(v float64) predicate.PMILocation {
-	return predicate.PMILocation(sql.FieldNEQ(FieldLng, v))
-}
-
-// LngIn applies the In predicate on the "lng" field.
-func LngIn(vs ...float64) predicate.PMILocation {
-	return predicate.PMILocation(sql.FieldIn(FieldLng, vs...))
-}
-
-// LngNotIn applies the NotIn predicate on the "lng" field.
-func LngNotIn(vs ...float64) predicate.PMILocation {
-	return predicate.PMILocation(sql.FieldNotIn(FieldLng, vs...))
-}
-
-// LngGT applies the GT predicate on the "lng" field.
-func LngGT(v float64) predicate.PMILocation {
-	return predicate.PMILocation(sql.FieldGT(FieldLng, v))
-}
-
-// LngGTE applies the GTE predicate on the "lng" field.
-func LngGTE(v float64) predicate.PMILocation {
-	return predicate.PMILocation(sql.FieldGTE(FieldLng, v))
-}
-
-// LngLT applies the LT predicate on the "lng" field.
-func LngLT(v float64) predicate.PMILocation {
-	return predicate.PMILocation(sql.FieldLT(FieldLng, v))
-}
-
-// LngLTE applies the LTE predicate on the "lng" field.
-func LngLTE(v float64) predicate.PMILocation {
-	return predicate.PMILocation(sql.FieldLTE(FieldLng, v))
+// LatLngLTE applies the LTE predicate on the "lat_lng" field.
+func LatLngLTE(v *schema.GeoPoint) predicate.PMILocation {
+	return predicate.PMILocation(sql.FieldLTE(FieldLatLng, v))
 }
 
 // StreetEQ applies the EQ predicate on the "street" field.
@@ -549,6 +512,71 @@ func EmailContainsFold(v string) predicate.PMILocation {
 	return predicate.PMILocation(sql.FieldContainsFold(FieldEmail, v))
 }
 
+// DialCodeEQ applies the EQ predicate on the "dial_code" field.
+func DialCodeEQ(v string) predicate.PMILocation {
+	return predicate.PMILocation(sql.FieldEQ(FieldDialCode, v))
+}
+
+// DialCodeNEQ applies the NEQ predicate on the "dial_code" field.
+func DialCodeNEQ(v string) predicate.PMILocation {
+	return predicate.PMILocation(sql.FieldNEQ(FieldDialCode, v))
+}
+
+// DialCodeIn applies the In predicate on the "dial_code" field.
+func DialCodeIn(vs ...string) predicate.PMILocation {
+	return predicate.PMILocation(sql.FieldIn(FieldDialCode, vs...))
+}
+
+// DialCodeNotIn applies the NotIn predicate on the "dial_code" field.
+func DialCodeNotIn(vs ...string) predicate.PMILocation {
+	return predicate.PMILocation(sql.FieldNotIn(FieldDialCode, vs...))
+}
+
+// DialCodeGT applies the GT predicate on the "dial_code" field.
+func DialCodeGT(v string) predicate.PMILocation {
+	return predicate.PMILocation(sql.FieldGT(FieldDialCode, v))
+}
+
+// DialCodeGTE applies the GTE predicate on the "dial_code" field.
+func DialCodeGTE(v string) predicate.PMILocation {
+	return predicate.PMILocation(sql.FieldGTE(FieldDialCode, v))
+}
+
+// DialCodeLT applies the LT predicate on the "dial_code" field.
+func DialCodeLT(v string) predicate.PMILocation {
+	return predicate.PMILocation(sql.FieldLT(FieldDialCode, v))
+}
+
+// DialCodeLTE applies the LTE predicate on the "dial_code" field.
+func DialCodeLTE(v string) predicate.PMILocation {
+	return predicate.PMILocation(sql.FieldLTE(FieldDialCode, v))
+}
+
+// DialCodeContains applies the Contains predicate on the "dial_code" field.
+func DialCodeContains(v string) predicate.PMILocation {
+	return predicate.PMILocation(sql.FieldContains(FieldDialCode, v))
+}
+
+// DialCodeHasPrefix applies the HasPrefix predicate on the "dial_code" field.
+func DialCodeHasPrefix(v string) predicate.PMILocation {
+	return predicate.PMILocation(sql.FieldHasPrefix(FieldDialCode, v))
+}
+
+// DialCodeHasSuffix applies the HasSuffix predicate on the "dial_code" field.
+func DialCodeHasSuffix(v string) predicate.PMILocation {
+	return predicate.PMILocation(sql.FieldHasSuffix(FieldDialCode, v))
+}
+
+// DialCodeEqualFold applies the EqualFold predicate on the "dial_code" field.
+func DialCodeEqualFold(v string) predicate.PMILocation {
+	return predicate.PMILocation(sql.FieldEqualFold(FieldDialCode, v))
+}
+
+// DialCodeContainsFold applies the ContainsFold predicate on the "dial_code" field.
+func DialCodeContainsFold(v string) predicate.PMILocation {
+	return predicate.PMILocation(sql.FieldContainsFold(FieldDialCode, v))
+}
+
 // PhoneNumberEQ applies the EQ predicate on the "phone_number" field.
 func PhoneNumberEQ(v string) predicate.PMILocation {
 	return predicate.PMILocation(sql.FieldEQ(FieldPhoneNumber, v))
@@ -615,82 +643,82 @@ func PhoneNumberContainsFold(v string) predicate.PMILocation {
 }
 
 // OpensAtEQ applies the EQ predicate on the "opens_at" field.
-func OpensAtEQ(v int) predicate.PMILocation {
+func OpensAtEQ(v time.Time) predicate.PMILocation {
 	return predicate.PMILocation(sql.FieldEQ(FieldOpensAt, v))
 }
 
 // OpensAtNEQ applies the NEQ predicate on the "opens_at" field.
-func OpensAtNEQ(v int) predicate.PMILocation {
+func OpensAtNEQ(v time.Time) predicate.PMILocation {
 	return predicate.PMILocation(sql.FieldNEQ(FieldOpensAt, v))
 }
 
 // OpensAtIn applies the In predicate on the "opens_at" field.
-func OpensAtIn(vs ...int) predicate.PMILocation {
+func OpensAtIn(vs ...time.Time) predicate.PMILocation {
 	return predicate.PMILocation(sql.FieldIn(FieldOpensAt, vs...))
 }
 
 // OpensAtNotIn applies the NotIn predicate on the "opens_at" field.
-func OpensAtNotIn(vs ...int) predicate.PMILocation {
+func OpensAtNotIn(vs ...time.Time) predicate.PMILocation {
 	return predicate.PMILocation(sql.FieldNotIn(FieldOpensAt, vs...))
 }
 
 // OpensAtGT applies the GT predicate on the "opens_at" field.
-func OpensAtGT(v int) predicate.PMILocation {
+func OpensAtGT(v time.Time) predicate.PMILocation {
 	return predicate.PMILocation(sql.FieldGT(FieldOpensAt, v))
 }
 
 // OpensAtGTE applies the GTE predicate on the "opens_at" field.
-func OpensAtGTE(v int) predicate.PMILocation {
+func OpensAtGTE(v time.Time) predicate.PMILocation {
 	return predicate.PMILocation(sql.FieldGTE(FieldOpensAt, v))
 }
 
 // OpensAtLT applies the LT predicate on the "opens_at" field.
-func OpensAtLT(v int) predicate.PMILocation {
+func OpensAtLT(v time.Time) predicate.PMILocation {
 	return predicate.PMILocation(sql.FieldLT(FieldOpensAt, v))
 }
 
 // OpensAtLTE applies the LTE predicate on the "opens_at" field.
-func OpensAtLTE(v int) predicate.PMILocation {
+func OpensAtLTE(v time.Time) predicate.PMILocation {
 	return predicate.PMILocation(sql.FieldLTE(FieldOpensAt, v))
 }
 
 // ClosesAtEQ applies the EQ predicate on the "closes_at" field.
-func ClosesAtEQ(v int) predicate.PMILocation {
+func ClosesAtEQ(v time.Time) predicate.PMILocation {
 	return predicate.PMILocation(sql.FieldEQ(FieldClosesAt, v))
 }
 
 // ClosesAtNEQ applies the NEQ predicate on the "closes_at" field.
-func ClosesAtNEQ(v int) predicate.PMILocation {
+func ClosesAtNEQ(v time.Time) predicate.PMILocation {
 	return predicate.PMILocation(sql.FieldNEQ(FieldClosesAt, v))
 }
 
 // ClosesAtIn applies the In predicate on the "closes_at" field.
-func ClosesAtIn(vs ...int) predicate.PMILocation {
+func ClosesAtIn(vs ...time.Time) predicate.PMILocation {
 	return predicate.PMILocation(sql.FieldIn(FieldClosesAt, vs...))
 }
 
 // ClosesAtNotIn applies the NotIn predicate on the "closes_at" field.
-func ClosesAtNotIn(vs ...int) predicate.PMILocation {
+func ClosesAtNotIn(vs ...time.Time) predicate.PMILocation {
 	return predicate.PMILocation(sql.FieldNotIn(FieldClosesAt, vs...))
 }
 
 // ClosesAtGT applies the GT predicate on the "closes_at" field.
-func ClosesAtGT(v int) predicate.PMILocation {
+func ClosesAtGT(v time.Time) predicate.PMILocation {
 	return predicate.PMILocation(sql.FieldGT(FieldClosesAt, v))
 }
 
 // ClosesAtGTE applies the GTE predicate on the "closes_at" field.
-func ClosesAtGTE(v int) predicate.PMILocation {
+func ClosesAtGTE(v time.Time) predicate.PMILocation {
 	return predicate.PMILocation(sql.FieldGTE(FieldClosesAt, v))
 }
 
 // ClosesAtLT applies the LT predicate on the "closes_at" field.
-func ClosesAtLT(v int) predicate.PMILocation {
+func ClosesAtLT(v time.Time) predicate.PMILocation {
 	return predicate.PMILocation(sql.FieldLT(FieldClosesAt, v))
 }
 
 // ClosesAtLTE applies the LTE predicate on the "closes_at" field.
-func ClosesAtLTE(v int) predicate.PMILocation {
+func ClosesAtLTE(v time.Time) predicate.PMILocation {
 	return predicate.PMILocation(sql.FieldLTE(FieldClosesAt, v))
 }
 

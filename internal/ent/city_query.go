@@ -337,12 +337,12 @@ func (_q *CityQuery) WithDistrict(opts ...func(*DistrictQuery)) *CityQuery {
 // Example:
 //
 //	var v []struct {
-//		CreatedAt int64 `json:"created_at"`
+//		BpsCode string `json:"bps_code"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
 //	client.City.Query().
-//		GroupBy(city.FieldCreatedAt).
+//		GroupBy(city.FieldBpsCode).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 func (_q *CityQuery) GroupBy(field string, fields ...string) *CityGroupBy {
@@ -360,11 +360,11 @@ func (_q *CityQuery) GroupBy(field string, fields ...string) *CityGroupBy {
 // Example:
 //
 //	var v []struct {
-//		CreatedAt int64 `json:"created_at"`
+//		BpsCode string `json:"bps_code"`
 //	}
 //
 //	client.City.Query().
-//		Select(city.FieldCreatedAt).
+//		Select(city.FieldBpsCode).
 //		Scan(ctx, &v)
 func (_q *CityQuery) Select(fields ...string) *CitySelect {
 	_q.ctx.Fields = append(_q.ctx.Fields, fields...)

@@ -18,12 +18,6 @@ type Province struct {
 	config `json:"-"`
 	// ID of the ent.
 	ID uuid.UUID `json:"id"`
-	// CreatedAt holds the value of the "created_at" field.
-	CreatedAt int64 `json:"created_at"`
-	// UpdatedAt holds the value of the "updated_at" field.
-	UpdatedAt *int64 `json:"updated_at"`
-	// Represents soft delete timestamp in milliseconds.
-	DeletedAt *int64 `json:"deleted_at"`
 	// BpsCode holds the value of the "bps_code" field.
 	BpsCode string `json:"bps_code"`
 	// Name holds the value of the "name" field.
@@ -60,8 +54,6 @@ func (*Province) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case province.FieldCreatedAt, province.FieldUpdatedAt, province.FieldDeletedAt:
-			values[i] = new(sql.NullInt64)
 		case province.FieldBpsCode, province.FieldName:
 			values[i] = new(sql.NullString)
 		case province.FieldID:
@@ -88,26 +80,6 @@ func (_m *Province) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field id", values[i])
 			} else if value != nil {
 				_m.ID = *value
-			}
-		case province.FieldCreatedAt:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field created_at", values[i])
-			} else if value.Valid {
-				_m.CreatedAt = value.Int64
-			}
-		case province.FieldUpdatedAt:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
-			} else if value.Valid {
-				_m.UpdatedAt = new(int64)
-				*_m.UpdatedAt = value.Int64
-			}
-		case province.FieldDeletedAt:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field deleted_at", values[i])
-			} else if value.Valid {
-				_m.DeletedAt = new(int64)
-				*_m.DeletedAt = value.Int64
 			}
 		case province.FieldBpsCode:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -169,19 +141,6 @@ func (_m *Province) String() string {
 	var builder strings.Builder
 	builder.WriteString("Province(")
 	builder.WriteString(fmt.Sprintf("id=%v, ", _m.ID))
-	builder.WriteString("created_at=")
-	builder.WriteString(fmt.Sprintf("%v", _m.CreatedAt))
-	builder.WriteString(", ")
-	if v := _m.UpdatedAt; v != nil {
-		builder.WriteString("updated_at=")
-		builder.WriteString(fmt.Sprintf("%v", *v))
-	}
-	builder.WriteString(", ")
-	if v := _m.DeletedAt; v != nil {
-		builder.WriteString("deleted_at=")
-		builder.WriteString(fmt.Sprintf("%v", *v))
-	}
-	builder.WriteString(", ")
 	builder.WriteString("bps_code=")
 	builder.WriteString(_m.BpsCode)
 	builder.WriteString(", ")

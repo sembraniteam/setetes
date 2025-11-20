@@ -21,16 +21,16 @@ func (f AccountFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, err
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.AccountMutation", m)
 }
 
-// The BloodFunc type is an adapter to allow the use of ordinary
-// function as Blood mutator.
-type BloodFunc func(context.Context, *ent.BloodMutation) (ent.Value, error)
+// The BloodTypeFunc type is an adapter to allow the use of ordinary
+// function as BloodType mutator.
+type BloodTypeFunc func(context.Context, *ent.BloodTypeMutation) (ent.Value, error)
 
 // Mutate calls f(ctx, m).
-func (f BloodFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-	if mv, ok := m.(*ent.BloodMutation); ok {
+func (f BloodTypeFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.BloodTypeMutation); ok {
 		return f(ctx, mv)
 	}
-	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.BloodMutation", m)
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.BloodTypeMutation", m)
 }
 
 // The CityFunc type is an adapter to allow the use of ordinary

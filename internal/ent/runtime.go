@@ -4,7 +4,7 @@ package ent
 
 import (
 	"github.com/megalodev/setetes/internal/ent/account"
-	"github.com/megalodev/setetes/internal/ent/blood"
+	"github.com/megalodev/setetes/internal/ent/bloodtype"
 	"github.com/megalodev/setetes/internal/ent/city"
 	"github.com/megalodev/setetes/internal/ent/district"
 	"github.com/megalodev/setetes/internal/ent/password"
@@ -25,8 +25,6 @@ func init() {
 	_ = accountFields
 	// accountDescCreatedAt is the schema descriptor for created_at field.
 	accountDescCreatedAt := accountMixinFields0[1].Descriptor()
-	// account.DefaultCreatedAt holds the default value on creation for the created_at field.
-	account.DefaultCreatedAt = accountDescCreatedAt.Default.(int64)
 	// account.CreatedAtValidator is a validator for the "created_at" field. It is called by the builders before save.
 	account.CreatedAtValidator = accountDescCreatedAt.Validators[0].(func(int64) error)
 	// accountDescUpdatedAt is the schema descriptor for updated_at field.
@@ -141,75 +139,35 @@ func init() {
 	accountDescTempLockedAt := accountFields[9].Descriptor()
 	// account.TempLockedAtValidator is a validator for the "temp_locked_at" field. It is called by the builders before save.
 	account.TempLockedAtValidator = accountDescTempLockedAt.Validators[0].(func(int64) error)
-	bloodMixin := schema.Blood{}.Mixin()
-	bloodMixinFields0 := bloodMixin[0].Fields()
-	_ = bloodMixinFields0
-	bloodFields := schema.Blood{}.Fields()
-	_ = bloodFields
-	// bloodDescCreatedAt is the schema descriptor for created_at field.
-	bloodDescCreatedAt := bloodMixinFields0[1].Descriptor()
-	// blood.DefaultCreatedAt holds the default value on creation for the created_at field.
-	blood.DefaultCreatedAt = bloodDescCreatedAt.Default.(int64)
-	// blood.CreatedAtValidator is a validator for the "created_at" field. It is called by the builders before save.
-	blood.CreatedAtValidator = bloodDescCreatedAt.Validators[0].(func(int64) error)
-	// bloodDescUpdatedAt is the schema descriptor for updated_at field.
-	bloodDescUpdatedAt := bloodMixinFields0[2].Descriptor()
-	// blood.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
-	blood.UpdateDefaultUpdatedAt = bloodDescUpdatedAt.UpdateDefault.(func() int64)
-	// blood.UpdatedAtValidator is a validator for the "updated_at" field. It is called by the builders before save.
-	blood.UpdatedAtValidator = bloodDescUpdatedAt.Validators[0].(func(int64) error)
-	// bloodDescDeletedAt is the schema descriptor for deleted_at field.
-	bloodDescDeletedAt := bloodMixinFields0[3].Descriptor()
-	// blood.DeletedAtValidator is a validator for the "deleted_at" field. It is called by the builders before save.
-	blood.DeletedAtValidator = bloodDescDeletedAt.Validators[0].(func(int64) error)
-	cityMixin := schema.City{}.Mixin()
-	cityMixinFields0 := cityMixin[0].Fields()
-	_ = cityMixinFields0
+	bloodtypeMixin := schema.BloodType{}.Mixin()
+	bloodtypeMixinFields0 := bloodtypeMixin[0].Fields()
+	_ = bloodtypeMixinFields0
+	bloodtypeFields := schema.BloodType{}.Fields()
+	_ = bloodtypeFields
+	// bloodtypeDescCreatedAt is the schema descriptor for created_at field.
+	bloodtypeDescCreatedAt := bloodtypeMixinFields0[1].Descriptor()
+	// bloodtype.CreatedAtValidator is a validator for the "created_at" field. It is called by the builders before save.
+	bloodtype.CreatedAtValidator = bloodtypeDescCreatedAt.Validators[0].(func(int64) error)
+	// bloodtypeDescUpdatedAt is the schema descriptor for updated_at field.
+	bloodtypeDescUpdatedAt := bloodtypeMixinFields0[2].Descriptor()
+	// bloodtype.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	bloodtype.UpdateDefaultUpdatedAt = bloodtypeDescUpdatedAt.UpdateDefault.(func() int64)
+	// bloodtype.UpdatedAtValidator is a validator for the "updated_at" field. It is called by the builders before save.
+	bloodtype.UpdatedAtValidator = bloodtypeDescUpdatedAt.Validators[0].(func(int64) error)
+	// bloodtypeDescDeletedAt is the schema descriptor for deleted_at field.
+	bloodtypeDescDeletedAt := bloodtypeMixinFields0[3].Descriptor()
+	// bloodtype.DeletedAtValidator is a validator for the "deleted_at" field. It is called by the builders before save.
+	bloodtype.DeletedAtValidator = bloodtypeDescDeletedAt.Validators[0].(func(int64) error)
 	cityFields := schema.City{}.Fields()
 	_ = cityFields
-	// cityDescCreatedAt is the schema descriptor for created_at field.
-	cityDescCreatedAt := cityMixinFields0[1].Descriptor()
-	// city.DefaultCreatedAt holds the default value on creation for the created_at field.
-	city.DefaultCreatedAt = cityDescCreatedAt.Default.(int64)
-	// city.CreatedAtValidator is a validator for the "created_at" field. It is called by the builders before save.
-	city.CreatedAtValidator = cityDescCreatedAt.Validators[0].(func(int64) error)
-	// cityDescUpdatedAt is the schema descriptor for updated_at field.
-	cityDescUpdatedAt := cityMixinFields0[2].Descriptor()
-	// city.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
-	city.UpdateDefaultUpdatedAt = cityDescUpdatedAt.UpdateDefault.(func() int64)
-	// city.UpdatedAtValidator is a validator for the "updated_at" field. It is called by the builders before save.
-	city.UpdatedAtValidator = cityDescUpdatedAt.Validators[0].(func(int64) error)
-	// cityDescDeletedAt is the schema descriptor for deleted_at field.
-	cityDescDeletedAt := cityMixinFields0[3].Descriptor()
-	// city.DeletedAtValidator is a validator for the "deleted_at" field. It is called by the builders before save.
-	city.DeletedAtValidator = cityDescDeletedAt.Validators[0].(func(int64) error)
 	// cityDescBpsCode is the schema descriptor for bps_code field.
-	cityDescBpsCode := cityFields[0].Descriptor()
+	cityDescBpsCode := cityFields[1].Descriptor()
 	// city.BpsCodeValidator is a validator for the "bps_code" field. It is called by the builders before save.
 	city.BpsCodeValidator = cityDescBpsCode.Validators[0].(func(string) error)
-	districtMixin := schema.District{}.Mixin()
-	districtMixinFields0 := districtMixin[0].Fields()
-	_ = districtMixinFields0
 	districtFields := schema.District{}.Fields()
 	_ = districtFields
-	// districtDescCreatedAt is the schema descriptor for created_at field.
-	districtDescCreatedAt := districtMixinFields0[1].Descriptor()
-	// district.DefaultCreatedAt holds the default value on creation for the created_at field.
-	district.DefaultCreatedAt = districtDescCreatedAt.Default.(int64)
-	// district.CreatedAtValidator is a validator for the "created_at" field. It is called by the builders before save.
-	district.CreatedAtValidator = districtDescCreatedAt.Validators[0].(func(int64) error)
-	// districtDescUpdatedAt is the schema descriptor for updated_at field.
-	districtDescUpdatedAt := districtMixinFields0[2].Descriptor()
-	// district.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
-	district.UpdateDefaultUpdatedAt = districtDescUpdatedAt.UpdateDefault.(func() int64)
-	// district.UpdatedAtValidator is a validator for the "updated_at" field. It is called by the builders before save.
-	district.UpdatedAtValidator = districtDescUpdatedAt.Validators[0].(func(int64) error)
-	// districtDescDeletedAt is the schema descriptor for deleted_at field.
-	districtDescDeletedAt := districtMixinFields0[3].Descriptor()
-	// district.DeletedAtValidator is a validator for the "deleted_at" field. It is called by the builders before save.
-	district.DeletedAtValidator = districtDescDeletedAt.Validators[0].(func(int64) error)
 	// districtDescBpsCode is the schema descriptor for bps_code field.
-	districtDescBpsCode := districtFields[0].Descriptor()
+	districtDescBpsCode := districtFields[1].Descriptor()
 	// district.BpsCodeValidator is a validator for the "bps_code" field. It is called by the builders before save.
 	district.BpsCodeValidator = districtDescBpsCode.Validators[0].(func(string) error)
 	pmilocationMixin := schema.PMILocation{}.Mixin()
@@ -219,8 +177,6 @@ func init() {
 	_ = pmilocationFields
 	// pmilocationDescCreatedAt is the schema descriptor for created_at field.
 	pmilocationDescCreatedAt := pmilocationMixinFields0[1].Descriptor()
-	// pmilocation.DefaultCreatedAt holds the default value on creation for the created_at field.
-	pmilocation.DefaultCreatedAt = pmilocationDescCreatedAt.Default.(int64)
 	// pmilocation.CreatedAtValidator is a validator for the "created_at" field. It is called by the builders before save.
 	pmilocation.CreatedAtValidator = pmilocationDescCreatedAt.Validators[0].(func(int64) error)
 	// pmilocationDescUpdatedAt is the schema descriptor for updated_at field.
@@ -241,6 +197,7 @@ func init() {
 		fns := [...]func(string) error{
 			validators[0].(func(string) error),
 			validators[1].(func(string) error),
+			validators[2].(func(string) error),
 		}
 		return func(name string) error {
 			for _, fn := range fns {
@@ -254,15 +211,15 @@ func init() {
 	// pmilocationDescBedCapacities is the schema descriptor for bed_capacities field.
 	pmilocationDescBedCapacities := pmilocationFields[1].Descriptor()
 	// pmilocation.DefaultBedCapacities holds the default value on creation for the bed_capacities field.
-	pmilocation.DefaultBedCapacities = pmilocationDescBedCapacities.Default.(int)
+	pmilocation.DefaultBedCapacities = pmilocationDescBedCapacities.Default.(int16)
 	// pmilocation.BedCapacitiesValidator is a validator for the "bed_capacities" field. It is called by the builders before save.
-	pmilocation.BedCapacitiesValidator = pmilocationDescBedCapacities.Validators[0].(func(int) error)
+	pmilocation.BedCapacitiesValidator = pmilocationDescBedCapacities.Validators[0].(func(int16) error)
 	// pmilocationDescStreet is the schema descriptor for street field.
-	pmilocationDescStreet := pmilocationFields[4].Descriptor()
+	pmilocationDescStreet := pmilocationFields[3].Descriptor()
 	// pmilocation.StreetValidator is a validator for the "street" field. It is called by the builders before save.
 	pmilocation.StreetValidator = pmilocationDescStreet.Validators[0].(func(string) error)
 	// pmilocationDescEmail is the schema descriptor for email field.
-	pmilocationDescEmail := pmilocationFields[5].Descriptor()
+	pmilocationDescEmail := pmilocationFields[4].Descriptor()
 	// pmilocation.EmailValidator is a validator for the "email" field. It is called by the builders before save.
 	pmilocation.EmailValidator = func() func(string) error {
 		validators := pmilocationDescEmail.Validators
@@ -297,14 +254,6 @@ func init() {
 			return nil
 		}
 	}()
-	// pmilocationDescOpensAt is the schema descriptor for opens_at field.
-	pmilocationDescOpensAt := pmilocationFields[7].Descriptor()
-	// pmilocation.OpensAtValidator is a validator for the "opens_at" field. It is called by the builders before save.
-	pmilocation.OpensAtValidator = pmilocationDescOpensAt.Validators[0].(func(int) error)
-	// pmilocationDescClosesAt is the schema descriptor for closes_at field.
-	pmilocationDescClosesAt := pmilocationFields[8].Descriptor()
-	// pmilocation.ClosesAtValidator is a validator for the "closes_at" field. It is called by the builders before save.
-	pmilocation.ClosesAtValidator = pmilocationDescClosesAt.Validators[0].(func(int) error)
 	passwordMixin := schema.Password{}.Mixin()
 	passwordMixinFields0 := passwordMixin[0].Fields()
 	_ = passwordMixinFields0
@@ -312,8 +261,6 @@ func init() {
 	_ = passwordFields
 	// passwordDescCreatedAt is the schema descriptor for created_at field.
 	passwordDescCreatedAt := passwordMixinFields0[1].Descriptor()
-	// password.DefaultCreatedAt holds the default value on creation for the created_at field.
-	password.DefaultCreatedAt = passwordDescCreatedAt.Default.(int64)
 	// password.CreatedAtValidator is a validator for the "created_at" field. It is called by the builders before save.
 	password.CreatedAtValidator = passwordDescCreatedAt.Validators[0].(func(int64) error)
 	// passwordDescUpdatedAt is the schema descriptor for updated_at field.
@@ -326,58 +273,20 @@ func init() {
 	passwordDescDeletedAt := passwordMixinFields0[3].Descriptor()
 	// password.DeletedAtValidator is a validator for the "deleted_at" field. It is called by the builders before save.
 	password.DeletedAtValidator = passwordDescDeletedAt.Validators[0].(func(int64) error)
-	provinceMixin := schema.Province{}.Mixin()
-	provinceMixinFields0 := provinceMixin[0].Fields()
-	_ = provinceMixinFields0
 	provinceFields := schema.Province{}.Fields()
 	_ = provinceFields
-	// provinceDescCreatedAt is the schema descriptor for created_at field.
-	provinceDescCreatedAt := provinceMixinFields0[1].Descriptor()
-	// province.DefaultCreatedAt holds the default value on creation for the created_at field.
-	province.DefaultCreatedAt = provinceDescCreatedAt.Default.(int64)
-	// province.CreatedAtValidator is a validator for the "created_at" field. It is called by the builders before save.
-	province.CreatedAtValidator = provinceDescCreatedAt.Validators[0].(func(int64) error)
-	// provinceDescUpdatedAt is the schema descriptor for updated_at field.
-	provinceDescUpdatedAt := provinceMixinFields0[2].Descriptor()
-	// province.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
-	province.UpdateDefaultUpdatedAt = provinceDescUpdatedAt.UpdateDefault.(func() int64)
-	// province.UpdatedAtValidator is a validator for the "updated_at" field. It is called by the builders before save.
-	province.UpdatedAtValidator = provinceDescUpdatedAt.Validators[0].(func(int64) error)
-	// provinceDescDeletedAt is the schema descriptor for deleted_at field.
-	provinceDescDeletedAt := provinceMixinFields0[3].Descriptor()
-	// province.DeletedAtValidator is a validator for the "deleted_at" field. It is called by the builders before save.
-	province.DeletedAtValidator = provinceDescDeletedAt.Validators[0].(func(int64) error)
 	// provinceDescBpsCode is the schema descriptor for bps_code field.
-	provinceDescBpsCode := provinceFields[0].Descriptor()
+	provinceDescBpsCode := provinceFields[1].Descriptor()
 	// province.BpsCodeValidator is a validator for the "bps_code" field. It is called by the builders before save.
 	province.BpsCodeValidator = provinceDescBpsCode.Validators[0].(func(string) error)
-	subdistrictMixin := schema.Subdistrict{}.Mixin()
-	subdistrictMixinFields0 := subdistrictMixin[0].Fields()
-	_ = subdistrictMixinFields0
 	subdistrictFields := schema.Subdistrict{}.Fields()
 	_ = subdistrictFields
-	// subdistrictDescCreatedAt is the schema descriptor for created_at field.
-	subdistrictDescCreatedAt := subdistrictMixinFields0[1].Descriptor()
-	// subdistrict.DefaultCreatedAt holds the default value on creation for the created_at field.
-	subdistrict.DefaultCreatedAt = subdistrictDescCreatedAt.Default.(int64)
-	// subdistrict.CreatedAtValidator is a validator for the "created_at" field. It is called by the builders before save.
-	subdistrict.CreatedAtValidator = subdistrictDescCreatedAt.Validators[0].(func(int64) error)
-	// subdistrictDescUpdatedAt is the schema descriptor for updated_at field.
-	subdistrictDescUpdatedAt := subdistrictMixinFields0[2].Descriptor()
-	// subdistrict.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
-	subdistrict.UpdateDefaultUpdatedAt = subdistrictDescUpdatedAt.UpdateDefault.(func() int64)
-	// subdistrict.UpdatedAtValidator is a validator for the "updated_at" field. It is called by the builders before save.
-	subdistrict.UpdatedAtValidator = subdistrictDescUpdatedAt.Validators[0].(func(int64) error)
-	// subdistrictDescDeletedAt is the schema descriptor for deleted_at field.
-	subdistrictDescDeletedAt := subdistrictMixinFields0[3].Descriptor()
-	// subdistrict.DeletedAtValidator is a validator for the "deleted_at" field. It is called by the builders before save.
-	subdistrict.DeletedAtValidator = subdistrictDescDeletedAt.Validators[0].(func(int64) error)
 	// subdistrictDescBpsCode is the schema descriptor for bps_code field.
-	subdistrictDescBpsCode := subdistrictFields[0].Descriptor()
+	subdistrictDescBpsCode := subdistrictFields[1].Descriptor()
 	// subdistrict.BpsCodeValidator is a validator for the "bps_code" field. It is called by the builders before save.
 	subdistrict.BpsCodeValidator = subdistrictDescBpsCode.Validators[0].(func(string) error)
 	// subdistrictDescPostalCode is the schema descriptor for postal_code field.
-	subdistrictDescPostalCode := subdistrictFields[1].Descriptor()
+	subdistrictDescPostalCode := subdistrictFields[2].Descriptor()
 	// subdistrict.PostalCodeValidator is a validator for the "postal_code" field. It is called by the builders before save.
 	subdistrict.PostalCodeValidator = subdistrictDescPostalCode.Validators[0].(func(string) error)
 }

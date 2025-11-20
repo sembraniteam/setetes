@@ -300,12 +300,12 @@ func (_q *ProvinceQuery) WithCity(opts ...func(*CityQuery)) *ProvinceQuery {
 // Example:
 //
 //	var v []struct {
-//		CreatedAt int64 `json:"created_at"`
+//		BpsCode string `json:"bps_code"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
 //	client.Province.Query().
-//		GroupBy(province.FieldCreatedAt).
+//		GroupBy(province.FieldBpsCode).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 func (_q *ProvinceQuery) GroupBy(field string, fields ...string) *ProvinceGroupBy {
@@ -323,11 +323,11 @@ func (_q *ProvinceQuery) GroupBy(field string, fields ...string) *ProvinceGroupB
 // Example:
 //
 //	var v []struct {
-//		CreatedAt int64 `json:"created_at"`
+//		BpsCode string `json:"bps_code"`
 //	}
 //
 //	client.Province.Query().
-//		Select(province.FieldCreatedAt).
+//		Select(province.FieldBpsCode).
 //		Scan(ctx, &v)
 func (_q *ProvinceQuery) Select(fields ...string) *ProvinceSelect {
 	_q.ctx.Fields = append(_q.ctx.Fields, fields...)

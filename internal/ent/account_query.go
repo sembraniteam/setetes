@@ -14,7 +14,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
 	"github.com/megalodev/setetes/internal/ent/account"
-	"github.com/megalodev/setetes/internal/ent/blood"
+	"github.com/megalodev/setetes/internal/ent/bloodtype"
 	"github.com/megalodev/setetes/internal/ent/password"
 	"github.com/megalodev/setetes/internal/ent/predicate"
 )
@@ -22,12 +22,12 @@ import (
 // AccountQuery is the builder for querying Account entities.
 type AccountQuery struct {
 	config
-	ctx          *QueryContext
-	order        []account.OrderOption
-	inters       []Interceptor
-	predicates   []predicate.Account
-	withBlood    *BloodQuery
-	withPassword *PasswordQuery
+	ctx           *QueryContext
+	order         []account.OrderOption
+	inters        []Interceptor
+	predicates    []predicate.Account
+	withBloodType *BloodTypeQuery
+	withPassword  *PasswordQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -64,9 +64,9 @@ func (_q *AccountQuery) Order(o ...account.OrderOption) *AccountQuery {
 	return _q
 }
 
-// QueryBlood chains the current query on the "blood" edge.
-func (_q *AccountQuery) QueryBlood() *BloodQuery {
-	query := (&BloodClient{config: _q.config}).Query()
+// QueryBloodType chains the current query on the "blood_type" edge.
+func (_q *AccountQuery) QueryBloodType() *BloodTypeQuery {
+	query := (&BloodTypeClient{config: _q.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := _q.prepareQuery(ctx); err != nil {
 			return nil, err
@@ -77,8 +77,8 @@ func (_q *AccountQuery) QueryBlood() *BloodQuery {
 		}
 		step := sqlgraph.NewStep(
 			sqlgraph.From(account.Table, account.FieldID, selector),
-			sqlgraph.To(blood.Table, blood.FieldID),
-			sqlgraph.Edge(sqlgraph.O2O, false, account.BloodTable, account.BloodColumn),
+			sqlgraph.To(bloodtype.Table, bloodtype.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, false, account.BloodTypeTable, account.BloodTypeColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
 		return fromU, nil
@@ -295,27 +295,27 @@ func (_q *AccountQuery) Clone() *AccountQuery {
 		return nil
 	}
 	return &AccountQuery{
-		config:       _q.config,
-		ctx:          _q.ctx.Clone(),
-		order:        append([]account.OrderOption{}, _q.order...),
-		inters:       append([]Interceptor{}, _q.inters...),
-		predicates:   append([]predicate.Account{}, _q.predicates...),
-		withBlood:    _q.withBlood.Clone(),
-		withPassword: _q.withPassword.Clone(),
+		config:        _q.config,
+		ctx:           _q.ctx.Clone(),
+		order:         append([]account.OrderOption{}, _q.order...),
+		inters:        append([]Interceptor{}, _q.inters...),
+		predicates:    append([]predicate.Account{}, _q.predicates...),
+		withBloodType: _q.withBloodType.Clone(),
+		withPassword:  _q.withPassword.Clone(),
 		// clone intermediate query.
 		sql:  _q.sql.Clone(),
 		path: _q.path,
 	}
 }
 
-// WithBlood tells the query-builder to eager-load the nodes that are connected to
-// the "blood" edge. The optional arguments are used to configure the query builder of the edge.
-func (_q *AccountQuery) WithBlood(opts ...func(*BloodQuery)) *AccountQuery {
-	query := (&BloodClient{config: _q.config}).Query()
+// WithBloodType tells the query-builder to eager-load the nodes that are connected to
+// the "blood_type" edge. The optional arguments are used to configure the query builder of the edge.
+func (_q *AccountQuery) WithBloodType(opts ...func(*BloodTypeQuery)) *AccountQuery {
+	query := (&BloodTypeClient{config: _q.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
-	_q.withBlood = query
+	_q.withBloodType = query
 	return _q
 }
 
@@ -409,7 +409,7 @@ func (_q *AccountQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Acco
 		nodes       = []*Account{}
 		_spec       = _q.querySpec()
 		loadedTypes = [2]bool{
-			_q.withBlood != nil,
+			_q.withBloodType != nil,
 			_q.withPassword != nil,
 		}
 	)
@@ -431,9 +431,9 @@ func (_q *AccountQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Acco
 	if len(nodes) == 0 {
 		return nodes, nil
 	}
-	if query := _q.withBlood; query != nil {
-		if err := _q.loadBlood(ctx, query, nodes, nil,
-			func(n *Account, e *Blood) { n.Edges.Blood = e }); err != nil {
+	if query := _q.withBloodType; query != nil {
+		if err := _q.loadBloodType(ctx, query, nodes, nil,
+			func(n *Account, e *BloodType) { n.Edges.BloodType = e }); err != nil {
 			return nil, err
 		}
 	}
@@ -446,7 +446,7 @@ func (_q *AccountQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Acco
 	return nodes, nil
 }
 
-func (_q *AccountQuery) loadBlood(ctx context.Context, query *BloodQuery, nodes []*Account, init func(*Account), assign func(*Account, *Blood)) error {
+func (_q *AccountQuery) loadBloodType(ctx context.Context, query *BloodTypeQuery, nodes []*Account, init func(*Account), assign func(*Account, *BloodType)) error {
 	fks := make([]driver.Value, 0, len(nodes))
 	nodeids := make(map[uuid.UUID]*Account)
 	for i := range nodes {
@@ -454,8 +454,8 @@ func (_q *AccountQuery) loadBlood(ctx context.Context, query *BloodQuery, nodes 
 		nodeids[nodes[i].ID] = nodes[i]
 	}
 	query.withFKs = true
-	query.Where(predicate.Blood(func(s *sql.Selector) {
-		s.Where(sql.InValues(s.C(account.BloodColumn), fks...))
+	query.Where(predicate.BloodType(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(account.BloodTypeColumn), fks...))
 	}))
 	neighbors, err := query.All(ctx)
 	if err != nil {

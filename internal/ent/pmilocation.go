@@ -5,11 +5,13 @@ package ent
 import (
 	"fmt"
 	"strings"
+	"time"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"github.com/google/uuid"
 	"github.com/megalodev/setetes/internal/ent/pmilocation"
+	"github.com/megalodev/setetes/internal/ent/schema"
 )
 
 // PMILocation is the model entity for the PMILocation schema.
@@ -26,21 +28,21 @@ type PMILocation struct {
 	// Name holds the value of the "name" field.
 	Name string `json:"name"`
 	// BedCapacities holds the value of the "bed_capacities" field.
-	BedCapacities int `json:"bed_capacities"`
-	// Lat holds the value of the "lat" field.
-	Lat float64 `json:"lat"`
-	// Lng holds the value of the "lng" field.
-	Lng float64 `json:"lng"`
+	BedCapacities int16 `json:"bed_capacities"`
+	// LatLng holds the value of the "lat_lng" field.
+	LatLng *schema.GeoPoint `json:"lat_lng"`
 	// Street holds the value of the "street" field.
 	Street string `json:"street"`
 	// Email holds the value of the "email" field.
 	Email *string `json:"email"`
+	// International dialing code of the user's country (e.g., +62 for Indonesia, +1 for United States). Used for constructing complete phone numbers.
+	DialCode string `json:"dial_code"`
 	// PhoneNumber holds the value of the "phone_number" field.
 	PhoneNumber string `json:"phone_number"`
 	// OpensAt holds the value of the "opens_at" field.
-	OpensAt int `json:"opens_at"`
+	OpensAt time.Time `json:"opens_at"`
 	// ClosesAt holds the value of the "closes_at" field.
-	ClosesAt int `json:"closes_at"`
+	ClosesAt time.Time `json:"closes_at"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the PMILocationQuery when eager-loading is set.
 	Edges        PMILocationEdges `json:"edges"`
@@ -70,12 +72,14 @@ func (*PMILocation) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case pmilocation.FieldLat, pmilocation.FieldLng:
-			values[i] = new(sql.NullFloat64)
-		case pmilocation.FieldCreatedAt, pmilocation.FieldUpdatedAt, pmilocation.FieldDeletedAt, pmilocation.FieldBedCapacities, pmilocation.FieldOpensAt, pmilocation.FieldClosesAt:
+		case pmilocation.FieldLatLng:
+			values[i] = new(schema.GeoPoint)
+		case pmilocation.FieldCreatedAt, pmilocation.FieldUpdatedAt, pmilocation.FieldDeletedAt, pmilocation.FieldBedCapacities:
 			values[i] = new(sql.NullInt64)
-		case pmilocation.FieldName, pmilocation.FieldStreet, pmilocation.FieldEmail, pmilocation.FieldPhoneNumber:
+		case pmilocation.FieldName, pmilocation.FieldStreet, pmilocation.FieldEmail, pmilocation.FieldDialCode, pmilocation.FieldPhoneNumber:
 			values[i] = new(sql.NullString)
+		case pmilocation.FieldOpensAt, pmilocation.FieldClosesAt:
+			values[i] = new(sql.NullTime)
 		case pmilocation.FieldID:
 			values[i] = new(uuid.UUID)
 		default:
@@ -129,19 +133,13 @@ func (_m *PMILocation) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field bed_capacities", values[i])
 			} else if value.Valid {
-				_m.BedCapacities = int(value.Int64)
+				_m.BedCapacities = int16(value.Int64)
 			}
-		case pmilocation.FieldLat:
-			if value, ok := values[i].(*sql.NullFloat64); !ok {
-				return fmt.Errorf("unexpected type %T for field lat", values[i])
-			} else if value.Valid {
-				_m.Lat = value.Float64
-			}
-		case pmilocation.FieldLng:
-			if value, ok := values[i].(*sql.NullFloat64); !ok {
-				return fmt.Errorf("unexpected type %T for field lng", values[i])
-			} else if value.Valid {
-				_m.Lng = value.Float64
+		case pmilocation.FieldLatLng:
+			if value, ok := values[i].(*schema.GeoPoint); !ok {
+				return fmt.Errorf("unexpected type %T for field lat_lng", values[i])
+			} else if value != nil {
+				_m.LatLng = value
 			}
 		case pmilocation.FieldStreet:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -156,6 +154,12 @@ func (_m *PMILocation) assignValues(columns []string, values []any) error {
 				_m.Email = new(string)
 				*_m.Email = value.String
 			}
+		case pmilocation.FieldDialCode:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field dial_code", values[i])
+			} else if value.Valid {
+				_m.DialCode = value.String
+			}
 		case pmilocation.FieldPhoneNumber:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field phone_number", values[i])
@@ -163,16 +167,16 @@ func (_m *PMILocation) assignValues(columns []string, values []any) error {
 				_m.PhoneNumber = value.String
 			}
 		case pmilocation.FieldOpensAt:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
+			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field opens_at", values[i])
 			} else if value.Valid {
-				_m.OpensAt = int(value.Int64)
+				_m.OpensAt = value.Time
 			}
 		case pmilocation.FieldClosesAt:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
+			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field closes_at", values[i])
 			} else if value.Valid {
-				_m.ClosesAt = int(value.Int64)
+				_m.ClosesAt = value.Time
 			}
 		default:
 			_m.selectValues.Set(columns[i], values[i])
@@ -234,11 +238,8 @@ func (_m *PMILocation) String() string {
 	builder.WriteString("bed_capacities=")
 	builder.WriteString(fmt.Sprintf("%v", _m.BedCapacities))
 	builder.WriteString(", ")
-	builder.WriteString("lat=")
-	builder.WriteString(fmt.Sprintf("%v", _m.Lat))
-	builder.WriteString(", ")
-	builder.WriteString("lng=")
-	builder.WriteString(fmt.Sprintf("%v", _m.Lng))
+	builder.WriteString("lat_lng=")
+	builder.WriteString(fmt.Sprintf("%v", _m.LatLng))
 	builder.WriteString(", ")
 	builder.WriteString("street=")
 	builder.WriteString(_m.Street)
@@ -248,14 +249,17 @@ func (_m *PMILocation) String() string {
 		builder.WriteString(*v)
 	}
 	builder.WriteString(", ")
+	builder.WriteString("dial_code=")
+	builder.WriteString(_m.DialCode)
+	builder.WriteString(", ")
 	builder.WriteString("phone_number=")
 	builder.WriteString(_m.PhoneNumber)
 	builder.WriteString(", ")
 	builder.WriteString("opens_at=")
-	builder.WriteString(fmt.Sprintf("%v", _m.OpensAt))
+	builder.WriteString(_m.OpensAt.Format(time.ANSIC))
 	builder.WriteString(", ")
 	builder.WriteString("closes_at=")
-	builder.WriteString(fmt.Sprintf("%v", _m.ClosesAt))
+	builder.WriteString(_m.ClosesAt.Format(time.ANSIC))
 	builder.WriteByte(')')
 	return builder.String()
 }

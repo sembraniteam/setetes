@@ -40,19 +40,19 @@ const (
 	FieldLocked = "locked"
 	// FieldTempLockedAt holds the string denoting the temp_locked_at field in the database.
 	FieldTempLockedAt = "temp_locked_at"
-	// EdgeBlood holds the string denoting the blood edge name in mutations.
-	EdgeBlood = "blood"
+	// EdgeBloodType holds the string denoting the blood_type edge name in mutations.
+	EdgeBloodType = "blood_type"
 	// EdgePassword holds the string denoting the password edge name in mutations.
 	EdgePassword = "password"
 	// Table holds the table name of the account in the database.
 	Table = "accounts"
-	// BloodTable is the table that holds the blood relation/edge.
-	BloodTable = "bloods"
-	// BloodInverseTable is the table name for the Blood entity.
-	// It exists in this package in order to avoid circular dependency with the "blood" package.
-	BloodInverseTable = "bloods"
-	// BloodColumn is the table column denoting the blood relation/edge.
-	BloodColumn = "blood_id"
+	// BloodTypeTable is the table that holds the blood_type relation/edge.
+	BloodTypeTable = "blood_types"
+	// BloodTypeInverseTable is the table name for the BloodType entity.
+	// It exists in this package in order to avoid circular dependency with the "bloodtype" package.
+	BloodTypeInverseTable = "blood_types"
+	// BloodTypeColumn is the table column denoting the blood_type relation/edge.
+	BloodTypeColumn = "blood_id"
 	// PasswordTable is the table that holds the password relation/edge.
 	PasswordTable = "passwords"
 	// PasswordInverseTable is the table name for the Password entity.
@@ -91,8 +91,6 @@ func ValidColumn(column string) bool {
 }
 
 var (
-	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
-	DefaultCreatedAt int64
 	// CreatedAtValidator is a validator for the "created_at" field. It is called by the builders before save.
 	CreatedAtValidator func(int64) error
 	// UpdateDefaultUpdatedAt holds the default value on update for the "updated_at" field.
@@ -215,10 +213,10 @@ func ByTempLockedAt(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldTempLockedAt, opts...).ToFunc()
 }
 
-// ByBloodField orders the results by blood field.
-func ByBloodField(field string, opts ...sql.OrderTermOption) OrderOption {
+// ByBloodTypeField orders the results by blood_type field.
+func ByBloodTypeField(field string, opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newBloodStep(), sql.OrderByField(field, opts...))
+		sqlgraph.OrderByNeighborTerms(s, newBloodTypeStep(), sql.OrderByField(field, opts...))
 	}
 }
 
@@ -228,11 +226,11 @@ func ByPasswordField(field string, opts ...sql.OrderTermOption) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newPasswordStep(), sql.OrderByField(field, opts...))
 	}
 }
-func newBloodStep() *sqlgraph.Step {
+func newBloodTypeStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(BloodInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.O2O, false, BloodTable, BloodColumn),
+		sqlgraph.To(BloodTypeInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2O, false, BloodTypeTable, BloodTypeColumn),
 	)
 }
 func newPasswordStep() *sqlgraph.Step {

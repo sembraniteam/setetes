@@ -21,32 +21,6 @@ type ProvinceCreate struct {
 	hooks    []Hook
 }
 
-// SetCreatedAt sets the "created_at" field.
-func (_c *ProvinceCreate) SetCreatedAt(v int64) *ProvinceCreate {
-	_c.mutation.SetCreatedAt(v)
-	return _c
-}
-
-// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
-func (_c *ProvinceCreate) SetNillableCreatedAt(v *int64) *ProvinceCreate {
-	if v != nil {
-		_c.SetCreatedAt(*v)
-	}
-	return _c
-}
-
-// SetUpdatedAt sets the "updated_at" field.
-func (_c *ProvinceCreate) SetUpdatedAt(v int64) *ProvinceCreate {
-	_c.mutation.SetUpdatedAt(v)
-	return _c
-}
-
-// SetDeletedAt sets the "deleted_at" field.
-func (_c *ProvinceCreate) SetDeletedAt(v int64) *ProvinceCreate {
-	_c.mutation.SetDeletedAt(v)
-	return _c
-}
-
 // SetBpsCode sets the "bps_code" field.
 func (_c *ProvinceCreate) SetBpsCode(v string) *ProvinceCreate {
 	_c.mutation.SetBpsCode(v)
@@ -83,7 +57,6 @@ func (_c *ProvinceCreate) Mutation() *ProvinceMutation {
 
 // Save creates the Province in the database.
 func (_c *ProvinceCreate) Save(ctx context.Context) (*Province, error) {
-	_c.defaults()
 	return withHooks(ctx, _c.sqlSave, _c.mutation, _c.hooks)
 }
 
@@ -109,40 +82,8 @@ func (_c *ProvinceCreate) ExecX(ctx context.Context) {
 	}
 }
 
-// defaults sets the default values of the builder before save.
-func (_c *ProvinceCreate) defaults() {
-	if _, ok := _c.mutation.CreatedAt(); !ok {
-		v := province.DefaultCreatedAt
-		_c.mutation.SetCreatedAt(v)
-	}
-}
-
 // check runs all checks and user-defined validators on the builder.
 func (_c *ProvinceCreate) check() error {
-	if _, ok := _c.mutation.CreatedAt(); !ok {
-		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "Province.created_at"`)}
-	}
-	if v, ok := _c.mutation.CreatedAt(); ok {
-		if err := province.CreatedAtValidator(v); err != nil {
-			return &ValidationError{Name: "created_at", err: fmt.Errorf(`ent: validator failed for field "Province.created_at": %w`, err)}
-		}
-	}
-	if _, ok := _c.mutation.UpdatedAt(); !ok {
-		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "Province.updated_at"`)}
-	}
-	if v, ok := _c.mutation.UpdatedAt(); ok {
-		if err := province.UpdatedAtValidator(v); err != nil {
-			return &ValidationError{Name: "updated_at", err: fmt.Errorf(`ent: validator failed for field "Province.updated_at": %w`, err)}
-		}
-	}
-	if _, ok := _c.mutation.DeletedAt(); !ok {
-		return &ValidationError{Name: "deleted_at", err: errors.New(`ent: missing required field "Province.deleted_at"`)}
-	}
-	if v, ok := _c.mutation.DeletedAt(); ok {
-		if err := province.DeletedAtValidator(v); err != nil {
-			return &ValidationError{Name: "deleted_at", err: fmt.Errorf(`ent: validator failed for field "Province.deleted_at": %w`, err)}
-		}
-	}
 	if _, ok := _c.mutation.BpsCode(); !ok {
 		return &ValidationError{Name: "bps_code", err: errors.New(`ent: missing required field "Province.bps_code"`)}
 	}
@@ -192,18 +133,6 @@ func (_c *ProvinceCreate) createSpec() (*Province, *sqlgraph.CreateSpec) {
 		_node.ID = id
 		_spec.ID.Value = &id
 	}
-	if value, ok := _c.mutation.CreatedAt(); ok {
-		_spec.SetField(province.FieldCreatedAt, field.TypeInt64, value)
-		_node.CreatedAt = value
-	}
-	if value, ok := _c.mutation.UpdatedAt(); ok {
-		_spec.SetField(province.FieldUpdatedAt, field.TypeInt64, value)
-		_node.UpdatedAt = &value
-	}
-	if value, ok := _c.mutation.DeletedAt(); ok {
-		_spec.SetField(province.FieldDeletedAt, field.TypeInt64, value)
-		_node.DeletedAt = &value
-	}
 	if value, ok := _c.mutation.BpsCode(); ok {
 		_spec.SetField(province.FieldBpsCode, field.TypeString, value)
 		_node.BpsCode = value
@@ -250,7 +179,6 @@ func (_c *ProvinceCreateBulk) Save(ctx context.Context) ([]*Province, error) {
 	for i := range _c.builders {
 		func(i int, root context.Context) {
 			builder := _c.builders[i]
-			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 				mutation, ok := m.(*ProvinceMutation)
 				if !ok {

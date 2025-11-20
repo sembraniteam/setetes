@@ -17,7 +17,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"github.com/megalodev/setetes/internal/ent/account"
-	"github.com/megalodev/setetes/internal/ent/blood"
+	"github.com/megalodev/setetes/internal/ent/bloodtype"
 	"github.com/megalodev/setetes/internal/ent/city"
 	"github.com/megalodev/setetes/internal/ent/district"
 	"github.com/megalodev/setetes/internal/ent/password"
@@ -33,8 +33,8 @@ type Client struct {
 	Schema *migrate.Schema
 	// Account is the client for interacting with the Account builders.
 	Account *AccountClient
-	// Blood is the client for interacting with the Blood builders.
-	Blood *BloodClient
+	// BloodType is the client for interacting with the BloodType builders.
+	BloodType *BloodTypeClient
 	// City is the client for interacting with the City builders.
 	City *CityClient
 	// District is the client for interacting with the District builders.
@@ -59,7 +59,7 @@ func NewClient(opts ...Option) *Client {
 func (c *Client) init() {
 	c.Schema = migrate.NewSchema(c.driver)
 	c.Account = NewAccountClient(c.config)
-	c.Blood = NewBloodClient(c.config)
+	c.BloodType = NewBloodTypeClient(c.config)
 	c.City = NewCityClient(c.config)
 	c.District = NewDistrictClient(c.config)
 	c.PMILocation = NewPMILocationClient(c.config)
@@ -159,7 +159,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		ctx:         ctx,
 		config:      cfg,
 		Account:     NewAccountClient(cfg),
-		Blood:       NewBloodClient(cfg),
+		BloodType:   NewBloodTypeClient(cfg),
 		City:        NewCityClient(cfg),
 		District:    NewDistrictClient(cfg),
 		PMILocation: NewPMILocationClient(cfg),
@@ -186,7 +186,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		ctx:         ctx,
 		config:      cfg,
 		Account:     NewAccountClient(cfg),
-		Blood:       NewBloodClient(cfg),
+		BloodType:   NewBloodTypeClient(cfg),
 		City:        NewCityClient(cfg),
 		District:    NewDistrictClient(cfg),
 		PMILocation: NewPMILocationClient(cfg),
@@ -222,8 +222,8 @@ func (c *Client) Close() error {
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
-		c.Account, c.Blood, c.City, c.District, c.PMILocation, c.Password, c.Province,
-		c.Subdistrict,
+		c.Account, c.BloodType, c.City, c.District, c.PMILocation, c.Password,
+		c.Province, c.Subdistrict,
 	} {
 		n.Use(hooks...)
 	}
@@ -233,8 +233,8 @@ func (c *Client) Use(hooks ...Hook) {
 // In order to add interceptors to a specific client, call: `client.Node.Intercept(...)`.
 func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
-		c.Account, c.Blood, c.City, c.District, c.PMILocation, c.Password, c.Province,
-		c.Subdistrict,
+		c.Account, c.BloodType, c.City, c.District, c.PMILocation, c.Password,
+		c.Province, c.Subdistrict,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -245,8 +245,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 	switch m := m.(type) {
 	case *AccountMutation:
 		return c.Account.mutate(ctx, m)
-	case *BloodMutation:
-		return c.Blood.mutate(ctx, m)
+	case *BloodTypeMutation:
+		return c.BloodType.mutate(ctx, m)
 	case *CityMutation:
 		return c.City.mutate(ctx, m)
 	case *DistrictMutation:
@@ -372,15 +372,15 @@ func (c *AccountClient) GetX(ctx context.Context, id uuid.UUID) *Account {
 	return obj
 }
 
-// QueryBlood queries the blood edge of a Account.
-func (c *AccountClient) QueryBlood(_m *Account) *BloodQuery {
-	query := (&BloodClient{config: c.config}).Query()
+// QueryBloodType queries the blood_type edge of a Account.
+func (c *AccountClient) QueryBloodType(_m *Account) *BloodTypeQuery {
+	query := (&BloodTypeClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := _m.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(account.Table, account.FieldID, id),
-			sqlgraph.To(blood.Table, blood.FieldID),
-			sqlgraph.Edge(sqlgraph.O2O, false, account.BloodTable, account.BloodColumn),
+			sqlgraph.To(bloodtype.Table, bloodtype.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, false, account.BloodTypeTable, account.BloodTypeColumn),
 		)
 		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
 		return fromV, nil
@@ -429,107 +429,107 @@ func (c *AccountClient) mutate(ctx context.Context, m *AccountMutation) (Value, 
 	}
 }
 
-// BloodClient is a client for the Blood schema.
-type BloodClient struct {
+// BloodTypeClient is a client for the BloodType schema.
+type BloodTypeClient struct {
 	config
 }
 
-// NewBloodClient returns a client for the Blood from the given config.
-func NewBloodClient(c config) *BloodClient {
-	return &BloodClient{config: c}
+// NewBloodTypeClient returns a client for the BloodType from the given config.
+func NewBloodTypeClient(c config) *BloodTypeClient {
+	return &BloodTypeClient{config: c}
 }
 
 // Use adds a list of mutation hooks to the hooks stack.
-// A call to `Use(f, g, h)` equals to `blood.Hooks(f(g(h())))`.
-func (c *BloodClient) Use(hooks ...Hook) {
-	c.hooks.Blood = append(c.hooks.Blood, hooks...)
+// A call to `Use(f, g, h)` equals to `bloodtype.Hooks(f(g(h())))`.
+func (c *BloodTypeClient) Use(hooks ...Hook) {
+	c.hooks.BloodType = append(c.hooks.BloodType, hooks...)
 }
 
 // Intercept adds a list of query interceptors to the interceptors stack.
-// A call to `Intercept(f, g, h)` equals to `blood.Intercept(f(g(h())))`.
-func (c *BloodClient) Intercept(interceptors ...Interceptor) {
-	c.inters.Blood = append(c.inters.Blood, interceptors...)
+// A call to `Intercept(f, g, h)` equals to `bloodtype.Intercept(f(g(h())))`.
+func (c *BloodTypeClient) Intercept(interceptors ...Interceptor) {
+	c.inters.BloodType = append(c.inters.BloodType, interceptors...)
 }
 
-// Create returns a builder for creating a Blood entity.
-func (c *BloodClient) Create() *BloodCreate {
-	mutation := newBloodMutation(c.config, OpCreate)
-	return &BloodCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+// Create returns a builder for creating a BloodType entity.
+func (c *BloodTypeClient) Create() *BloodTypeCreate {
+	mutation := newBloodTypeMutation(c.config, OpCreate)
+	return &BloodTypeCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// CreateBulk returns a builder for creating a bulk of Blood entities.
-func (c *BloodClient) CreateBulk(builders ...*BloodCreate) *BloodCreateBulk {
-	return &BloodCreateBulk{config: c.config, builders: builders}
+// CreateBulk returns a builder for creating a bulk of BloodType entities.
+func (c *BloodTypeClient) CreateBulk(builders ...*BloodTypeCreate) *BloodTypeCreateBulk {
+	return &BloodTypeCreateBulk{config: c.config, builders: builders}
 }
 
 // MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
 // a builder and applies setFunc on it.
-func (c *BloodClient) MapCreateBulk(slice any, setFunc func(*BloodCreate, int)) *BloodCreateBulk {
+func (c *BloodTypeClient) MapCreateBulk(slice any, setFunc func(*BloodTypeCreate, int)) *BloodTypeCreateBulk {
 	rv := reflect.ValueOf(slice)
 	if rv.Kind() != reflect.Slice {
-		return &BloodCreateBulk{err: fmt.Errorf("calling to BloodClient.MapCreateBulk with wrong type %T, need slice", slice)}
+		return &BloodTypeCreateBulk{err: fmt.Errorf("calling to BloodTypeClient.MapCreateBulk with wrong type %T, need slice", slice)}
 	}
-	builders := make([]*BloodCreate, rv.Len())
+	builders := make([]*BloodTypeCreate, rv.Len())
 	for i := 0; i < rv.Len(); i++ {
 		builders[i] = c.Create()
 		setFunc(builders[i], i)
 	}
-	return &BloodCreateBulk{config: c.config, builders: builders}
+	return &BloodTypeCreateBulk{config: c.config, builders: builders}
 }
 
-// Update returns an update builder for Blood.
-func (c *BloodClient) Update() *BloodUpdate {
-	mutation := newBloodMutation(c.config, OpUpdate)
-	return &BloodUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+// Update returns an update builder for BloodType.
+func (c *BloodTypeClient) Update() *BloodTypeUpdate {
+	mutation := newBloodTypeMutation(c.config, OpUpdate)
+	return &BloodTypeUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
 // UpdateOne returns an update builder for the given entity.
-func (c *BloodClient) UpdateOne(_m *Blood) *BloodUpdateOne {
-	mutation := newBloodMutation(c.config, OpUpdateOne, withBlood(_m))
-	return &BloodUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+func (c *BloodTypeClient) UpdateOne(_m *BloodType) *BloodTypeUpdateOne {
+	mutation := newBloodTypeMutation(c.config, OpUpdateOne, withBloodType(_m))
+	return &BloodTypeUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
 // UpdateOneID returns an update builder for the given id.
-func (c *BloodClient) UpdateOneID(id uuid.UUID) *BloodUpdateOne {
-	mutation := newBloodMutation(c.config, OpUpdateOne, withBloodID(id))
-	return &BloodUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+func (c *BloodTypeClient) UpdateOneID(id uuid.UUID) *BloodTypeUpdateOne {
+	mutation := newBloodTypeMutation(c.config, OpUpdateOne, withBloodTypeID(id))
+	return &BloodTypeUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// Delete returns a delete builder for Blood.
-func (c *BloodClient) Delete() *BloodDelete {
-	mutation := newBloodMutation(c.config, OpDelete)
-	return &BloodDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+// Delete returns a delete builder for BloodType.
+func (c *BloodTypeClient) Delete() *BloodTypeDelete {
+	mutation := newBloodTypeMutation(c.config, OpDelete)
+	return &BloodTypeDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
 // DeleteOne returns a builder for deleting the given entity.
-func (c *BloodClient) DeleteOne(_m *Blood) *BloodDeleteOne {
+func (c *BloodTypeClient) DeleteOne(_m *BloodType) *BloodTypeDeleteOne {
 	return c.DeleteOneID(_m.ID)
 }
 
 // DeleteOneID returns a builder for deleting the given entity by its id.
-func (c *BloodClient) DeleteOneID(id uuid.UUID) *BloodDeleteOne {
-	builder := c.Delete().Where(blood.ID(id))
+func (c *BloodTypeClient) DeleteOneID(id uuid.UUID) *BloodTypeDeleteOne {
+	builder := c.Delete().Where(bloodtype.ID(id))
 	builder.mutation.id = &id
 	builder.mutation.op = OpDeleteOne
-	return &BloodDeleteOne{builder}
+	return &BloodTypeDeleteOne{builder}
 }
 
-// Query returns a query builder for Blood.
-func (c *BloodClient) Query() *BloodQuery {
-	return &BloodQuery{
+// Query returns a query builder for BloodType.
+func (c *BloodTypeClient) Query() *BloodTypeQuery {
+	return &BloodTypeQuery{
 		config: c.config,
-		ctx:    &QueryContext{Type: TypeBlood},
+		ctx:    &QueryContext{Type: TypeBloodType},
 		inters: c.Interceptors(),
 	}
 }
 
-// Get returns a Blood entity by its id.
-func (c *BloodClient) Get(ctx context.Context, id uuid.UUID) (*Blood, error) {
-	return c.Query().Where(blood.ID(id)).Only(ctx)
+// Get returns a BloodType entity by its id.
+func (c *BloodTypeClient) Get(ctx context.Context, id uuid.UUID) (*BloodType, error) {
+	return c.Query().Where(bloodtype.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
-func (c *BloodClient) GetX(ctx context.Context, id uuid.UUID) *Blood {
+func (c *BloodTypeClient) GetX(ctx context.Context, id uuid.UUID) *BloodType {
 	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
@@ -537,15 +537,15 @@ func (c *BloodClient) GetX(ctx context.Context, id uuid.UUID) *Blood {
 	return obj
 }
 
-// QueryAccount queries the account edge of a Blood.
-func (c *BloodClient) QueryAccount(_m *Blood) *AccountQuery {
+// QueryAccount queries the account edge of a BloodType.
+func (c *BloodTypeClient) QueryAccount(_m *BloodType) *AccountQuery {
 	query := (&AccountClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := _m.ID
 		step := sqlgraph.NewStep(
-			sqlgraph.From(blood.Table, blood.FieldID, id),
+			sqlgraph.From(bloodtype.Table, bloodtype.FieldID, id),
 			sqlgraph.To(account.Table, account.FieldID),
-			sqlgraph.Edge(sqlgraph.O2O, true, blood.AccountTable, blood.AccountColumn),
+			sqlgraph.Edge(sqlgraph.O2O, true, bloodtype.AccountTable, bloodtype.AccountColumn),
 		)
 		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
 		return fromV, nil
@@ -554,27 +554,27 @@ func (c *BloodClient) QueryAccount(_m *Blood) *AccountQuery {
 }
 
 // Hooks returns the client hooks.
-func (c *BloodClient) Hooks() []Hook {
-	return c.hooks.Blood
+func (c *BloodTypeClient) Hooks() []Hook {
+	return c.hooks.BloodType
 }
 
 // Interceptors returns the client interceptors.
-func (c *BloodClient) Interceptors() []Interceptor {
-	return c.inters.Blood
+func (c *BloodTypeClient) Interceptors() []Interceptor {
+	return c.inters.BloodType
 }
 
-func (c *BloodClient) mutate(ctx context.Context, m *BloodMutation) (Value, error) {
+func (c *BloodTypeClient) mutate(ctx context.Context, m *BloodTypeMutation) (Value, error) {
 	switch m.Op() {
 	case OpCreate:
-		return (&BloodCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+		return (&BloodTypeCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
 	case OpUpdate:
-		return (&BloodUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+		return (&BloodTypeUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
 	case OpUpdateOne:
-		return (&BloodUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+		return (&BloodTypeUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
 	case OpDelete, OpDeleteOne:
-		return (&BloodDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+		return (&BloodTypeDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
-		return nil, fmt.Errorf("ent: unknown Blood mutation op: %q", m.Op())
+		return nil, fmt.Errorf("ent: unknown BloodType mutation op: %q", m.Op())
 	}
 }
 
@@ -1523,11 +1523,11 @@ func (c *SubdistrictClient) mutate(ctx context.Context, m *SubdistrictMutation) 
 // hooks and interceptors per client, for fast access.
 type (
 	hooks struct {
-		Account, Blood, City, District, PMILocation, Password, Province,
+		Account, BloodType, City, District, PMILocation, Password, Province,
 		Subdistrict []ent.Hook
 	}
 	inters struct {
-		Account, Blood, City, District, PMILocation, Password, Province,
+		Account, BloodType, City, District, PMILocation, Password, Province,
 		Subdistrict []ent.Interceptor
 	}
 )

@@ -8,30 +8,30 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/megalodev/setetes/internal/ent/blood"
+	"github.com/megalodev/setetes/internal/ent/bloodtype"
 	"github.com/megalodev/setetes/internal/ent/predicate"
 )
 
-// BloodDelete is the builder for deleting a Blood entity.
-type BloodDelete struct {
+// BloodTypeDelete is the builder for deleting a BloodType entity.
+type BloodTypeDelete struct {
 	config
 	hooks    []Hook
-	mutation *BloodMutation
+	mutation *BloodTypeMutation
 }
 
-// Where appends a list predicates to the BloodDelete builder.
-func (_d *BloodDelete) Where(ps ...predicate.Blood) *BloodDelete {
+// Where appends a list predicates to the BloodTypeDelete builder.
+func (_d *BloodTypeDelete) Where(ps ...predicate.BloodType) *BloodTypeDelete {
 	_d.mutation.Where(ps...)
 	return _d
 }
 
 // Exec executes the deletion query and returns how many vertices were deleted.
-func (_d *BloodDelete) Exec(ctx context.Context) (int, error) {
+func (_d *BloodTypeDelete) Exec(ctx context.Context) (int, error) {
 	return withHooks(ctx, _d.sqlExec, _d.mutation, _d.hooks)
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (_d *BloodDelete) ExecX(ctx context.Context) int {
+func (_d *BloodTypeDelete) ExecX(ctx context.Context) int {
 	n, err := _d.Exec(ctx)
 	if err != nil {
 		panic(err)
@@ -39,8 +39,8 @@ func (_d *BloodDelete) ExecX(ctx context.Context) int {
 	return n
 }
 
-func (_d *BloodDelete) sqlExec(ctx context.Context) (int, error) {
-	_spec := sqlgraph.NewDeleteSpec(blood.Table, sqlgraph.NewFieldSpec(blood.FieldID, field.TypeUUID))
+func (_d *BloodTypeDelete) sqlExec(ctx context.Context) (int, error) {
+	_spec := sqlgraph.NewDeleteSpec(bloodtype.Table, sqlgraph.NewFieldSpec(bloodtype.FieldID, field.TypeUUID))
 	if ps := _d.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -56,32 +56,32 @@ func (_d *BloodDelete) sqlExec(ctx context.Context) (int, error) {
 	return affected, err
 }
 
-// BloodDeleteOne is the builder for deleting a single Blood entity.
-type BloodDeleteOne struct {
-	_d *BloodDelete
+// BloodTypeDeleteOne is the builder for deleting a single BloodType entity.
+type BloodTypeDeleteOne struct {
+	_d *BloodTypeDelete
 }
 
-// Where appends a list predicates to the BloodDelete builder.
-func (_d *BloodDeleteOne) Where(ps ...predicate.Blood) *BloodDeleteOne {
+// Where appends a list predicates to the BloodTypeDelete builder.
+func (_d *BloodTypeDeleteOne) Where(ps ...predicate.BloodType) *BloodTypeDeleteOne {
 	_d._d.mutation.Where(ps...)
 	return _d
 }
 
 // Exec executes the deletion query.
-func (_d *BloodDeleteOne) Exec(ctx context.Context) error {
+func (_d *BloodTypeDeleteOne) Exec(ctx context.Context) error {
 	n, err := _d._d.Exec(ctx)
 	switch {
 	case err != nil:
 		return err
 	case n == 0:
-		return &NotFoundError{blood.Label}
+		return &NotFoundError{bloodtype.Label}
 	default:
 		return nil
 	}
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (_d *BloodDeleteOne) ExecX(ctx context.Context) {
+func (_d *BloodTypeDeleteOne) ExecX(ctx context.Context) {
 	if err := _d.Exec(ctx); err != nil {
 		panic(err)
 	}

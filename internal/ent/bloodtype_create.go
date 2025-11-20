@@ -11,84 +11,75 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
 	"github.com/megalodev/setetes/internal/ent/account"
-	"github.com/megalodev/setetes/internal/ent/blood"
+	"github.com/megalodev/setetes/internal/ent/bloodtype"
 )
 
-// BloodCreate is the builder for creating a Blood entity.
-type BloodCreate struct {
+// BloodTypeCreate is the builder for creating a BloodType entity.
+type BloodTypeCreate struct {
 	config
-	mutation *BloodMutation
+	mutation *BloodTypeMutation
 	hooks    []Hook
 }
 
 // SetCreatedAt sets the "created_at" field.
-func (_c *BloodCreate) SetCreatedAt(v int64) *BloodCreate {
+func (_c *BloodTypeCreate) SetCreatedAt(v int64) *BloodTypeCreate {
 	_c.mutation.SetCreatedAt(v)
 	return _c
 }
 
-// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
-func (_c *BloodCreate) SetNillableCreatedAt(v *int64) *BloodCreate {
-	if v != nil {
-		_c.SetCreatedAt(*v)
-	}
-	return _c
-}
-
 // SetUpdatedAt sets the "updated_at" field.
-func (_c *BloodCreate) SetUpdatedAt(v int64) *BloodCreate {
+func (_c *BloodTypeCreate) SetUpdatedAt(v int64) *BloodTypeCreate {
 	_c.mutation.SetUpdatedAt(v)
 	return _c
 }
 
 // SetDeletedAt sets the "deleted_at" field.
-func (_c *BloodCreate) SetDeletedAt(v int64) *BloodCreate {
+func (_c *BloodTypeCreate) SetDeletedAt(v int64) *BloodTypeCreate {
 	_c.mutation.SetDeletedAt(v)
 	return _c
 }
 
 // SetGroup sets the "group" field.
-func (_c *BloodCreate) SetGroup(v blood.Group) *BloodCreate {
+func (_c *BloodTypeCreate) SetGroup(v bloodtype.Group) *BloodTypeCreate {
 	_c.mutation.SetGroup(v)
 	return _c
 }
 
 // SetRhesus sets the "rhesus" field.
-func (_c *BloodCreate) SetRhesus(v blood.Rhesus) *BloodCreate {
+func (_c *BloodTypeCreate) SetRhesus(v bloodtype.Rhesus) *BloodTypeCreate {
 	_c.mutation.SetRhesus(v)
 	return _c
 }
 
 // SetID sets the "id" field.
-func (_c *BloodCreate) SetID(v uuid.UUID) *BloodCreate {
+func (_c *BloodTypeCreate) SetID(v uuid.UUID) *BloodTypeCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
 
 // SetAccountID sets the "account" edge to the Account entity by ID.
-func (_c *BloodCreate) SetAccountID(id uuid.UUID) *BloodCreate {
+func (_c *BloodTypeCreate) SetAccountID(id uuid.UUID) *BloodTypeCreate {
 	_c.mutation.SetAccountID(id)
 	return _c
 }
 
 // SetAccount sets the "account" edge to the Account entity.
-func (_c *BloodCreate) SetAccount(v *Account) *BloodCreate {
+func (_c *BloodTypeCreate) SetAccount(v *Account) *BloodTypeCreate {
 	return _c.SetAccountID(v.ID)
 }
 
-// Mutation returns the BloodMutation object of the builder.
-func (_c *BloodCreate) Mutation() *BloodMutation {
+// Mutation returns the BloodTypeMutation object of the builder.
+func (_c *BloodTypeCreate) Mutation() *BloodTypeMutation {
 	return _c.mutation
 }
 
-// Save creates the Blood in the database.
-func (_c *BloodCreate) Save(ctx context.Context) (*Blood, error) {
-	_c.defaults()
+// Save creates the BloodType in the database.
+func (_c *BloodTypeCreate) Save(ctx context.Context) (*BloodType, error) {
 	return withHooks(ctx, _c.sqlSave, _c.mutation, _c.hooks)
 }
 
 // SaveX calls Save and panics if Save returns an error.
-func (_c *BloodCreate) SaveX(ctx context.Context) *Blood {
+func (_c *BloodTypeCreate) SaveX(ctx context.Context) *BloodType {
 	v, err := _c.Save(ctx)
 	if err != nil {
 		panic(err)
@@ -97,75 +88,64 @@ func (_c *BloodCreate) SaveX(ctx context.Context) *Blood {
 }
 
 // Exec executes the query.
-func (_c *BloodCreate) Exec(ctx context.Context) error {
+func (_c *BloodTypeCreate) Exec(ctx context.Context) error {
 	_, err := _c.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (_c *BloodCreate) ExecX(ctx context.Context) {
+func (_c *BloodTypeCreate) ExecX(ctx context.Context) {
 	if err := _c.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
-// defaults sets the default values of the builder before save.
-func (_c *BloodCreate) defaults() {
-	if _, ok := _c.mutation.CreatedAt(); !ok {
-		v := blood.DefaultCreatedAt
-		_c.mutation.SetCreatedAt(v)
-	}
-}
-
 // check runs all checks and user-defined validators on the builder.
-func (_c *BloodCreate) check() error {
-	if _, ok := _c.mutation.CreatedAt(); !ok {
-		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "Blood.created_at"`)}
-	}
+func (_c *BloodTypeCreate) check() error {
 	if v, ok := _c.mutation.CreatedAt(); ok {
-		if err := blood.CreatedAtValidator(v); err != nil {
-			return &ValidationError{Name: "created_at", err: fmt.Errorf(`ent: validator failed for field "Blood.created_at": %w`, err)}
+		if err := bloodtype.CreatedAtValidator(v); err != nil {
+			return &ValidationError{Name: "created_at", err: fmt.Errorf(`ent: validator failed for field "BloodType.created_at": %w`, err)}
 		}
 	}
 	if _, ok := _c.mutation.UpdatedAt(); !ok {
-		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "Blood.updated_at"`)}
+		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "BloodType.updated_at"`)}
 	}
 	if v, ok := _c.mutation.UpdatedAt(); ok {
-		if err := blood.UpdatedAtValidator(v); err != nil {
-			return &ValidationError{Name: "updated_at", err: fmt.Errorf(`ent: validator failed for field "Blood.updated_at": %w`, err)}
+		if err := bloodtype.UpdatedAtValidator(v); err != nil {
+			return &ValidationError{Name: "updated_at", err: fmt.Errorf(`ent: validator failed for field "BloodType.updated_at": %w`, err)}
 		}
 	}
 	if _, ok := _c.mutation.DeletedAt(); !ok {
-		return &ValidationError{Name: "deleted_at", err: errors.New(`ent: missing required field "Blood.deleted_at"`)}
+		return &ValidationError{Name: "deleted_at", err: errors.New(`ent: missing required field "BloodType.deleted_at"`)}
 	}
 	if v, ok := _c.mutation.DeletedAt(); ok {
-		if err := blood.DeletedAtValidator(v); err != nil {
-			return &ValidationError{Name: "deleted_at", err: fmt.Errorf(`ent: validator failed for field "Blood.deleted_at": %w`, err)}
+		if err := bloodtype.DeletedAtValidator(v); err != nil {
+			return &ValidationError{Name: "deleted_at", err: fmt.Errorf(`ent: validator failed for field "BloodType.deleted_at": %w`, err)}
 		}
 	}
 	if _, ok := _c.mutation.Group(); !ok {
-		return &ValidationError{Name: "group", err: errors.New(`ent: missing required field "Blood.group"`)}
+		return &ValidationError{Name: "group", err: errors.New(`ent: missing required field "BloodType.group"`)}
 	}
 	if v, ok := _c.mutation.Group(); ok {
-		if err := blood.GroupValidator(v); err != nil {
-			return &ValidationError{Name: "group", err: fmt.Errorf(`ent: validator failed for field "Blood.group": %w`, err)}
+		if err := bloodtype.GroupValidator(v); err != nil {
+			return &ValidationError{Name: "group", err: fmt.Errorf(`ent: validator failed for field "BloodType.group": %w`, err)}
 		}
 	}
 	if _, ok := _c.mutation.Rhesus(); !ok {
-		return &ValidationError{Name: "rhesus", err: errors.New(`ent: missing required field "Blood.rhesus"`)}
+		return &ValidationError{Name: "rhesus", err: errors.New(`ent: missing required field "BloodType.rhesus"`)}
 	}
 	if v, ok := _c.mutation.Rhesus(); ok {
-		if err := blood.RhesusValidator(v); err != nil {
-			return &ValidationError{Name: "rhesus", err: fmt.Errorf(`ent: validator failed for field "Blood.rhesus": %w`, err)}
+		if err := bloodtype.RhesusValidator(v); err != nil {
+			return &ValidationError{Name: "rhesus", err: fmt.Errorf(`ent: validator failed for field "BloodType.rhesus": %w`, err)}
 		}
 	}
 	if len(_c.mutation.AccountIDs()) == 0 {
-		return &ValidationError{Name: "account", err: errors.New(`ent: missing required edge "Blood.account"`)}
+		return &ValidationError{Name: "account", err: errors.New(`ent: missing required edge "BloodType.account"`)}
 	}
 	return nil
 }
 
-func (_c *BloodCreate) sqlSave(ctx context.Context) (*Blood, error) {
+func (_c *BloodTypeCreate) sqlSave(ctx context.Context) (*BloodType, error) {
 	if err := _c.check(); err != nil {
 		return nil, err
 	}
@@ -188,41 +168,41 @@ func (_c *BloodCreate) sqlSave(ctx context.Context) (*Blood, error) {
 	return _node, nil
 }
 
-func (_c *BloodCreate) createSpec() (*Blood, *sqlgraph.CreateSpec) {
+func (_c *BloodTypeCreate) createSpec() (*BloodType, *sqlgraph.CreateSpec) {
 	var (
-		_node = &Blood{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(blood.Table, sqlgraph.NewFieldSpec(blood.FieldID, field.TypeUUID))
+		_node = &BloodType{config: _c.config}
+		_spec = sqlgraph.NewCreateSpec(bloodtype.Table, sqlgraph.NewFieldSpec(bloodtype.FieldID, field.TypeUUID))
 	)
 	if id, ok := _c.mutation.ID(); ok {
 		_node.ID = id
 		_spec.ID.Value = &id
 	}
 	if value, ok := _c.mutation.CreatedAt(); ok {
-		_spec.SetField(blood.FieldCreatedAt, field.TypeInt64, value)
+		_spec.SetField(bloodtype.FieldCreatedAt, field.TypeInt64, value)
 		_node.CreatedAt = value
 	}
 	if value, ok := _c.mutation.UpdatedAt(); ok {
-		_spec.SetField(blood.FieldUpdatedAt, field.TypeInt64, value)
+		_spec.SetField(bloodtype.FieldUpdatedAt, field.TypeInt64, value)
 		_node.UpdatedAt = &value
 	}
 	if value, ok := _c.mutation.DeletedAt(); ok {
-		_spec.SetField(blood.FieldDeletedAt, field.TypeInt64, value)
+		_spec.SetField(bloodtype.FieldDeletedAt, field.TypeInt64, value)
 		_node.DeletedAt = &value
 	}
 	if value, ok := _c.mutation.Group(); ok {
-		_spec.SetField(blood.FieldGroup, field.TypeEnum, value)
+		_spec.SetField(bloodtype.FieldGroup, field.TypeEnum, value)
 		_node.Group = value
 	}
 	if value, ok := _c.mutation.Rhesus(); ok {
-		_spec.SetField(blood.FieldRhesus, field.TypeEnum, value)
+		_spec.SetField(bloodtype.FieldRhesus, field.TypeEnum, value)
 		_node.Rhesus = &value
 	}
 	if nodes := _c.mutation.AccountIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2O,
 			Inverse: true,
-			Table:   blood.AccountTable,
-			Columns: []string{blood.AccountColumn},
+			Table:   bloodtype.AccountTable,
+			Columns: []string{bloodtype.AccountColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(account.FieldID, field.TypeUUID),
@@ -237,27 +217,26 @@ func (_c *BloodCreate) createSpec() (*Blood, *sqlgraph.CreateSpec) {
 	return _node, _spec
 }
 
-// BloodCreateBulk is the builder for creating many Blood entities in bulk.
-type BloodCreateBulk struct {
+// BloodTypeCreateBulk is the builder for creating many BloodType entities in bulk.
+type BloodTypeCreateBulk struct {
 	config
 	err      error
-	builders []*BloodCreate
+	builders []*BloodTypeCreate
 }
 
-// Save creates the Blood entities in the database.
-func (_c *BloodCreateBulk) Save(ctx context.Context) ([]*Blood, error) {
+// Save creates the BloodType entities in the database.
+func (_c *BloodTypeCreateBulk) Save(ctx context.Context) ([]*BloodType, error) {
 	if _c.err != nil {
 		return nil, _c.err
 	}
 	specs := make([]*sqlgraph.CreateSpec, len(_c.builders))
-	nodes := make([]*Blood, len(_c.builders))
+	nodes := make([]*BloodType, len(_c.builders))
 	mutators := make([]Mutator, len(_c.builders))
 	for i := range _c.builders {
 		func(i int, root context.Context) {
 			builder := _c.builders[i]
-			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-				mutation, ok := m.(*BloodMutation)
+				mutation, ok := m.(*BloodTypeMutation)
 				if !ok {
 					return nil, fmt.Errorf("unexpected mutation type %T", m)
 				}
@@ -300,7 +279,7 @@ func (_c *BloodCreateBulk) Save(ctx context.Context) ([]*Blood, error) {
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (_c *BloodCreateBulk) SaveX(ctx context.Context) []*Blood {
+func (_c *BloodTypeCreateBulk) SaveX(ctx context.Context) []*BloodType {
 	v, err := _c.Save(ctx)
 	if err != nil {
 		panic(err)
@@ -309,13 +288,13 @@ func (_c *BloodCreateBulk) SaveX(ctx context.Context) []*Blood {
 }
 
 // Exec executes the query.
-func (_c *BloodCreateBulk) Exec(ctx context.Context) error {
+func (_c *BloodTypeCreateBulk) Exec(ctx context.Context) error {
 	_, err := _c.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (_c *BloodCreateBulk) ExecX(ctx context.Context) {
+func (_c *BloodTypeCreateBulk) ExecX(ctx context.Context) {
 	if err := _c.Exec(ctx); err != nil {
 		panic(err)
 	}

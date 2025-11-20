@@ -12,45 +12,45 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
 	"github.com/megalodev/setetes/internal/ent/account"
-	"github.com/megalodev/setetes/internal/ent/blood"
+	"github.com/megalodev/setetes/internal/ent/bloodtype"
 	"github.com/megalodev/setetes/internal/ent/predicate"
 )
 
-// BloodUpdate is the builder for updating Blood entities.
-type BloodUpdate struct {
+// BloodTypeUpdate is the builder for updating BloodType entities.
+type BloodTypeUpdate struct {
 	config
 	hooks    []Hook
-	mutation *BloodMutation
+	mutation *BloodTypeMutation
 }
 
-// Where appends a list predicates to the BloodUpdate builder.
-func (_u *BloodUpdate) Where(ps ...predicate.Blood) *BloodUpdate {
+// Where appends a list predicates to the BloodTypeUpdate builder.
+func (_u *BloodTypeUpdate) Where(ps ...predicate.BloodType) *BloodTypeUpdate {
 	_u.mutation.Where(ps...)
 	return _u
 }
 
 // SetUpdatedAt sets the "updated_at" field.
-func (_u *BloodUpdate) SetUpdatedAt(v int64) *BloodUpdate {
+func (_u *BloodTypeUpdate) SetUpdatedAt(v int64) *BloodTypeUpdate {
 	_u.mutation.ResetUpdatedAt()
 	_u.mutation.SetUpdatedAt(v)
 	return _u
 }
 
 // AddUpdatedAt adds value to the "updated_at" field.
-func (_u *BloodUpdate) AddUpdatedAt(v int64) *BloodUpdate {
+func (_u *BloodTypeUpdate) AddUpdatedAt(v int64) *BloodTypeUpdate {
 	_u.mutation.AddUpdatedAt(v)
 	return _u
 }
 
 // SetDeletedAt sets the "deleted_at" field.
-func (_u *BloodUpdate) SetDeletedAt(v int64) *BloodUpdate {
+func (_u *BloodTypeUpdate) SetDeletedAt(v int64) *BloodTypeUpdate {
 	_u.mutation.ResetDeletedAt()
 	_u.mutation.SetDeletedAt(v)
 	return _u
 }
 
 // SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
-func (_u *BloodUpdate) SetNillableDeletedAt(v *int64) *BloodUpdate {
+func (_u *BloodTypeUpdate) SetNillableDeletedAt(v *int64) *BloodTypeUpdate {
 	if v != nil {
 		_u.SetDeletedAt(*v)
 	}
@@ -58,19 +58,19 @@ func (_u *BloodUpdate) SetNillableDeletedAt(v *int64) *BloodUpdate {
 }
 
 // AddDeletedAt adds value to the "deleted_at" field.
-func (_u *BloodUpdate) AddDeletedAt(v int64) *BloodUpdate {
+func (_u *BloodTypeUpdate) AddDeletedAt(v int64) *BloodTypeUpdate {
 	_u.mutation.AddDeletedAt(v)
 	return _u
 }
 
 // SetGroup sets the "group" field.
-func (_u *BloodUpdate) SetGroup(v blood.Group) *BloodUpdate {
+func (_u *BloodTypeUpdate) SetGroup(v bloodtype.Group) *BloodTypeUpdate {
 	_u.mutation.SetGroup(v)
 	return _u
 }
 
 // SetNillableGroup sets the "group" field if the given value is not nil.
-func (_u *BloodUpdate) SetNillableGroup(v *blood.Group) *BloodUpdate {
+func (_u *BloodTypeUpdate) SetNillableGroup(v *bloodtype.Group) *BloodTypeUpdate {
 	if v != nil {
 		_u.SetGroup(*v)
 	}
@@ -78,13 +78,13 @@ func (_u *BloodUpdate) SetNillableGroup(v *blood.Group) *BloodUpdate {
 }
 
 // SetRhesus sets the "rhesus" field.
-func (_u *BloodUpdate) SetRhesus(v blood.Rhesus) *BloodUpdate {
+func (_u *BloodTypeUpdate) SetRhesus(v bloodtype.Rhesus) *BloodTypeUpdate {
 	_u.mutation.SetRhesus(v)
 	return _u
 }
 
 // SetNillableRhesus sets the "rhesus" field if the given value is not nil.
-func (_u *BloodUpdate) SetNillableRhesus(v *blood.Rhesus) *BloodUpdate {
+func (_u *BloodTypeUpdate) SetNillableRhesus(v *bloodtype.Rhesus) *BloodTypeUpdate {
 	if v != nil {
 		_u.SetRhesus(*v)
 	}
@@ -92,35 +92,35 @@ func (_u *BloodUpdate) SetNillableRhesus(v *blood.Rhesus) *BloodUpdate {
 }
 
 // SetAccountID sets the "account" edge to the Account entity by ID.
-func (_u *BloodUpdate) SetAccountID(id uuid.UUID) *BloodUpdate {
+func (_u *BloodTypeUpdate) SetAccountID(id uuid.UUID) *BloodTypeUpdate {
 	_u.mutation.SetAccountID(id)
 	return _u
 }
 
 // SetAccount sets the "account" edge to the Account entity.
-func (_u *BloodUpdate) SetAccount(v *Account) *BloodUpdate {
+func (_u *BloodTypeUpdate) SetAccount(v *Account) *BloodTypeUpdate {
 	return _u.SetAccountID(v.ID)
 }
 
-// Mutation returns the BloodMutation object of the builder.
-func (_u *BloodUpdate) Mutation() *BloodMutation {
+// Mutation returns the BloodTypeMutation object of the builder.
+func (_u *BloodTypeUpdate) Mutation() *BloodTypeMutation {
 	return _u.mutation
 }
 
 // ClearAccount clears the "account" edge to the Account entity.
-func (_u *BloodUpdate) ClearAccount() *BloodUpdate {
+func (_u *BloodTypeUpdate) ClearAccount() *BloodTypeUpdate {
 	_u.mutation.ClearAccount()
 	return _u
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
-func (_u *BloodUpdate) Save(ctx context.Context) (int, error) {
+func (_u *BloodTypeUpdate) Save(ctx context.Context) (int, error) {
 	_u.defaults()
 	return withHooks(ctx, _u.sqlSave, _u.mutation, _u.hooks)
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (_u *BloodUpdate) SaveX(ctx context.Context) int {
+func (_u *BloodTypeUpdate) SaveX(ctx context.Context) int {
 	affected, err := _u.Save(ctx)
 	if err != nil {
 		panic(err)
@@ -129,59 +129,59 @@ func (_u *BloodUpdate) SaveX(ctx context.Context) int {
 }
 
 // Exec executes the query.
-func (_u *BloodUpdate) Exec(ctx context.Context) error {
+func (_u *BloodTypeUpdate) Exec(ctx context.Context) error {
 	_, err := _u.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (_u *BloodUpdate) ExecX(ctx context.Context) {
+func (_u *BloodTypeUpdate) ExecX(ctx context.Context) {
 	if err := _u.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
 // defaults sets the default values of the builder before save.
-func (_u *BloodUpdate) defaults() {
+func (_u *BloodTypeUpdate) defaults() {
 	if _, ok := _u.mutation.UpdatedAt(); !ok {
-		v := blood.UpdateDefaultUpdatedAt()
+		v := bloodtype.UpdateDefaultUpdatedAt()
 		_u.mutation.SetUpdatedAt(v)
 	}
 }
 
 // check runs all checks and user-defined validators on the builder.
-func (_u *BloodUpdate) check() error {
+func (_u *BloodTypeUpdate) check() error {
 	if v, ok := _u.mutation.UpdatedAt(); ok {
-		if err := blood.UpdatedAtValidator(v); err != nil {
-			return &ValidationError{Name: "updated_at", err: fmt.Errorf(`ent: validator failed for field "Blood.updated_at": %w`, err)}
+		if err := bloodtype.UpdatedAtValidator(v); err != nil {
+			return &ValidationError{Name: "updated_at", err: fmt.Errorf(`ent: validator failed for field "BloodType.updated_at": %w`, err)}
 		}
 	}
 	if v, ok := _u.mutation.DeletedAt(); ok {
-		if err := blood.DeletedAtValidator(v); err != nil {
-			return &ValidationError{Name: "deleted_at", err: fmt.Errorf(`ent: validator failed for field "Blood.deleted_at": %w`, err)}
+		if err := bloodtype.DeletedAtValidator(v); err != nil {
+			return &ValidationError{Name: "deleted_at", err: fmt.Errorf(`ent: validator failed for field "BloodType.deleted_at": %w`, err)}
 		}
 	}
 	if v, ok := _u.mutation.Group(); ok {
-		if err := blood.GroupValidator(v); err != nil {
-			return &ValidationError{Name: "group", err: fmt.Errorf(`ent: validator failed for field "Blood.group": %w`, err)}
+		if err := bloodtype.GroupValidator(v); err != nil {
+			return &ValidationError{Name: "group", err: fmt.Errorf(`ent: validator failed for field "BloodType.group": %w`, err)}
 		}
 	}
 	if v, ok := _u.mutation.Rhesus(); ok {
-		if err := blood.RhesusValidator(v); err != nil {
-			return &ValidationError{Name: "rhesus", err: fmt.Errorf(`ent: validator failed for field "Blood.rhesus": %w`, err)}
+		if err := bloodtype.RhesusValidator(v); err != nil {
+			return &ValidationError{Name: "rhesus", err: fmt.Errorf(`ent: validator failed for field "BloodType.rhesus": %w`, err)}
 		}
 	}
 	if _u.mutation.AccountCleared() && len(_u.mutation.AccountIDs()) > 0 {
-		return errors.New(`ent: clearing a required unique edge "Blood.account"`)
+		return errors.New(`ent: clearing a required unique edge "BloodType.account"`)
 	}
 	return nil
 }
 
-func (_u *BloodUpdate) sqlSave(ctx context.Context) (_node int, err error) {
+func (_u *BloodTypeUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(blood.Table, blood.Columns, sqlgraph.NewFieldSpec(blood.FieldID, field.TypeUUID))
+	_spec := sqlgraph.NewUpdateSpec(bloodtype.Table, bloodtype.Columns, sqlgraph.NewFieldSpec(bloodtype.FieldID, field.TypeUUID))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -190,29 +190,29 @@ func (_u *BloodUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		}
 	}
 	if value, ok := _u.mutation.UpdatedAt(); ok {
-		_spec.SetField(blood.FieldUpdatedAt, field.TypeInt64, value)
+		_spec.SetField(bloodtype.FieldUpdatedAt, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedAt(); ok {
-		_spec.AddField(blood.FieldUpdatedAt, field.TypeInt64, value)
+		_spec.AddField(bloodtype.FieldUpdatedAt, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.DeletedAt(); ok {
-		_spec.SetField(blood.FieldDeletedAt, field.TypeInt64, value)
+		_spec.SetField(bloodtype.FieldDeletedAt, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedAt(); ok {
-		_spec.AddField(blood.FieldDeletedAt, field.TypeInt64, value)
+		_spec.AddField(bloodtype.FieldDeletedAt, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.Group(); ok {
-		_spec.SetField(blood.FieldGroup, field.TypeEnum, value)
+		_spec.SetField(bloodtype.FieldGroup, field.TypeEnum, value)
 	}
 	if value, ok := _u.mutation.Rhesus(); ok {
-		_spec.SetField(blood.FieldRhesus, field.TypeEnum, value)
+		_spec.SetField(bloodtype.FieldRhesus, field.TypeEnum, value)
 	}
 	if _u.mutation.AccountCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2O,
 			Inverse: true,
-			Table:   blood.AccountTable,
-			Columns: []string{blood.AccountColumn},
+			Table:   bloodtype.AccountTable,
+			Columns: []string{bloodtype.AccountColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(account.FieldID, field.TypeUUID),
@@ -224,8 +224,8 @@ func (_u *BloodUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2O,
 			Inverse: true,
-			Table:   blood.AccountTable,
-			Columns: []string{blood.AccountColumn},
+			Table:   bloodtype.AccountTable,
+			Columns: []string{bloodtype.AccountColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(account.FieldID, field.TypeUUID),
@@ -238,7 +238,7 @@ func (_u *BloodUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
-			err = &NotFoundError{blood.Label}
+			err = &NotFoundError{bloodtype.Label}
 		} else if sqlgraph.IsConstraintError(err) {
 			err = &ConstraintError{msg: err.Error(), wrap: err}
 		}
@@ -248,36 +248,36 @@ func (_u *BloodUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	return _node, nil
 }
 
-// BloodUpdateOne is the builder for updating a single Blood entity.
-type BloodUpdateOne struct {
+// BloodTypeUpdateOne is the builder for updating a single BloodType entity.
+type BloodTypeUpdateOne struct {
 	config
 	fields   []string
 	hooks    []Hook
-	mutation *BloodMutation
+	mutation *BloodTypeMutation
 }
 
 // SetUpdatedAt sets the "updated_at" field.
-func (_u *BloodUpdateOne) SetUpdatedAt(v int64) *BloodUpdateOne {
+func (_u *BloodTypeUpdateOne) SetUpdatedAt(v int64) *BloodTypeUpdateOne {
 	_u.mutation.ResetUpdatedAt()
 	_u.mutation.SetUpdatedAt(v)
 	return _u
 }
 
 // AddUpdatedAt adds value to the "updated_at" field.
-func (_u *BloodUpdateOne) AddUpdatedAt(v int64) *BloodUpdateOne {
+func (_u *BloodTypeUpdateOne) AddUpdatedAt(v int64) *BloodTypeUpdateOne {
 	_u.mutation.AddUpdatedAt(v)
 	return _u
 }
 
 // SetDeletedAt sets the "deleted_at" field.
-func (_u *BloodUpdateOne) SetDeletedAt(v int64) *BloodUpdateOne {
+func (_u *BloodTypeUpdateOne) SetDeletedAt(v int64) *BloodTypeUpdateOne {
 	_u.mutation.ResetDeletedAt()
 	_u.mutation.SetDeletedAt(v)
 	return _u
 }
 
 // SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
-func (_u *BloodUpdateOne) SetNillableDeletedAt(v *int64) *BloodUpdateOne {
+func (_u *BloodTypeUpdateOne) SetNillableDeletedAt(v *int64) *BloodTypeUpdateOne {
 	if v != nil {
 		_u.SetDeletedAt(*v)
 	}
@@ -285,19 +285,19 @@ func (_u *BloodUpdateOne) SetNillableDeletedAt(v *int64) *BloodUpdateOne {
 }
 
 // AddDeletedAt adds value to the "deleted_at" field.
-func (_u *BloodUpdateOne) AddDeletedAt(v int64) *BloodUpdateOne {
+func (_u *BloodTypeUpdateOne) AddDeletedAt(v int64) *BloodTypeUpdateOne {
 	_u.mutation.AddDeletedAt(v)
 	return _u
 }
 
 // SetGroup sets the "group" field.
-func (_u *BloodUpdateOne) SetGroup(v blood.Group) *BloodUpdateOne {
+func (_u *BloodTypeUpdateOne) SetGroup(v bloodtype.Group) *BloodTypeUpdateOne {
 	_u.mutation.SetGroup(v)
 	return _u
 }
 
 // SetNillableGroup sets the "group" field if the given value is not nil.
-func (_u *BloodUpdateOne) SetNillableGroup(v *blood.Group) *BloodUpdateOne {
+func (_u *BloodTypeUpdateOne) SetNillableGroup(v *bloodtype.Group) *BloodTypeUpdateOne {
 	if v != nil {
 		_u.SetGroup(*v)
 	}
@@ -305,13 +305,13 @@ func (_u *BloodUpdateOne) SetNillableGroup(v *blood.Group) *BloodUpdateOne {
 }
 
 // SetRhesus sets the "rhesus" field.
-func (_u *BloodUpdateOne) SetRhesus(v blood.Rhesus) *BloodUpdateOne {
+func (_u *BloodTypeUpdateOne) SetRhesus(v bloodtype.Rhesus) *BloodTypeUpdateOne {
 	_u.mutation.SetRhesus(v)
 	return _u
 }
 
 // SetNillableRhesus sets the "rhesus" field if the given value is not nil.
-func (_u *BloodUpdateOne) SetNillableRhesus(v *blood.Rhesus) *BloodUpdateOne {
+func (_u *BloodTypeUpdateOne) SetNillableRhesus(v *bloodtype.Rhesus) *BloodTypeUpdateOne {
 	if v != nil {
 		_u.SetRhesus(*v)
 	}
@@ -319,48 +319,48 @@ func (_u *BloodUpdateOne) SetNillableRhesus(v *blood.Rhesus) *BloodUpdateOne {
 }
 
 // SetAccountID sets the "account" edge to the Account entity by ID.
-func (_u *BloodUpdateOne) SetAccountID(id uuid.UUID) *BloodUpdateOne {
+func (_u *BloodTypeUpdateOne) SetAccountID(id uuid.UUID) *BloodTypeUpdateOne {
 	_u.mutation.SetAccountID(id)
 	return _u
 }
 
 // SetAccount sets the "account" edge to the Account entity.
-func (_u *BloodUpdateOne) SetAccount(v *Account) *BloodUpdateOne {
+func (_u *BloodTypeUpdateOne) SetAccount(v *Account) *BloodTypeUpdateOne {
 	return _u.SetAccountID(v.ID)
 }
 
-// Mutation returns the BloodMutation object of the builder.
-func (_u *BloodUpdateOne) Mutation() *BloodMutation {
+// Mutation returns the BloodTypeMutation object of the builder.
+func (_u *BloodTypeUpdateOne) Mutation() *BloodTypeMutation {
 	return _u.mutation
 }
 
 // ClearAccount clears the "account" edge to the Account entity.
-func (_u *BloodUpdateOne) ClearAccount() *BloodUpdateOne {
+func (_u *BloodTypeUpdateOne) ClearAccount() *BloodTypeUpdateOne {
 	_u.mutation.ClearAccount()
 	return _u
 }
 
-// Where appends a list predicates to the BloodUpdate builder.
-func (_u *BloodUpdateOne) Where(ps ...predicate.Blood) *BloodUpdateOne {
+// Where appends a list predicates to the BloodTypeUpdate builder.
+func (_u *BloodTypeUpdateOne) Where(ps ...predicate.BloodType) *BloodTypeUpdateOne {
 	_u.mutation.Where(ps...)
 	return _u
 }
 
 // Select allows selecting one or more fields (columns) of the returned entity.
 // The default is selecting all fields defined in the entity schema.
-func (_u *BloodUpdateOne) Select(field string, fields ...string) *BloodUpdateOne {
+func (_u *BloodTypeUpdateOne) Select(field string, fields ...string) *BloodTypeUpdateOne {
 	_u.fields = append([]string{field}, fields...)
 	return _u
 }
 
-// Save executes the query and returns the updated Blood entity.
-func (_u *BloodUpdateOne) Save(ctx context.Context) (*Blood, error) {
+// Save executes the query and returns the updated BloodType entity.
+func (_u *BloodTypeUpdateOne) Save(ctx context.Context) (*BloodType, error) {
 	_u.defaults()
 	return withHooks(ctx, _u.sqlSave, _u.mutation, _u.hooks)
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (_u *BloodUpdateOne) SaveX(ctx context.Context) *Blood {
+func (_u *BloodTypeUpdateOne) SaveX(ctx context.Context) *BloodType {
 	node, err := _u.Save(ctx)
 	if err != nil {
 		panic(err)
@@ -369,72 +369,72 @@ func (_u *BloodUpdateOne) SaveX(ctx context.Context) *Blood {
 }
 
 // Exec executes the query on the entity.
-func (_u *BloodUpdateOne) Exec(ctx context.Context) error {
+func (_u *BloodTypeUpdateOne) Exec(ctx context.Context) error {
 	_, err := _u.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (_u *BloodUpdateOne) ExecX(ctx context.Context) {
+func (_u *BloodTypeUpdateOne) ExecX(ctx context.Context) {
 	if err := _u.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
 // defaults sets the default values of the builder before save.
-func (_u *BloodUpdateOne) defaults() {
+func (_u *BloodTypeUpdateOne) defaults() {
 	if _, ok := _u.mutation.UpdatedAt(); !ok {
-		v := blood.UpdateDefaultUpdatedAt()
+		v := bloodtype.UpdateDefaultUpdatedAt()
 		_u.mutation.SetUpdatedAt(v)
 	}
 }
 
 // check runs all checks and user-defined validators on the builder.
-func (_u *BloodUpdateOne) check() error {
+func (_u *BloodTypeUpdateOne) check() error {
 	if v, ok := _u.mutation.UpdatedAt(); ok {
-		if err := blood.UpdatedAtValidator(v); err != nil {
-			return &ValidationError{Name: "updated_at", err: fmt.Errorf(`ent: validator failed for field "Blood.updated_at": %w`, err)}
+		if err := bloodtype.UpdatedAtValidator(v); err != nil {
+			return &ValidationError{Name: "updated_at", err: fmt.Errorf(`ent: validator failed for field "BloodType.updated_at": %w`, err)}
 		}
 	}
 	if v, ok := _u.mutation.DeletedAt(); ok {
-		if err := blood.DeletedAtValidator(v); err != nil {
-			return &ValidationError{Name: "deleted_at", err: fmt.Errorf(`ent: validator failed for field "Blood.deleted_at": %w`, err)}
+		if err := bloodtype.DeletedAtValidator(v); err != nil {
+			return &ValidationError{Name: "deleted_at", err: fmt.Errorf(`ent: validator failed for field "BloodType.deleted_at": %w`, err)}
 		}
 	}
 	if v, ok := _u.mutation.Group(); ok {
-		if err := blood.GroupValidator(v); err != nil {
-			return &ValidationError{Name: "group", err: fmt.Errorf(`ent: validator failed for field "Blood.group": %w`, err)}
+		if err := bloodtype.GroupValidator(v); err != nil {
+			return &ValidationError{Name: "group", err: fmt.Errorf(`ent: validator failed for field "BloodType.group": %w`, err)}
 		}
 	}
 	if v, ok := _u.mutation.Rhesus(); ok {
-		if err := blood.RhesusValidator(v); err != nil {
-			return &ValidationError{Name: "rhesus", err: fmt.Errorf(`ent: validator failed for field "Blood.rhesus": %w`, err)}
+		if err := bloodtype.RhesusValidator(v); err != nil {
+			return &ValidationError{Name: "rhesus", err: fmt.Errorf(`ent: validator failed for field "BloodType.rhesus": %w`, err)}
 		}
 	}
 	if _u.mutation.AccountCleared() && len(_u.mutation.AccountIDs()) > 0 {
-		return errors.New(`ent: clearing a required unique edge "Blood.account"`)
+		return errors.New(`ent: clearing a required unique edge "BloodType.account"`)
 	}
 	return nil
 }
 
-func (_u *BloodUpdateOne) sqlSave(ctx context.Context) (_node *Blood, err error) {
+func (_u *BloodTypeUpdateOne) sqlSave(ctx context.Context) (_node *BloodType, err error) {
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(blood.Table, blood.Columns, sqlgraph.NewFieldSpec(blood.FieldID, field.TypeUUID))
+	_spec := sqlgraph.NewUpdateSpec(bloodtype.Table, bloodtype.Columns, sqlgraph.NewFieldSpec(bloodtype.FieldID, field.TypeUUID))
 	id, ok := _u.mutation.ID()
 	if !ok {
-		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "Blood.id" for update`)}
+		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "BloodType.id" for update`)}
 	}
 	_spec.Node.ID.Value = id
 	if fields := _u.fields; len(fields) > 0 {
 		_spec.Node.Columns = make([]string, 0, len(fields))
-		_spec.Node.Columns = append(_spec.Node.Columns, blood.FieldID)
+		_spec.Node.Columns = append(_spec.Node.Columns, bloodtype.FieldID)
 		for _, f := range fields {
-			if !blood.ValidColumn(f) {
+			if !bloodtype.ValidColumn(f) {
 				return nil, &ValidationError{Name: f, err: fmt.Errorf("ent: invalid field %q for query", f)}
 			}
-			if f != blood.FieldID {
+			if f != bloodtype.FieldID {
 				_spec.Node.Columns = append(_spec.Node.Columns, f)
 			}
 		}
@@ -447,29 +447,29 @@ func (_u *BloodUpdateOne) sqlSave(ctx context.Context) (_node *Blood, err error)
 		}
 	}
 	if value, ok := _u.mutation.UpdatedAt(); ok {
-		_spec.SetField(blood.FieldUpdatedAt, field.TypeInt64, value)
+		_spec.SetField(bloodtype.FieldUpdatedAt, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedAt(); ok {
-		_spec.AddField(blood.FieldUpdatedAt, field.TypeInt64, value)
+		_spec.AddField(bloodtype.FieldUpdatedAt, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.DeletedAt(); ok {
-		_spec.SetField(blood.FieldDeletedAt, field.TypeInt64, value)
+		_spec.SetField(bloodtype.FieldDeletedAt, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedAt(); ok {
-		_spec.AddField(blood.FieldDeletedAt, field.TypeInt64, value)
+		_spec.AddField(bloodtype.FieldDeletedAt, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.Group(); ok {
-		_spec.SetField(blood.FieldGroup, field.TypeEnum, value)
+		_spec.SetField(bloodtype.FieldGroup, field.TypeEnum, value)
 	}
 	if value, ok := _u.mutation.Rhesus(); ok {
-		_spec.SetField(blood.FieldRhesus, field.TypeEnum, value)
+		_spec.SetField(bloodtype.FieldRhesus, field.TypeEnum, value)
 	}
 	if _u.mutation.AccountCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2O,
 			Inverse: true,
-			Table:   blood.AccountTable,
-			Columns: []string{blood.AccountColumn},
+			Table:   bloodtype.AccountTable,
+			Columns: []string{bloodtype.AccountColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(account.FieldID, field.TypeUUID),
@@ -481,8 +481,8 @@ func (_u *BloodUpdateOne) sqlSave(ctx context.Context) (_node *Blood, err error)
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2O,
 			Inverse: true,
-			Table:   blood.AccountTable,
-			Columns: []string{blood.AccountColumn},
+			Table:   bloodtype.AccountTable,
+			Columns: []string{bloodtype.AccountColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(account.FieldID, field.TypeUUID),
@@ -493,12 +493,12 @@ func (_u *BloodUpdateOne) sqlSave(ctx context.Context) (_node *Blood, err error)
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	_node = &Blood{config: _u.config}
+	_node = &BloodType{config: _u.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues
 	if err = sqlgraph.UpdateNode(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
-			err = &NotFoundError{blood.Label}
+			err = &NotFoundError{bloodtype.Label}
 		} else if sqlgraph.IsConstraintError(err) {
 			err = &ConstraintError{msg: err.Error(), wrap: err}
 		}

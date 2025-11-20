@@ -12,12 +12,6 @@ const (
 	Label = "subdistrict"
 	// FieldID holds the string denoting the id field in the database.
 	FieldID = "id"
-	// FieldCreatedAt holds the string denoting the created_at field in the database.
-	FieldCreatedAt = "created_at"
-	// FieldUpdatedAt holds the string denoting the updated_at field in the database.
-	FieldUpdatedAt = "updated_at"
-	// FieldDeletedAt holds the string denoting the deleted_at field in the database.
-	FieldDeletedAt = "deleted_at"
 	// FieldBpsCode holds the string denoting the bps_code field in the database.
 	FieldBpsCode = "bps_code"
 	// FieldPostalCode holds the string denoting the postal_code field in the database.
@@ -49,9 +43,6 @@ const (
 // Columns holds all SQL columns for subdistrict fields.
 var Columns = []string{
 	FieldID,
-	FieldCreatedAt,
-	FieldUpdatedAt,
-	FieldDeletedAt,
 	FieldBpsCode,
 	FieldPostalCode,
 	FieldName,
@@ -79,16 +70,6 @@ func ValidColumn(column string) bool {
 }
 
 var (
-	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
-	DefaultCreatedAt int64
-	// CreatedAtValidator is a validator for the "created_at" field. It is called by the builders before save.
-	CreatedAtValidator func(int64) error
-	// UpdateDefaultUpdatedAt holds the default value on update for the "updated_at" field.
-	UpdateDefaultUpdatedAt func() int64
-	// UpdatedAtValidator is a validator for the "updated_at" field. It is called by the builders before save.
-	UpdatedAtValidator func(int64) error
-	// DeletedAtValidator is a validator for the "deleted_at" field. It is called by the builders before save.
-	DeletedAtValidator func(int64) error
 	// BpsCodeValidator is a validator for the "bps_code" field. It is called by the builders before save.
 	BpsCodeValidator func(string) error
 	// PostalCodeValidator is a validator for the "postal_code" field. It is called by the builders before save.
@@ -101,21 +82,6 @@ type OrderOption func(*sql.Selector)
 // ByID orders the results by the id field.
 func ByID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldID, opts...).ToFunc()
-}
-
-// ByCreatedAt orders the results by the created_at field.
-func ByCreatedAt(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldCreatedAt, opts...).ToFunc()
-}
-
-// ByUpdatedAt orders the results by the updated_at field.
-func ByUpdatedAt(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldUpdatedAt, opts...).ToFunc()
-}
-
-// ByDeletedAt orders the results by the deleted_at field.
-func ByDeletedAt(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldDeletedAt, opts...).ToFunc()
 }
 
 // ByBpsCode orders the results by the bps_code field.

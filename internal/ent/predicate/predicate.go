@@ -9,8 +9,8 @@ import (
 // Account is the predicate function for account builders.
 type Account func(*sql.Selector)
 
-// Blood is the predicate function for blood builders.
-type Blood func(*sql.Selector)
+// BloodType is the predicate function for bloodtype builders.
+type BloodType func(*sql.Selector)
 
 // City is the predicate function for city builders.
 type City func(*sql.Selector)

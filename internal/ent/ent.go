@@ -13,7 +13,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"github.com/megalodev/setetes/internal/ent/account"
-	"github.com/megalodev/setetes/internal/ent/blood"
+	"github.com/megalodev/setetes/internal/ent/bloodtype"
 	"github.com/megalodev/setetes/internal/ent/city"
 	"github.com/megalodev/setetes/internal/ent/district"
 	"github.com/megalodev/setetes/internal/ent/password"
@@ -81,7 +81,7 @@ func checkColumn(t, c string) error {
 	initCheck.Do(func() {
 		columnCheck = sql.NewColumnCheck(map[string]func(string) bool{
 			account.Table:     account.ValidColumn,
-			blood.Table:       blood.ValidColumn,
+			bloodtype.Table:   bloodtype.ValidColumn,
 			city.Table:        city.ValidColumn,
 			district.Table:    district.ValidColumn,
 			pmilocation.Table: pmilocation.ValidColumn,

@@ -22,14 +22,14 @@ const (
 	FieldName = "name"
 	// FieldBedCapacities holds the string denoting the bed_capacities field in the database.
 	FieldBedCapacities = "bed_capacities"
-	// FieldLat holds the string denoting the lat field in the database.
-	FieldLat = "lat"
-	// FieldLng holds the string denoting the lng field in the database.
-	FieldLng = "lng"
+	// FieldLatLng holds the string denoting the lat_lng field in the database.
+	FieldLatLng = "lat_lng"
 	// FieldStreet holds the string denoting the street field in the database.
 	FieldStreet = "street"
 	// FieldEmail holds the string denoting the email field in the database.
 	FieldEmail = "email"
+	// FieldDialCode holds the string denoting the dial_code field in the database.
+	FieldDialCode = "dial_code"
 	// FieldPhoneNumber holds the string denoting the phone_number field in the database.
 	FieldPhoneNumber = "phone_number"
 	// FieldOpensAt holds the string denoting the opens_at field in the database.
@@ -57,10 +57,10 @@ var Columns = []string{
 	FieldDeletedAt,
 	FieldName,
 	FieldBedCapacities,
-	FieldLat,
-	FieldLng,
+	FieldLatLng,
 	FieldStreet,
 	FieldEmail,
+	FieldDialCode,
 	FieldPhoneNumber,
 	FieldOpensAt,
 	FieldClosesAt,
@@ -77,8 +77,6 @@ func ValidColumn(column string) bool {
 }
 
 var (
-	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
-	DefaultCreatedAt int64
 	// CreatedAtValidator is a validator for the "created_at" field. It is called by the builders before save.
 	CreatedAtValidator func(int64) error
 	// UpdateDefaultUpdatedAt holds the default value on update for the "updated_at" field.
@@ -90,19 +88,15 @@ var (
 	// NameValidator is a validator for the "name" field. It is called by the builders before save.
 	NameValidator func(string) error
 	// DefaultBedCapacities holds the default value on creation for the "bed_capacities" field.
-	DefaultBedCapacities int
+	DefaultBedCapacities int16
 	// BedCapacitiesValidator is a validator for the "bed_capacities" field. It is called by the builders before save.
-	BedCapacitiesValidator func(int) error
+	BedCapacitiesValidator func(int16) error
 	// StreetValidator is a validator for the "street" field. It is called by the builders before save.
 	StreetValidator func(string) error
 	// EmailValidator is a validator for the "email" field. It is called by the builders before save.
 	EmailValidator func(string) error
 	// PhoneNumberValidator is a validator for the "phone_number" field. It is called by the builders before save.
 	PhoneNumberValidator func(string) error
-	// OpensAtValidator is a validator for the "opens_at" field. It is called by the builders before save.
-	OpensAtValidator func(int) error
-	// ClosesAtValidator is a validator for the "closes_at" field. It is called by the builders before save.
-	ClosesAtValidator func(int) error
 )
 
 // OrderOption defines the ordering options for the PMILocation queries.
@@ -138,14 +132,9 @@ func ByBedCapacities(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldBedCapacities, opts...).ToFunc()
 }
 
-// ByLat orders the results by the lat field.
-func ByLat(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldLat, opts...).ToFunc()
-}
-
-// ByLng orders the results by the lng field.
-func ByLng(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldLng, opts...).ToFunc()
+// ByLatLng orders the results by the lat_lng field.
+func ByLatLng(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldLatLng, opts...).ToFunc()
 }
 
 // ByStreet orders the results by the street field.
@@ -156,6 +145,11 @@ func ByStreet(opts ...sql.OrderTermOption) OrderOption {
 // ByEmail orders the results by the email field.
 func ByEmail(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldEmail, opts...).ToFunc()
+}
+
+// ByDialCode orders the results by the dial_code field.
+func ByDialCode(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldDialCode, opts...).ToFunc()
 }
 
 // ByPhoneNumber orders the results by the phone_number field.

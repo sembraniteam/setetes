@@ -10,11 +10,11 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"github.com/google/uuid"
 	"github.com/megalodev/setetes/internal/ent/account"
-	"github.com/megalodev/setetes/internal/ent/blood"
+	"github.com/megalodev/setetes/internal/ent/bloodtype"
 )
 
-// Blood is the model entity for the Blood schema.
-type Blood struct {
+// BloodType is the model entity for the BloodType schema.
+type BloodType struct {
 	config `json:"-"`
 	// ID of the ent.
 	ID uuid.UUID `json:"id"`
@@ -25,18 +25,18 @@ type Blood struct {
 	// Represents soft delete timestamp in milliseconds.
 	DeletedAt *int64 `json:"deleted_at"`
 	// comment:The ABO blood group classification (A, B, AB, or O).
-	Group blood.Group `json:"group"`
+	Group bloodtype.Group `json:"group"`
 	// The Rhesus (Rh) factor of the blood group, either POSITIVE or NEGATIVE.
-	Rhesus *blood.Rhesus `json:"rhesus,omitempty"`
+	Rhesus *bloodtype.Rhesus `json:"rhesus"`
 	// Edges holds the relations/edges for other nodes in the graph.
-	// The values are being populated by the BloodQuery when eager-loading is set.
-	Edges        BloodEdges `json:"edges"`
+	// The values are being populated by the BloodTypeQuery when eager-loading is set.
+	Edges        BloodTypeEdges `json:"edges"`
 	blood_id     *uuid.UUID
 	selectValues sql.SelectValues
 }
 
-// BloodEdges holds the relations/edges for other nodes in the graph.
-type BloodEdges struct {
+// BloodTypeEdges holds the relations/edges for other nodes in the graph.
+type BloodTypeEdges struct {
 	// Account holds the value of the account edge.
 	Account *Account `json:"account,omitempty"`
 	// loadedTypes holds the information for reporting if a
@@ -46,7 +46,7 @@ type BloodEdges struct {
 
 // AccountOrErr returns the Account value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
-func (e BloodEdges) AccountOrErr() (*Account, error) {
+func (e BloodTypeEdges) AccountOrErr() (*Account, error) {
 	if e.Account != nil {
 		return e.Account, nil
 	} else if e.loadedTypes[0] {
@@ -56,17 +56,17 @@ func (e BloodEdges) AccountOrErr() (*Account, error) {
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
-func (*Blood) scanValues(columns []string) ([]any, error) {
+func (*BloodType) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case blood.FieldCreatedAt, blood.FieldUpdatedAt, blood.FieldDeletedAt:
+		case bloodtype.FieldCreatedAt, bloodtype.FieldUpdatedAt, bloodtype.FieldDeletedAt:
 			values[i] = new(sql.NullInt64)
-		case blood.FieldGroup, blood.FieldRhesus:
+		case bloodtype.FieldGroup, bloodtype.FieldRhesus:
 			values[i] = new(sql.NullString)
-		case blood.FieldID:
+		case bloodtype.FieldID:
 			values[i] = new(uuid.UUID)
-		case blood.ForeignKeys[0]: // blood_id
+		case bloodtype.ForeignKeys[0]: // blood_id
 			values[i] = &sql.NullScanner{S: new(uuid.UUID)}
 		default:
 			values[i] = new(sql.UnknownType)
@@ -76,53 +76,53 @@ func (*Blood) scanValues(columns []string) ([]any, error) {
 }
 
 // assignValues assigns the values that were returned from sql.Rows (after scanning)
-// to the Blood fields.
-func (_m *Blood) assignValues(columns []string, values []any) error {
+// to the BloodType fields.
+func (_m *BloodType) assignValues(columns []string, values []any) error {
 	if m, n := len(values), len(columns); m < n {
 		return fmt.Errorf("mismatch number of scan values: %d != %d", m, n)
 	}
 	for i := range columns {
 		switch columns[i] {
-		case blood.FieldID:
+		case bloodtype.FieldID:
 			if value, ok := values[i].(*uuid.UUID); !ok {
 				return fmt.Errorf("unexpected type %T for field id", values[i])
 			} else if value != nil {
 				_m.ID = *value
 			}
-		case blood.FieldCreatedAt:
+		case bloodtype.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field created_at", values[i])
 			} else if value.Valid {
 				_m.CreatedAt = value.Int64
 			}
-		case blood.FieldUpdatedAt:
+		case bloodtype.FieldUpdatedAt:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
 			} else if value.Valid {
 				_m.UpdatedAt = new(int64)
 				*_m.UpdatedAt = value.Int64
 			}
-		case blood.FieldDeletedAt:
+		case bloodtype.FieldDeletedAt:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field deleted_at", values[i])
 			} else if value.Valid {
 				_m.DeletedAt = new(int64)
 				*_m.DeletedAt = value.Int64
 			}
-		case blood.FieldGroup:
+		case bloodtype.FieldGroup:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field group", values[i])
 			} else if value.Valid {
-				_m.Group = blood.Group(value.String)
+				_m.Group = bloodtype.Group(value.String)
 			}
-		case blood.FieldRhesus:
+		case bloodtype.FieldRhesus:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field rhesus", values[i])
 			} else if value.Valid {
-				_m.Rhesus = new(blood.Rhesus)
-				*_m.Rhesus = blood.Rhesus(value.String)
+				_m.Rhesus = new(bloodtype.Rhesus)
+				*_m.Rhesus = bloodtype.Rhesus(value.String)
 			}
-		case blood.ForeignKeys[0]:
+		case bloodtype.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullScanner); !ok {
 				return fmt.Errorf("unexpected type %T for field blood_id", values[i])
 			} else if value.Valid {
@@ -136,39 +136,39 @@ func (_m *Blood) assignValues(columns []string, values []any) error {
 	return nil
 }
 
-// Value returns the ent.Value that was dynamically selected and assigned to the Blood.
+// Value returns the ent.Value that was dynamically selected and assigned to the BloodType.
 // This includes values selected through modifiers, order, etc.
-func (_m *Blood) Value(name string) (ent.Value, error) {
+func (_m *BloodType) Value(name string) (ent.Value, error) {
 	return _m.selectValues.Get(name)
 }
 
-// QueryAccount queries the "account" edge of the Blood entity.
-func (_m *Blood) QueryAccount() *AccountQuery {
-	return NewBloodClient(_m.config).QueryAccount(_m)
+// QueryAccount queries the "account" edge of the BloodType entity.
+func (_m *BloodType) QueryAccount() *AccountQuery {
+	return NewBloodTypeClient(_m.config).QueryAccount(_m)
 }
 
-// Update returns a builder for updating this Blood.
-// Note that you need to call Blood.Unwrap() before calling this method if this Blood
+// Update returns a builder for updating this BloodType.
+// Note that you need to call BloodType.Unwrap() before calling this method if this BloodType
 // was returned from a transaction, and the transaction was committed or rolled back.
-func (_m *Blood) Update() *BloodUpdateOne {
-	return NewBloodClient(_m.config).UpdateOne(_m)
+func (_m *BloodType) Update() *BloodTypeUpdateOne {
+	return NewBloodTypeClient(_m.config).UpdateOne(_m)
 }
 
-// Unwrap unwraps the Blood entity that was returned from a transaction after it was closed,
+// Unwrap unwraps the BloodType entity that was returned from a transaction after it was closed,
 // so that all future queries will be executed through the driver which created the transaction.
-func (_m *Blood) Unwrap() *Blood {
+func (_m *BloodType) Unwrap() *BloodType {
 	_tx, ok := _m.config.driver.(*txDriver)
 	if !ok {
-		panic("ent: Blood is not a transactional entity")
+		panic("ent: BloodType is not a transactional entity")
 	}
 	_m.config.driver = _tx.drv
 	return _m
 }
 
 // String implements the fmt.Stringer.
-func (_m *Blood) String() string {
+func (_m *BloodType) String() string {
 	var builder strings.Builder
-	builder.WriteString("Blood(")
+	builder.WriteString("BloodType(")
 	builder.WriteString(fmt.Sprintf("id=%v, ", _m.ID))
 	builder.WriteString("created_at=")
 	builder.WriteString(fmt.Sprintf("%v", _m.CreatedAt))
@@ -194,5 +194,5 @@ func (_m *Blood) String() string {
 	return builder.String()
 }
 
-// Bloods is a parsable slice of Blood.
-type Bloods []*Blood
+// BloodTypes is a parsable slice of BloodType.
+type BloodTypes []*BloodType

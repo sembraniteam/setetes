@@ -6,6 +6,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -13,6 +14,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/megalodev/setetes/internal/ent/pmilocation"
 	"github.com/megalodev/setetes/internal/ent/predicate"
+	"github.com/megalodev/setetes/internal/ent/schema"
 	"github.com/megalodev/setetes/internal/ent/subdistrict"
 )
 
@@ -78,14 +80,14 @@ func (_u *PMILocationUpdate) SetNillableName(v *string) *PMILocationUpdate {
 }
 
 // SetBedCapacities sets the "bed_capacities" field.
-func (_u *PMILocationUpdate) SetBedCapacities(v int) *PMILocationUpdate {
+func (_u *PMILocationUpdate) SetBedCapacities(v int16) *PMILocationUpdate {
 	_u.mutation.ResetBedCapacities()
 	_u.mutation.SetBedCapacities(v)
 	return _u
 }
 
 // SetNillableBedCapacities sets the "bed_capacities" field if the given value is not nil.
-func (_u *PMILocationUpdate) SetNillableBedCapacities(v *int) *PMILocationUpdate {
+func (_u *PMILocationUpdate) SetNillableBedCapacities(v *int16) *PMILocationUpdate {
 	if v != nil {
 		_u.SetBedCapacities(*v)
 	}
@@ -93,50 +95,14 @@ func (_u *PMILocationUpdate) SetNillableBedCapacities(v *int) *PMILocationUpdate
 }
 
 // AddBedCapacities adds value to the "bed_capacities" field.
-func (_u *PMILocationUpdate) AddBedCapacities(v int) *PMILocationUpdate {
+func (_u *PMILocationUpdate) AddBedCapacities(v int16) *PMILocationUpdate {
 	_u.mutation.AddBedCapacities(v)
 	return _u
 }
 
-// SetLat sets the "lat" field.
-func (_u *PMILocationUpdate) SetLat(v float64) *PMILocationUpdate {
-	_u.mutation.ResetLat()
-	_u.mutation.SetLat(v)
-	return _u
-}
-
-// SetNillableLat sets the "lat" field if the given value is not nil.
-func (_u *PMILocationUpdate) SetNillableLat(v *float64) *PMILocationUpdate {
-	if v != nil {
-		_u.SetLat(*v)
-	}
-	return _u
-}
-
-// AddLat adds value to the "lat" field.
-func (_u *PMILocationUpdate) AddLat(v float64) *PMILocationUpdate {
-	_u.mutation.AddLat(v)
-	return _u
-}
-
-// SetLng sets the "lng" field.
-func (_u *PMILocationUpdate) SetLng(v float64) *PMILocationUpdate {
-	_u.mutation.ResetLng()
-	_u.mutation.SetLng(v)
-	return _u
-}
-
-// SetNillableLng sets the "lng" field if the given value is not nil.
-func (_u *PMILocationUpdate) SetNillableLng(v *float64) *PMILocationUpdate {
-	if v != nil {
-		_u.SetLng(*v)
-	}
-	return _u
-}
-
-// AddLng adds value to the "lng" field.
-func (_u *PMILocationUpdate) AddLng(v float64) *PMILocationUpdate {
-	_u.mutation.AddLng(v)
+// SetLatLng sets the "lat_lng" field.
+func (_u *PMILocationUpdate) SetLatLng(v *schema.GeoPoint) *PMILocationUpdate {
+	_u.mutation.SetLatLng(v)
 	return _u
 }
 
@@ -168,6 +134,20 @@ func (_u *PMILocationUpdate) SetNillableEmail(v *string) *PMILocationUpdate {
 	return _u
 }
 
+// SetDialCode sets the "dial_code" field.
+func (_u *PMILocationUpdate) SetDialCode(v string) *PMILocationUpdate {
+	_u.mutation.SetDialCode(v)
+	return _u
+}
+
+// SetNillableDialCode sets the "dial_code" field if the given value is not nil.
+func (_u *PMILocationUpdate) SetNillableDialCode(v *string) *PMILocationUpdate {
+	if v != nil {
+		_u.SetDialCode(*v)
+	}
+	return _u
+}
+
 // SetPhoneNumber sets the "phone_number" field.
 func (_u *PMILocationUpdate) SetPhoneNumber(v string) *PMILocationUpdate {
 	_u.mutation.SetPhoneNumber(v)
@@ -183,44 +163,30 @@ func (_u *PMILocationUpdate) SetNillablePhoneNumber(v *string) *PMILocationUpdat
 }
 
 // SetOpensAt sets the "opens_at" field.
-func (_u *PMILocationUpdate) SetOpensAt(v int) *PMILocationUpdate {
-	_u.mutation.ResetOpensAt()
+func (_u *PMILocationUpdate) SetOpensAt(v time.Time) *PMILocationUpdate {
 	_u.mutation.SetOpensAt(v)
 	return _u
 }
 
 // SetNillableOpensAt sets the "opens_at" field if the given value is not nil.
-func (_u *PMILocationUpdate) SetNillableOpensAt(v *int) *PMILocationUpdate {
+func (_u *PMILocationUpdate) SetNillableOpensAt(v *time.Time) *PMILocationUpdate {
 	if v != nil {
 		_u.SetOpensAt(*v)
 	}
 	return _u
 }
 
-// AddOpensAt adds value to the "opens_at" field.
-func (_u *PMILocationUpdate) AddOpensAt(v int) *PMILocationUpdate {
-	_u.mutation.AddOpensAt(v)
-	return _u
-}
-
 // SetClosesAt sets the "closes_at" field.
-func (_u *PMILocationUpdate) SetClosesAt(v int) *PMILocationUpdate {
-	_u.mutation.ResetClosesAt()
+func (_u *PMILocationUpdate) SetClosesAt(v time.Time) *PMILocationUpdate {
 	_u.mutation.SetClosesAt(v)
 	return _u
 }
 
 // SetNillableClosesAt sets the "closes_at" field if the given value is not nil.
-func (_u *PMILocationUpdate) SetNillableClosesAt(v *int) *PMILocationUpdate {
+func (_u *PMILocationUpdate) SetNillableClosesAt(v *time.Time) *PMILocationUpdate {
 	if v != nil {
 		_u.SetClosesAt(*v)
 	}
-	return _u
-}
-
-// AddClosesAt adds value to the "closes_at" field.
-func (_u *PMILocationUpdate) AddClosesAt(v int) *PMILocationUpdate {
-	_u.mutation.AddClosesAt(v)
 	return _u
 }
 
@@ -338,16 +304,6 @@ func (_u *PMILocationUpdate) check() error {
 			return &ValidationError{Name: "phone_number", err: fmt.Errorf(`ent: validator failed for field "PMILocation.phone_number": %w`, err)}
 		}
 	}
-	if v, ok := _u.mutation.OpensAt(); ok {
-		if err := pmilocation.OpensAtValidator(v); err != nil {
-			return &ValidationError{Name: "opens_at", err: fmt.Errorf(`ent: validator failed for field "PMILocation.opens_at": %w`, err)}
-		}
-	}
-	if v, ok := _u.mutation.ClosesAt(); ok {
-		if err := pmilocation.ClosesAtValidator(v); err != nil {
-			return &ValidationError{Name: "closes_at", err: fmt.Errorf(`ent: validator failed for field "PMILocation.closes_at": %w`, err)}
-		}
-	}
 	return nil
 }
 
@@ -379,22 +335,13 @@ func (_u *PMILocationUpdate) sqlSave(ctx context.Context) (_node int, err error)
 		_spec.SetField(pmilocation.FieldName, field.TypeString, value)
 	}
 	if value, ok := _u.mutation.BedCapacities(); ok {
-		_spec.SetField(pmilocation.FieldBedCapacities, field.TypeInt, value)
+		_spec.SetField(pmilocation.FieldBedCapacities, field.TypeInt16, value)
 	}
 	if value, ok := _u.mutation.AddedBedCapacities(); ok {
-		_spec.AddField(pmilocation.FieldBedCapacities, field.TypeInt, value)
+		_spec.AddField(pmilocation.FieldBedCapacities, field.TypeInt16, value)
 	}
-	if value, ok := _u.mutation.Lat(); ok {
-		_spec.SetField(pmilocation.FieldLat, field.TypeFloat64, value)
-	}
-	if value, ok := _u.mutation.AddedLat(); ok {
-		_spec.AddField(pmilocation.FieldLat, field.TypeFloat64, value)
-	}
-	if value, ok := _u.mutation.Lng(); ok {
-		_spec.SetField(pmilocation.FieldLng, field.TypeFloat64, value)
-	}
-	if value, ok := _u.mutation.AddedLng(); ok {
-		_spec.AddField(pmilocation.FieldLng, field.TypeFloat64, value)
+	if value, ok := _u.mutation.LatLng(); ok {
+		_spec.SetField(pmilocation.FieldLatLng, field.TypeOther, value)
 	}
 	if value, ok := _u.mutation.Street(); ok {
 		_spec.SetField(pmilocation.FieldStreet, field.TypeString, value)
@@ -402,20 +349,17 @@ func (_u *PMILocationUpdate) sqlSave(ctx context.Context) (_node int, err error)
 	if value, ok := _u.mutation.Email(); ok {
 		_spec.SetField(pmilocation.FieldEmail, field.TypeString, value)
 	}
+	if value, ok := _u.mutation.DialCode(); ok {
+		_spec.SetField(pmilocation.FieldDialCode, field.TypeString, value)
+	}
 	if value, ok := _u.mutation.PhoneNumber(); ok {
 		_spec.SetField(pmilocation.FieldPhoneNumber, field.TypeString, value)
 	}
 	if value, ok := _u.mutation.OpensAt(); ok {
-		_spec.SetField(pmilocation.FieldOpensAt, field.TypeInt, value)
-	}
-	if value, ok := _u.mutation.AddedOpensAt(); ok {
-		_spec.AddField(pmilocation.FieldOpensAt, field.TypeInt, value)
+		_spec.SetField(pmilocation.FieldOpensAt, field.TypeTime, value)
 	}
 	if value, ok := _u.mutation.ClosesAt(); ok {
-		_spec.SetField(pmilocation.FieldClosesAt, field.TypeInt, value)
-	}
-	if value, ok := _u.mutation.AddedClosesAt(); ok {
-		_spec.AddField(pmilocation.FieldClosesAt, field.TypeInt, value)
+		_spec.SetField(pmilocation.FieldClosesAt, field.TypeTime, value)
 	}
 	if _u.mutation.SubdistrictCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -531,14 +475,14 @@ func (_u *PMILocationUpdateOne) SetNillableName(v *string) *PMILocationUpdateOne
 }
 
 // SetBedCapacities sets the "bed_capacities" field.
-func (_u *PMILocationUpdateOne) SetBedCapacities(v int) *PMILocationUpdateOne {
+func (_u *PMILocationUpdateOne) SetBedCapacities(v int16) *PMILocationUpdateOne {
 	_u.mutation.ResetBedCapacities()
 	_u.mutation.SetBedCapacities(v)
 	return _u
 }
 
 // SetNillableBedCapacities sets the "bed_capacities" field if the given value is not nil.
-func (_u *PMILocationUpdateOne) SetNillableBedCapacities(v *int) *PMILocationUpdateOne {
+func (_u *PMILocationUpdateOne) SetNillableBedCapacities(v *int16) *PMILocationUpdateOne {
 	if v != nil {
 		_u.SetBedCapacities(*v)
 	}
@@ -546,50 +490,14 @@ func (_u *PMILocationUpdateOne) SetNillableBedCapacities(v *int) *PMILocationUpd
 }
 
 // AddBedCapacities adds value to the "bed_capacities" field.
-func (_u *PMILocationUpdateOne) AddBedCapacities(v int) *PMILocationUpdateOne {
+func (_u *PMILocationUpdateOne) AddBedCapacities(v int16) *PMILocationUpdateOne {
 	_u.mutation.AddBedCapacities(v)
 	return _u
 }
 
-// SetLat sets the "lat" field.
-func (_u *PMILocationUpdateOne) SetLat(v float64) *PMILocationUpdateOne {
-	_u.mutation.ResetLat()
-	_u.mutation.SetLat(v)
-	return _u
-}
-
-// SetNillableLat sets the "lat" field if the given value is not nil.
-func (_u *PMILocationUpdateOne) SetNillableLat(v *float64) *PMILocationUpdateOne {
-	if v != nil {
-		_u.SetLat(*v)
-	}
-	return _u
-}
-
-// AddLat adds value to the "lat" field.
-func (_u *PMILocationUpdateOne) AddLat(v float64) *PMILocationUpdateOne {
-	_u.mutation.AddLat(v)
-	return _u
-}
-
-// SetLng sets the "lng" field.
-func (_u *PMILocationUpdateOne) SetLng(v float64) *PMILocationUpdateOne {
-	_u.mutation.ResetLng()
-	_u.mutation.SetLng(v)
-	return _u
-}
-
-// SetNillableLng sets the "lng" field if the given value is not nil.
-func (_u *PMILocationUpdateOne) SetNillableLng(v *float64) *PMILocationUpdateOne {
-	if v != nil {
-		_u.SetLng(*v)
-	}
-	return _u
-}
-
-// AddLng adds value to the "lng" field.
-func (_u *PMILocationUpdateOne) AddLng(v float64) *PMILocationUpdateOne {
-	_u.mutation.AddLng(v)
+// SetLatLng sets the "lat_lng" field.
+func (_u *PMILocationUpdateOne) SetLatLng(v *schema.GeoPoint) *PMILocationUpdateOne {
+	_u.mutation.SetLatLng(v)
 	return _u
 }
 
@@ -621,6 +529,20 @@ func (_u *PMILocationUpdateOne) SetNillableEmail(v *string) *PMILocationUpdateOn
 	return _u
 }
 
+// SetDialCode sets the "dial_code" field.
+func (_u *PMILocationUpdateOne) SetDialCode(v string) *PMILocationUpdateOne {
+	_u.mutation.SetDialCode(v)
+	return _u
+}
+
+// SetNillableDialCode sets the "dial_code" field if the given value is not nil.
+func (_u *PMILocationUpdateOne) SetNillableDialCode(v *string) *PMILocationUpdateOne {
+	if v != nil {
+		_u.SetDialCode(*v)
+	}
+	return _u
+}
+
 // SetPhoneNumber sets the "phone_number" field.
 func (_u *PMILocationUpdateOne) SetPhoneNumber(v string) *PMILocationUpdateOne {
 	_u.mutation.SetPhoneNumber(v)
@@ -636,44 +558,30 @@ func (_u *PMILocationUpdateOne) SetNillablePhoneNumber(v *string) *PMILocationUp
 }
 
 // SetOpensAt sets the "opens_at" field.
-func (_u *PMILocationUpdateOne) SetOpensAt(v int) *PMILocationUpdateOne {
-	_u.mutation.ResetOpensAt()
+func (_u *PMILocationUpdateOne) SetOpensAt(v time.Time) *PMILocationUpdateOne {
 	_u.mutation.SetOpensAt(v)
 	return _u
 }
 
 // SetNillableOpensAt sets the "opens_at" field if the given value is not nil.
-func (_u *PMILocationUpdateOne) SetNillableOpensAt(v *int) *PMILocationUpdateOne {
+func (_u *PMILocationUpdateOne) SetNillableOpensAt(v *time.Time) *PMILocationUpdateOne {
 	if v != nil {
 		_u.SetOpensAt(*v)
 	}
 	return _u
 }
 
-// AddOpensAt adds value to the "opens_at" field.
-func (_u *PMILocationUpdateOne) AddOpensAt(v int) *PMILocationUpdateOne {
-	_u.mutation.AddOpensAt(v)
-	return _u
-}
-
 // SetClosesAt sets the "closes_at" field.
-func (_u *PMILocationUpdateOne) SetClosesAt(v int) *PMILocationUpdateOne {
-	_u.mutation.ResetClosesAt()
+func (_u *PMILocationUpdateOne) SetClosesAt(v time.Time) *PMILocationUpdateOne {
 	_u.mutation.SetClosesAt(v)
 	return _u
 }
 
 // SetNillableClosesAt sets the "closes_at" field if the given value is not nil.
-func (_u *PMILocationUpdateOne) SetNillableClosesAt(v *int) *PMILocationUpdateOne {
+func (_u *PMILocationUpdateOne) SetNillableClosesAt(v *time.Time) *PMILocationUpdateOne {
 	if v != nil {
 		_u.SetClosesAt(*v)
 	}
-	return _u
-}
-
-// AddClosesAt adds value to the "closes_at" field.
-func (_u *PMILocationUpdateOne) AddClosesAt(v int) *PMILocationUpdateOne {
-	_u.mutation.AddClosesAt(v)
 	return _u
 }
 
@@ -804,16 +712,6 @@ func (_u *PMILocationUpdateOne) check() error {
 			return &ValidationError{Name: "phone_number", err: fmt.Errorf(`ent: validator failed for field "PMILocation.phone_number": %w`, err)}
 		}
 	}
-	if v, ok := _u.mutation.OpensAt(); ok {
-		if err := pmilocation.OpensAtValidator(v); err != nil {
-			return &ValidationError{Name: "opens_at", err: fmt.Errorf(`ent: validator failed for field "PMILocation.opens_at": %w`, err)}
-		}
-	}
-	if v, ok := _u.mutation.ClosesAt(); ok {
-		if err := pmilocation.ClosesAtValidator(v); err != nil {
-			return &ValidationError{Name: "closes_at", err: fmt.Errorf(`ent: validator failed for field "PMILocation.closes_at": %w`, err)}
-		}
-	}
 	return nil
 }
 
@@ -862,22 +760,13 @@ func (_u *PMILocationUpdateOne) sqlSave(ctx context.Context) (_node *PMILocation
 		_spec.SetField(pmilocation.FieldName, field.TypeString, value)
 	}
 	if value, ok := _u.mutation.BedCapacities(); ok {
-		_spec.SetField(pmilocation.FieldBedCapacities, field.TypeInt, value)
+		_spec.SetField(pmilocation.FieldBedCapacities, field.TypeInt16, value)
 	}
 	if value, ok := _u.mutation.AddedBedCapacities(); ok {
-		_spec.AddField(pmilocation.FieldBedCapacities, field.TypeInt, value)
+		_spec.AddField(pmilocation.FieldBedCapacities, field.TypeInt16, value)
 	}
-	if value, ok := _u.mutation.Lat(); ok {
-		_spec.SetField(pmilocation.FieldLat, field.TypeFloat64, value)
-	}
-	if value, ok := _u.mutation.AddedLat(); ok {
-		_spec.AddField(pmilocation.FieldLat, field.TypeFloat64, value)
-	}
-	if value, ok := _u.mutation.Lng(); ok {
-		_spec.SetField(pmilocation.FieldLng, field.TypeFloat64, value)
-	}
-	if value, ok := _u.mutation.AddedLng(); ok {
-		_spec.AddField(pmilocation.FieldLng, field.TypeFloat64, value)
+	if value, ok := _u.mutation.LatLng(); ok {
+		_spec.SetField(pmilocation.FieldLatLng, field.TypeOther, value)
 	}
 	if value, ok := _u.mutation.Street(); ok {
 		_spec.SetField(pmilocation.FieldStreet, field.TypeString, value)
@@ -885,20 +774,17 @@ func (_u *PMILocationUpdateOne) sqlSave(ctx context.Context) (_node *PMILocation
 	if value, ok := _u.mutation.Email(); ok {
 		_spec.SetField(pmilocation.FieldEmail, field.TypeString, value)
 	}
+	if value, ok := _u.mutation.DialCode(); ok {
+		_spec.SetField(pmilocation.FieldDialCode, field.TypeString, value)
+	}
 	if value, ok := _u.mutation.PhoneNumber(); ok {
 		_spec.SetField(pmilocation.FieldPhoneNumber, field.TypeString, value)
 	}
 	if value, ok := _u.mutation.OpensAt(); ok {
-		_spec.SetField(pmilocation.FieldOpensAt, field.TypeInt, value)
-	}
-	if value, ok := _u.mutation.AddedOpensAt(); ok {
-		_spec.AddField(pmilocation.FieldOpensAt, field.TypeInt, value)
+		_spec.SetField(pmilocation.FieldOpensAt, field.TypeTime, value)
 	}
 	if value, ok := _u.mutation.ClosesAt(); ok {
-		_spec.SetField(pmilocation.FieldClosesAt, field.TypeInt, value)
-	}
-	if value, ok := _u.mutation.AddedClosesAt(); ok {
-		_spec.AddField(pmilocation.FieldClosesAt, field.TypeInt, value)
+		_spec.SetField(pmilocation.FieldClosesAt, field.TypeTime, value)
 	}
 	if _u.mutation.SubdistrictCleared() {
 		edge := &sqlgraph.EdgeSpec{

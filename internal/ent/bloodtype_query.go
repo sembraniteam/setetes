@@ -13,17 +13,17 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
 	"github.com/megalodev/setetes/internal/ent/account"
-	"github.com/megalodev/setetes/internal/ent/blood"
+	"github.com/megalodev/setetes/internal/ent/bloodtype"
 	"github.com/megalodev/setetes/internal/ent/predicate"
 )
 
-// BloodQuery is the builder for querying Blood entities.
-type BloodQuery struct {
+// BloodTypeQuery is the builder for querying BloodType entities.
+type BloodTypeQuery struct {
 	config
 	ctx         *QueryContext
-	order       []blood.OrderOption
+	order       []bloodtype.OrderOption
 	inters      []Interceptor
-	predicates  []predicate.Blood
+	predicates  []predicate.BloodType
 	withAccount *AccountQuery
 	withFKs     bool
 	// intermediate query (i.e. traversal path).
@@ -31,39 +31,39 @@ type BloodQuery struct {
 	path func(context.Context) (*sql.Selector, error)
 }
 
-// Where adds a new predicate for the BloodQuery builder.
-func (_q *BloodQuery) Where(ps ...predicate.Blood) *BloodQuery {
+// Where adds a new predicate for the BloodTypeQuery builder.
+func (_q *BloodTypeQuery) Where(ps ...predicate.BloodType) *BloodTypeQuery {
 	_q.predicates = append(_q.predicates, ps...)
 	return _q
 }
 
 // Limit the number of records to be returned by this query.
-func (_q *BloodQuery) Limit(limit int) *BloodQuery {
+func (_q *BloodTypeQuery) Limit(limit int) *BloodTypeQuery {
 	_q.ctx.Limit = &limit
 	return _q
 }
 
 // Offset to start from.
-func (_q *BloodQuery) Offset(offset int) *BloodQuery {
+func (_q *BloodTypeQuery) Offset(offset int) *BloodTypeQuery {
 	_q.ctx.Offset = &offset
 	return _q
 }
 
 // Unique configures the query builder to filter duplicate records on query.
 // By default, unique is set to true, and can be disabled using this method.
-func (_q *BloodQuery) Unique(unique bool) *BloodQuery {
+func (_q *BloodTypeQuery) Unique(unique bool) *BloodTypeQuery {
 	_q.ctx.Unique = &unique
 	return _q
 }
 
 // Order specifies how the records should be ordered.
-func (_q *BloodQuery) Order(o ...blood.OrderOption) *BloodQuery {
+func (_q *BloodTypeQuery) Order(o ...bloodtype.OrderOption) *BloodTypeQuery {
 	_q.order = append(_q.order, o...)
 	return _q
 }
 
 // QueryAccount chains the current query on the "account" edge.
-func (_q *BloodQuery) QueryAccount() *AccountQuery {
+func (_q *BloodTypeQuery) QueryAccount() *AccountQuery {
 	query := (&AccountClient{config: _q.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := _q.prepareQuery(ctx); err != nil {
@@ -74,9 +74,9 @@ func (_q *BloodQuery) QueryAccount() *AccountQuery {
 			return nil, err
 		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(blood.Table, blood.FieldID, selector),
+			sqlgraph.From(bloodtype.Table, bloodtype.FieldID, selector),
 			sqlgraph.To(account.Table, account.FieldID),
-			sqlgraph.Edge(sqlgraph.O2O, true, blood.AccountTable, blood.AccountColumn),
+			sqlgraph.Edge(sqlgraph.O2O, true, bloodtype.AccountTable, bloodtype.AccountColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
 		return fromU, nil
@@ -84,21 +84,21 @@ func (_q *BloodQuery) QueryAccount() *AccountQuery {
 	return query
 }
 
-// First returns the first Blood entity from the query.
-// Returns a *NotFoundError when no Blood was found.
-func (_q *BloodQuery) First(ctx context.Context) (*Blood, error) {
+// First returns the first BloodType entity from the query.
+// Returns a *NotFoundError when no BloodType was found.
+func (_q *BloodTypeQuery) First(ctx context.Context) (*BloodType, error) {
 	nodes, err := _q.Limit(1).All(setContextOp(ctx, _q.ctx, ent.OpQueryFirst))
 	if err != nil {
 		return nil, err
 	}
 	if len(nodes) == 0 {
-		return nil, &NotFoundError{blood.Label}
+		return nil, &NotFoundError{bloodtype.Label}
 	}
 	return nodes[0], nil
 }
 
 // FirstX is like First, but panics if an error occurs.
-func (_q *BloodQuery) FirstX(ctx context.Context) *Blood {
+func (_q *BloodTypeQuery) FirstX(ctx context.Context) *BloodType {
 	node, err := _q.First(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -106,22 +106,22 @@ func (_q *BloodQuery) FirstX(ctx context.Context) *Blood {
 	return node
 }
 
-// FirstID returns the first Blood ID from the query.
-// Returns a *NotFoundError when no Blood ID was found.
-func (_q *BloodQuery) FirstID(ctx context.Context) (id uuid.UUID, err error) {
+// FirstID returns the first BloodType ID from the query.
+// Returns a *NotFoundError when no BloodType ID was found.
+func (_q *BloodTypeQuery) FirstID(ctx context.Context) (id uuid.UUID, err error) {
 	var ids []uuid.UUID
 	if ids, err = _q.Limit(1).IDs(setContextOp(ctx, _q.ctx, ent.OpQueryFirstID)); err != nil {
 		return
 	}
 	if len(ids) == 0 {
-		err = &NotFoundError{blood.Label}
+		err = &NotFoundError{bloodtype.Label}
 		return
 	}
 	return ids[0], nil
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (_q *BloodQuery) FirstIDX(ctx context.Context) uuid.UUID {
+func (_q *BloodTypeQuery) FirstIDX(ctx context.Context) uuid.UUID {
 	id, err := _q.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -129,10 +129,10 @@ func (_q *BloodQuery) FirstIDX(ctx context.Context) uuid.UUID {
 	return id
 }
 
-// Only returns a single Blood entity found by the query, ensuring it only returns one.
-// Returns a *NotSingularError when more than one Blood entity is found.
-// Returns a *NotFoundError when no Blood entities are found.
-func (_q *BloodQuery) Only(ctx context.Context) (*Blood, error) {
+// Only returns a single BloodType entity found by the query, ensuring it only returns one.
+// Returns a *NotSingularError when more than one BloodType entity is found.
+// Returns a *NotFoundError when no BloodType entities are found.
+func (_q *BloodTypeQuery) Only(ctx context.Context) (*BloodType, error) {
 	nodes, err := _q.Limit(2).All(setContextOp(ctx, _q.ctx, ent.OpQueryOnly))
 	if err != nil {
 		return nil, err
@@ -141,14 +141,14 @@ func (_q *BloodQuery) Only(ctx context.Context) (*Blood, error) {
 	case 1:
 		return nodes[0], nil
 	case 0:
-		return nil, &NotFoundError{blood.Label}
+		return nil, &NotFoundError{bloodtype.Label}
 	default:
-		return nil, &NotSingularError{blood.Label}
+		return nil, &NotSingularError{bloodtype.Label}
 	}
 }
 
 // OnlyX is like Only, but panics if an error occurs.
-func (_q *BloodQuery) OnlyX(ctx context.Context) *Blood {
+func (_q *BloodTypeQuery) OnlyX(ctx context.Context) *BloodType {
 	node, err := _q.Only(ctx)
 	if err != nil {
 		panic(err)
@@ -156,10 +156,10 @@ func (_q *BloodQuery) OnlyX(ctx context.Context) *Blood {
 	return node
 }
 
-// OnlyID is like Only, but returns the only Blood ID in the query.
-// Returns a *NotSingularError when more than one Blood ID is found.
+// OnlyID is like Only, but returns the only BloodType ID in the query.
+// Returns a *NotSingularError when more than one BloodType ID is found.
 // Returns a *NotFoundError when no entities are found.
-func (_q *BloodQuery) OnlyID(ctx context.Context) (id uuid.UUID, err error) {
+func (_q *BloodTypeQuery) OnlyID(ctx context.Context) (id uuid.UUID, err error) {
 	var ids []uuid.UUID
 	if ids, err = _q.Limit(2).IDs(setContextOp(ctx, _q.ctx, ent.OpQueryOnlyID)); err != nil {
 		return
@@ -168,15 +168,15 @@ func (_q *BloodQuery) OnlyID(ctx context.Context) (id uuid.UUID, err error) {
 	case 1:
 		id = ids[0]
 	case 0:
-		err = &NotFoundError{blood.Label}
+		err = &NotFoundError{bloodtype.Label}
 	default:
-		err = &NotSingularError{blood.Label}
+		err = &NotSingularError{bloodtype.Label}
 	}
 	return
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (_q *BloodQuery) OnlyIDX(ctx context.Context) uuid.UUID {
+func (_q *BloodTypeQuery) OnlyIDX(ctx context.Context) uuid.UUID {
 	id, err := _q.OnlyID(ctx)
 	if err != nil {
 		panic(err)
@@ -184,18 +184,18 @@ func (_q *BloodQuery) OnlyIDX(ctx context.Context) uuid.UUID {
 	return id
 }
 
-// All executes the query and returns a list of Bloods.
-func (_q *BloodQuery) All(ctx context.Context) ([]*Blood, error) {
+// All executes the query and returns a list of BloodTypes.
+func (_q *BloodTypeQuery) All(ctx context.Context) ([]*BloodType, error) {
 	ctx = setContextOp(ctx, _q.ctx, ent.OpQueryAll)
 	if err := _q.prepareQuery(ctx); err != nil {
 		return nil, err
 	}
-	qr := querierAll[[]*Blood, *BloodQuery]()
-	return withInterceptors[[]*Blood](ctx, _q, qr, _q.inters)
+	qr := querierAll[[]*BloodType, *BloodTypeQuery]()
+	return withInterceptors[[]*BloodType](ctx, _q, qr, _q.inters)
 }
 
 // AllX is like All, but panics if an error occurs.
-func (_q *BloodQuery) AllX(ctx context.Context) []*Blood {
+func (_q *BloodTypeQuery) AllX(ctx context.Context) []*BloodType {
 	nodes, err := _q.All(ctx)
 	if err != nil {
 		panic(err)
@@ -203,20 +203,20 @@ func (_q *BloodQuery) AllX(ctx context.Context) []*Blood {
 	return nodes
 }
 
-// IDs executes the query and returns a list of Blood IDs.
-func (_q *BloodQuery) IDs(ctx context.Context) (ids []uuid.UUID, err error) {
+// IDs executes the query and returns a list of BloodType IDs.
+func (_q *BloodTypeQuery) IDs(ctx context.Context) (ids []uuid.UUID, err error) {
 	if _q.ctx.Unique == nil && _q.path != nil {
 		_q.Unique(true)
 	}
 	ctx = setContextOp(ctx, _q.ctx, ent.OpQueryIDs)
-	if err = _q.Select(blood.FieldID).Scan(ctx, &ids); err != nil {
+	if err = _q.Select(bloodtype.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
 	return ids, nil
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (_q *BloodQuery) IDsX(ctx context.Context) []uuid.UUID {
+func (_q *BloodTypeQuery) IDsX(ctx context.Context) []uuid.UUID {
 	ids, err := _q.IDs(ctx)
 	if err != nil {
 		panic(err)
@@ -225,16 +225,16 @@ func (_q *BloodQuery) IDsX(ctx context.Context) []uuid.UUID {
 }
 
 // Count returns the count of the given query.
-func (_q *BloodQuery) Count(ctx context.Context) (int, error) {
+func (_q *BloodTypeQuery) Count(ctx context.Context) (int, error) {
 	ctx = setContextOp(ctx, _q.ctx, ent.OpQueryCount)
 	if err := _q.prepareQuery(ctx); err != nil {
 		return 0, err
 	}
-	return withInterceptors[int](ctx, _q, querierCount[*BloodQuery](), _q.inters)
+	return withInterceptors[int](ctx, _q, querierCount[*BloodTypeQuery](), _q.inters)
 }
 
 // CountX is like Count, but panics if an error occurs.
-func (_q *BloodQuery) CountX(ctx context.Context) int {
+func (_q *BloodTypeQuery) CountX(ctx context.Context) int {
 	count, err := _q.Count(ctx)
 	if err != nil {
 		panic(err)
@@ -243,7 +243,7 @@ func (_q *BloodQuery) CountX(ctx context.Context) int {
 }
 
 // Exist returns true if the query has elements in the graph.
-func (_q *BloodQuery) Exist(ctx context.Context) (bool, error) {
+func (_q *BloodTypeQuery) Exist(ctx context.Context) (bool, error) {
 	ctx = setContextOp(ctx, _q.ctx, ent.OpQueryExist)
 	switch _, err := _q.FirstID(ctx); {
 	case IsNotFound(err):
@@ -256,7 +256,7 @@ func (_q *BloodQuery) Exist(ctx context.Context) (bool, error) {
 }
 
 // ExistX is like Exist, but panics if an error occurs.
-func (_q *BloodQuery) ExistX(ctx context.Context) bool {
+func (_q *BloodTypeQuery) ExistX(ctx context.Context) bool {
 	exist, err := _q.Exist(ctx)
 	if err != nil {
 		panic(err)
@@ -264,18 +264,18 @@ func (_q *BloodQuery) ExistX(ctx context.Context) bool {
 	return exist
 }
 
-// Clone returns a duplicate of the BloodQuery builder, including all associated steps. It can be
+// Clone returns a duplicate of the BloodTypeQuery builder, including all associated steps. It can be
 // used to prepare common query builders and use them differently after the clone is made.
-func (_q *BloodQuery) Clone() *BloodQuery {
+func (_q *BloodTypeQuery) Clone() *BloodTypeQuery {
 	if _q == nil {
 		return nil
 	}
-	return &BloodQuery{
+	return &BloodTypeQuery{
 		config:      _q.config,
 		ctx:         _q.ctx.Clone(),
-		order:       append([]blood.OrderOption{}, _q.order...),
+		order:       append([]bloodtype.OrderOption{}, _q.order...),
 		inters:      append([]Interceptor{}, _q.inters...),
-		predicates:  append([]predicate.Blood{}, _q.predicates...),
+		predicates:  append([]predicate.BloodType{}, _q.predicates...),
 		withAccount: _q.withAccount.Clone(),
 		// clone intermediate query.
 		sql:  _q.sql.Clone(),
@@ -285,7 +285,7 @@ func (_q *BloodQuery) Clone() *BloodQuery {
 
 // WithAccount tells the query-builder to eager-load the nodes that are connected to
 // the "account" edge. The optional arguments are used to configure the query builder of the edge.
-func (_q *BloodQuery) WithAccount(opts ...func(*AccountQuery)) *BloodQuery {
+func (_q *BloodTypeQuery) WithAccount(opts ...func(*AccountQuery)) *BloodTypeQuery {
 	query := (&AccountClient{config: _q.config}).Query()
 	for _, opt := range opts {
 		opt(query)
@@ -304,15 +304,15 @@ func (_q *BloodQuery) WithAccount(opts ...func(*AccountQuery)) *BloodQuery {
 //		Count int `json:"count,omitempty"`
 //	}
 //
-//	client.Blood.Query().
-//		GroupBy(blood.FieldCreatedAt).
+//	client.BloodType.Query().
+//		GroupBy(bloodtype.FieldCreatedAt).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
-func (_q *BloodQuery) GroupBy(field string, fields ...string) *BloodGroupBy {
+func (_q *BloodTypeQuery) GroupBy(field string, fields ...string) *BloodTypeGroupBy {
 	_q.ctx.Fields = append([]string{field}, fields...)
-	grbuild := &BloodGroupBy{build: _q}
+	grbuild := &BloodTypeGroupBy{build: _q}
 	grbuild.flds = &_q.ctx.Fields
-	grbuild.label = blood.Label
+	grbuild.label = bloodtype.Label
 	grbuild.scan = grbuild.Scan
 	return grbuild
 }
@@ -326,23 +326,23 @@ func (_q *BloodQuery) GroupBy(field string, fields ...string) *BloodGroupBy {
 //		CreatedAt int64 `json:"created_at"`
 //	}
 //
-//	client.Blood.Query().
-//		Select(blood.FieldCreatedAt).
+//	client.BloodType.Query().
+//		Select(bloodtype.FieldCreatedAt).
 //		Scan(ctx, &v)
-func (_q *BloodQuery) Select(fields ...string) *BloodSelect {
+func (_q *BloodTypeQuery) Select(fields ...string) *BloodTypeSelect {
 	_q.ctx.Fields = append(_q.ctx.Fields, fields...)
-	sbuild := &BloodSelect{BloodQuery: _q}
-	sbuild.label = blood.Label
+	sbuild := &BloodTypeSelect{BloodTypeQuery: _q}
+	sbuild.label = bloodtype.Label
 	sbuild.flds, sbuild.scan = &_q.ctx.Fields, sbuild.Scan
 	return sbuild
 }
 
-// Aggregate returns a BloodSelect configured with the given aggregations.
-func (_q *BloodQuery) Aggregate(fns ...AggregateFunc) *BloodSelect {
+// Aggregate returns a BloodTypeSelect configured with the given aggregations.
+func (_q *BloodTypeQuery) Aggregate(fns ...AggregateFunc) *BloodTypeSelect {
 	return _q.Select().Aggregate(fns...)
 }
 
-func (_q *BloodQuery) prepareQuery(ctx context.Context) error {
+func (_q *BloodTypeQuery) prepareQuery(ctx context.Context) error {
 	for _, inter := range _q.inters {
 		if inter == nil {
 			return fmt.Errorf("ent: uninitialized interceptor (forgotten import ent/runtime?)")
@@ -354,7 +354,7 @@ func (_q *BloodQuery) prepareQuery(ctx context.Context) error {
 		}
 	}
 	for _, f := range _q.ctx.Fields {
-		if !blood.ValidColumn(f) {
+		if !bloodtype.ValidColumn(f) {
 			return &ValidationError{Name: f, err: fmt.Errorf("ent: invalid field %q for query", f)}
 		}
 	}
@@ -368,9 +368,9 @@ func (_q *BloodQuery) prepareQuery(ctx context.Context) error {
 	return nil
 }
 
-func (_q *BloodQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Blood, error) {
+func (_q *BloodTypeQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*BloodType, error) {
 	var (
-		nodes       = []*Blood{}
+		nodes       = []*BloodType{}
 		withFKs     = _q.withFKs
 		_spec       = _q.querySpec()
 		loadedTypes = [1]bool{
@@ -381,13 +381,13 @@ func (_q *BloodQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Blood,
 		withFKs = true
 	}
 	if withFKs {
-		_spec.Node.Columns = append(_spec.Node.Columns, blood.ForeignKeys...)
+		_spec.Node.Columns = append(_spec.Node.Columns, bloodtype.ForeignKeys...)
 	}
 	_spec.ScanValues = func(columns []string) ([]any, error) {
-		return (*Blood).scanValues(nil, columns)
+		return (*BloodType).scanValues(nil, columns)
 	}
 	_spec.Assign = func(columns []string, values []any) error {
-		node := &Blood{config: _q.config}
+		node := &BloodType{config: _q.config}
 		nodes = append(nodes, node)
 		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(columns, values)
@@ -403,16 +403,16 @@ func (_q *BloodQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Blood,
 	}
 	if query := _q.withAccount; query != nil {
 		if err := _q.loadAccount(ctx, query, nodes, nil,
-			func(n *Blood, e *Account) { n.Edges.Account = e }); err != nil {
+			func(n *BloodType, e *Account) { n.Edges.Account = e }); err != nil {
 			return nil, err
 		}
 	}
 	return nodes, nil
 }
 
-func (_q *BloodQuery) loadAccount(ctx context.Context, query *AccountQuery, nodes []*Blood, init func(*Blood), assign func(*Blood, *Account)) error {
+func (_q *BloodTypeQuery) loadAccount(ctx context.Context, query *AccountQuery, nodes []*BloodType, init func(*BloodType), assign func(*BloodType, *Account)) error {
 	ids := make([]uuid.UUID, 0, len(nodes))
-	nodeids := make(map[uuid.UUID][]*Blood)
+	nodeids := make(map[uuid.UUID][]*BloodType)
 	for i := range nodes {
 		if nodes[i].blood_id == nil {
 			continue
@@ -443,7 +443,7 @@ func (_q *BloodQuery) loadAccount(ctx context.Context, query *AccountQuery, node
 	return nil
 }
 
-func (_q *BloodQuery) sqlCount(ctx context.Context) (int, error) {
+func (_q *BloodTypeQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := _q.querySpec()
 	_spec.Node.Columns = _q.ctx.Fields
 	if len(_q.ctx.Fields) > 0 {
@@ -452,8 +452,8 @@ func (_q *BloodQuery) sqlCount(ctx context.Context) (int, error) {
 	return sqlgraph.CountNodes(ctx, _q.driver, _spec)
 }
 
-func (_q *BloodQuery) querySpec() *sqlgraph.QuerySpec {
-	_spec := sqlgraph.NewQuerySpec(blood.Table, blood.Columns, sqlgraph.NewFieldSpec(blood.FieldID, field.TypeUUID))
+func (_q *BloodTypeQuery) querySpec() *sqlgraph.QuerySpec {
+	_spec := sqlgraph.NewQuerySpec(bloodtype.Table, bloodtype.Columns, sqlgraph.NewFieldSpec(bloodtype.FieldID, field.TypeUUID))
 	_spec.From = _q.sql
 	if unique := _q.ctx.Unique; unique != nil {
 		_spec.Unique = *unique
@@ -462,9 +462,9 @@ func (_q *BloodQuery) querySpec() *sqlgraph.QuerySpec {
 	}
 	if fields := _q.ctx.Fields; len(fields) > 0 {
 		_spec.Node.Columns = make([]string, 0, len(fields))
-		_spec.Node.Columns = append(_spec.Node.Columns, blood.FieldID)
+		_spec.Node.Columns = append(_spec.Node.Columns, bloodtype.FieldID)
 		for i := range fields {
-			if fields[i] != blood.FieldID {
+			if fields[i] != bloodtype.FieldID {
 				_spec.Node.Columns = append(_spec.Node.Columns, fields[i])
 			}
 		}
@@ -492,12 +492,12 @@ func (_q *BloodQuery) querySpec() *sqlgraph.QuerySpec {
 	return _spec
 }
 
-func (_q *BloodQuery) sqlQuery(ctx context.Context) *sql.Selector {
+func (_q *BloodTypeQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	builder := sql.Dialect(_q.driver.Dialect())
-	t1 := builder.Table(blood.Table)
+	t1 := builder.Table(bloodtype.Table)
 	columns := _q.ctx.Fields
 	if len(columns) == 0 {
-		columns = blood.Columns
+		columns = bloodtype.Columns
 	}
 	selector := builder.Select(t1.Columns(columns...)...).From(t1)
 	if _q.sql != nil {
@@ -524,28 +524,28 @@ func (_q *BloodQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	return selector
 }
 
-// BloodGroupBy is the group-by builder for Blood entities.
-type BloodGroupBy struct {
+// BloodTypeGroupBy is the group-by builder for BloodType entities.
+type BloodTypeGroupBy struct {
 	selector
-	build *BloodQuery
+	build *BloodTypeQuery
 }
 
 // Aggregate adds the given aggregation functions to the group-by query.
-func (_g *BloodGroupBy) Aggregate(fns ...AggregateFunc) *BloodGroupBy {
+func (_g *BloodTypeGroupBy) Aggregate(fns ...AggregateFunc) *BloodTypeGroupBy {
 	_g.fns = append(_g.fns, fns...)
 	return _g
 }
 
 // Scan applies the selector query and scans the result into the given value.
-func (_g *BloodGroupBy) Scan(ctx context.Context, v any) error {
+func (_g *BloodTypeGroupBy) Scan(ctx context.Context, v any) error {
 	ctx = setContextOp(ctx, _g.build.ctx, ent.OpQueryGroupBy)
 	if err := _g.build.prepareQuery(ctx); err != nil {
 		return err
 	}
-	return scanWithInterceptors[*BloodQuery, *BloodGroupBy](ctx, _g.build, _g, _g.build.inters, v)
+	return scanWithInterceptors[*BloodTypeQuery, *BloodTypeGroupBy](ctx, _g.build, _g, _g.build.inters, v)
 }
 
-func (_g *BloodGroupBy) sqlScan(ctx context.Context, root *BloodQuery, v any) error {
+func (_g *BloodTypeGroupBy) sqlScan(ctx context.Context, root *BloodTypeQuery, v any) error {
 	selector := root.sqlQuery(ctx).Select()
 	aggregation := make([]string, 0, len(_g.fns))
 	for _, fn := range _g.fns {
@@ -572,28 +572,28 @@ func (_g *BloodGroupBy) sqlScan(ctx context.Context, root *BloodQuery, v any) er
 	return sql.ScanSlice(rows, v)
 }
 
-// BloodSelect is the builder for selecting fields of Blood entities.
-type BloodSelect struct {
-	*BloodQuery
+// BloodTypeSelect is the builder for selecting fields of BloodType entities.
+type BloodTypeSelect struct {
+	*BloodTypeQuery
 	selector
 }
 
 // Aggregate adds the given aggregation functions to the selector query.
-func (_s *BloodSelect) Aggregate(fns ...AggregateFunc) *BloodSelect {
+func (_s *BloodTypeSelect) Aggregate(fns ...AggregateFunc) *BloodTypeSelect {
 	_s.fns = append(_s.fns, fns...)
 	return _s
 }
 
 // Scan applies the selector query and scans the result into the given value.
-func (_s *BloodSelect) Scan(ctx context.Context, v any) error {
+func (_s *BloodTypeSelect) Scan(ctx context.Context, v any) error {
 	ctx = setContextOp(ctx, _s.ctx, ent.OpQuerySelect)
 	if err := _s.prepareQuery(ctx); err != nil {
 		return err
 	}
-	return scanWithInterceptors[*BloodQuery, *BloodSelect](ctx, _s.BloodQuery, _s, _s.inters, v)
+	return scanWithInterceptors[*BloodTypeQuery, *BloodTypeSelect](ctx, _s.BloodTypeQuery, _s, _s.inters, v)
 }
 
-func (_s *BloodSelect) sqlScan(ctx context.Context, root *BloodQuery, v any) error {
+func (_s *BloodTypeSelect) sqlScan(ctx context.Context, root *BloodTypeQuery, v any) error {
 	selector := root.sqlQuery(ctx)
 	aggregation := make([]string, 0, len(_s.fns))
 	for _, fn := range _s.fns {

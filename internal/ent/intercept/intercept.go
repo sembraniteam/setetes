@@ -9,7 +9,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"github.com/megalodev/setetes/internal/ent"
 	"github.com/megalodev/setetes/internal/ent/account"
-	"github.com/megalodev/setetes/internal/ent/blood"
+	"github.com/megalodev/setetes/internal/ent/bloodtype"
 	"github.com/megalodev/setetes/internal/ent/city"
 	"github.com/megalodev/setetes/internal/ent/district"
 	"github.com/megalodev/setetes/internal/ent/password"
@@ -102,31 +102,31 @@ func (f TraverseAccount) Traverse(ctx context.Context, q ent.Query) error {
 	return fmt.Errorf("unexpected query type %T. expect *ent.AccountQuery", q)
 }
 
-// The BloodFunc type is an adapter to allow the use of ordinary function as a Querier.
-type BloodFunc func(context.Context, *ent.BloodQuery) (ent.Value, error)
+// The BloodTypeFunc type is an adapter to allow the use of ordinary function as a Querier.
+type BloodTypeFunc func(context.Context, *ent.BloodTypeQuery) (ent.Value, error)
 
 // Query calls f(ctx, q).
-func (f BloodFunc) Query(ctx context.Context, q ent.Query) (ent.Value, error) {
-	if q, ok := q.(*ent.BloodQuery); ok {
+func (f BloodTypeFunc) Query(ctx context.Context, q ent.Query) (ent.Value, error) {
+	if q, ok := q.(*ent.BloodTypeQuery); ok {
 		return f(ctx, q)
 	}
-	return nil, fmt.Errorf("unexpected query type %T. expect *ent.BloodQuery", q)
+	return nil, fmt.Errorf("unexpected query type %T. expect *ent.BloodTypeQuery", q)
 }
 
-// The TraverseBlood type is an adapter to allow the use of ordinary function as Traverser.
-type TraverseBlood func(context.Context, *ent.BloodQuery) error
+// The TraverseBloodType type is an adapter to allow the use of ordinary function as Traverser.
+type TraverseBloodType func(context.Context, *ent.BloodTypeQuery) error
 
 // Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
-func (f TraverseBlood) Intercept(next ent.Querier) ent.Querier {
+func (f TraverseBloodType) Intercept(next ent.Querier) ent.Querier {
 	return next
 }
 
 // Traverse calls f(ctx, q).
-func (f TraverseBlood) Traverse(ctx context.Context, q ent.Query) error {
-	if q, ok := q.(*ent.BloodQuery); ok {
+func (f TraverseBloodType) Traverse(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.BloodTypeQuery); ok {
 		return f(ctx, q)
 	}
-	return fmt.Errorf("unexpected query type %T. expect *ent.BloodQuery", q)
+	return fmt.Errorf("unexpected query type %T. expect *ent.BloodTypeQuery", q)
 }
 
 // The CityFunc type is an adapter to allow the use of ordinary function as a Querier.
@@ -296,8 +296,8 @@ func NewQuery(q ent.Query) (Query, error) {
 	switch q := q.(type) {
 	case *ent.AccountQuery:
 		return &query[*ent.AccountQuery, predicate.Account, account.OrderOption]{typ: ent.TypeAccount, tq: q}, nil
-	case *ent.BloodQuery:
-		return &query[*ent.BloodQuery, predicate.Blood, blood.OrderOption]{typ: ent.TypeBlood, tq: q}, nil
+	case *ent.BloodTypeQuery:
+		return &query[*ent.BloodTypeQuery, predicate.BloodType, bloodtype.OrderOption]{typ: ent.TypeBloodType, tq: q}, nil
 	case *ent.CityQuery:
 		return &query[*ent.CityQuery, predicate.City, city.OrderOption]{typ: ent.TypeCity, tq: q}, nil
 	case *ent.DistrictQuery:

@@ -12,7 +12,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
 	"github.com/megalodev/setetes/internal/ent/account"
-	"github.com/megalodev/setetes/internal/ent/blood"
+	"github.com/megalodev/setetes/internal/ent/bloodtype"
 	"github.com/megalodev/setetes/internal/ent/password"
 	"github.com/megalodev/setetes/internal/ent/predicate"
 )
@@ -211,23 +211,23 @@ func (_u *AccountUpdate) AddTempLockedAt(v int64) *AccountUpdate {
 	return _u
 }
 
-// SetBloodID sets the "blood" edge to the Blood entity by ID.
-func (_u *AccountUpdate) SetBloodID(id uuid.UUID) *AccountUpdate {
-	_u.mutation.SetBloodID(id)
+// SetBloodTypeID sets the "blood_type" edge to the BloodType entity by ID.
+func (_u *AccountUpdate) SetBloodTypeID(id uuid.UUID) *AccountUpdate {
+	_u.mutation.SetBloodTypeID(id)
 	return _u
 }
 
-// SetNillableBloodID sets the "blood" edge to the Blood entity by ID if the given value is not nil.
-func (_u *AccountUpdate) SetNillableBloodID(id *uuid.UUID) *AccountUpdate {
+// SetNillableBloodTypeID sets the "blood_type" edge to the BloodType entity by ID if the given value is not nil.
+func (_u *AccountUpdate) SetNillableBloodTypeID(id *uuid.UUID) *AccountUpdate {
 	if id != nil {
-		_u = _u.SetBloodID(*id)
+		_u = _u.SetBloodTypeID(*id)
 	}
 	return _u
 }
 
-// SetBlood sets the "blood" edge to the Blood entity.
-func (_u *AccountUpdate) SetBlood(v *Blood) *AccountUpdate {
-	return _u.SetBloodID(v.ID)
+// SetBloodType sets the "blood_type" edge to the BloodType entity.
+func (_u *AccountUpdate) SetBloodType(v *BloodType) *AccountUpdate {
+	return _u.SetBloodTypeID(v.ID)
 }
 
 // SetPasswordID sets the "password" edge to the Password entity by ID.
@@ -254,9 +254,9 @@ func (_u *AccountUpdate) Mutation() *AccountMutation {
 	return _u.mutation
 }
 
-// ClearBlood clears the "blood" edge to the Blood entity.
-func (_u *AccountUpdate) ClearBlood() *AccountUpdate {
-	_u.mutation.ClearBlood()
+// ClearBloodType clears the "blood_type" edge to the BloodType entity.
+func (_u *AccountUpdate) ClearBloodType() *AccountUpdate {
+	_u.mutation.ClearBloodType()
 	return _u
 }
 
@@ -409,28 +409,28 @@ func (_u *AccountUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	if value, ok := _u.mutation.AddedTempLockedAt(); ok {
 		_spec.AddField(account.FieldTempLockedAt, field.TypeInt64, value)
 	}
-	if _u.mutation.BloodCleared() {
+	if _u.mutation.BloodTypeCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2O,
 			Inverse: false,
-			Table:   account.BloodTable,
-			Columns: []string{account.BloodColumn},
+			Table:   account.BloodTypeTable,
+			Columns: []string{account.BloodTypeColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(blood.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(bloodtype.FieldID, field.TypeUUID),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := _u.mutation.BloodIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.BloodTypeIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2O,
 			Inverse: false,
-			Table:   account.BloodTable,
-			Columns: []string{account.BloodColumn},
+			Table:   account.BloodTypeTable,
+			Columns: []string{account.BloodTypeColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(blood.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(bloodtype.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
@@ -668,23 +668,23 @@ func (_u *AccountUpdateOne) AddTempLockedAt(v int64) *AccountUpdateOne {
 	return _u
 }
 
-// SetBloodID sets the "blood" edge to the Blood entity by ID.
-func (_u *AccountUpdateOne) SetBloodID(id uuid.UUID) *AccountUpdateOne {
-	_u.mutation.SetBloodID(id)
+// SetBloodTypeID sets the "blood_type" edge to the BloodType entity by ID.
+func (_u *AccountUpdateOne) SetBloodTypeID(id uuid.UUID) *AccountUpdateOne {
+	_u.mutation.SetBloodTypeID(id)
 	return _u
 }
 
-// SetNillableBloodID sets the "blood" edge to the Blood entity by ID if the given value is not nil.
-func (_u *AccountUpdateOne) SetNillableBloodID(id *uuid.UUID) *AccountUpdateOne {
+// SetNillableBloodTypeID sets the "blood_type" edge to the BloodType entity by ID if the given value is not nil.
+func (_u *AccountUpdateOne) SetNillableBloodTypeID(id *uuid.UUID) *AccountUpdateOne {
 	if id != nil {
-		_u = _u.SetBloodID(*id)
+		_u = _u.SetBloodTypeID(*id)
 	}
 	return _u
 }
 
-// SetBlood sets the "blood" edge to the Blood entity.
-func (_u *AccountUpdateOne) SetBlood(v *Blood) *AccountUpdateOne {
-	return _u.SetBloodID(v.ID)
+// SetBloodType sets the "blood_type" edge to the BloodType entity.
+func (_u *AccountUpdateOne) SetBloodType(v *BloodType) *AccountUpdateOne {
+	return _u.SetBloodTypeID(v.ID)
 }
 
 // SetPasswordID sets the "password" edge to the Password entity by ID.
@@ -711,9 +711,9 @@ func (_u *AccountUpdateOne) Mutation() *AccountMutation {
 	return _u.mutation
 }
 
-// ClearBlood clears the "blood" edge to the Blood entity.
-func (_u *AccountUpdateOne) ClearBlood() *AccountUpdateOne {
-	_u.mutation.ClearBlood()
+// ClearBloodType clears the "blood_type" edge to the BloodType entity.
+func (_u *AccountUpdateOne) ClearBloodType() *AccountUpdateOne {
+	_u.mutation.ClearBloodType()
 	return _u
 }
 
@@ -896,28 +896,28 @@ func (_u *AccountUpdateOne) sqlSave(ctx context.Context) (_node *Account, err er
 	if value, ok := _u.mutation.AddedTempLockedAt(); ok {
 		_spec.AddField(account.FieldTempLockedAt, field.TypeInt64, value)
 	}
-	if _u.mutation.BloodCleared() {
+	if _u.mutation.BloodTypeCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2O,
 			Inverse: false,
-			Table:   account.BloodTable,
-			Columns: []string{account.BloodColumn},
+			Table:   account.BloodTypeTable,
+			Columns: []string{account.BloodTypeColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(blood.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(bloodtype.FieldID, field.TypeUUID),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := _u.mutation.BloodIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.BloodTypeIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2O,
 			Inverse: false,
-			Table:   account.BloodTable,
-			Columns: []string{account.BloodColumn},
+			Table:   account.BloodTypeTable,
+			Columns: []string{account.BloodTypeColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(blood.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(bloodtype.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
