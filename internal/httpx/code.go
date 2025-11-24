@@ -1,6 +1,6 @@
 package httpx
 
-const (
+var (
 	OKCode                int16 = 0
 	UnknownCode           int16 = 1000
 	UnauthorizedCode      int16 = 1001
