@@ -7,9 +7,9 @@ import (
 
 	"entgo.io/ent/dialect"
 	entsql "entgo.io/ent/dialect/sql"
+	"github.com/casbin/ent-adapter/ent"
 	_ "github.com/jackc/pgx/v5/stdlib"
 	"github.com/megalodev/setetes/internal"
-	"github.com/megalodev/setetes/internal/ent"
 )
 
 type (
