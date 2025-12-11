@@ -18,7 +18,7 @@ func RequestID() gin.HandlerFunc {
 
 		parsed, err := uuid.Parse(rid)
 		if err != nil {
-			response.BadRequest(c, httpx.InvalidValueCode, response.MsgInvalidRequestID.WithField(headerXRequestID))
+			response.BadRequest(c, httpx.InvalidValueCode, response.MsgInvalidRequestID)
 			c.Abort()
 			return
 		}

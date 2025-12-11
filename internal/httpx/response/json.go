@@ -34,14 +34,20 @@ func Unauthorized(c *gin.Context) {
 
 func Error(c *gin.Context, errParam any) {
 	switch err := errParam.(type) {
+	case ErrorValidate:
+		BadRequest(c, *err.GetCode(), err.GetMessage())
+		break
 	case error:
 		if err == io.EOF {
 			BadRequest(c, httpx.InvalidBodyCode, MsgInvalidBody)
+			break
 		}
 
 		InternalServerError(c)
+		break
 	default:
 		UnknownError(c)
+		break
 	}
 }
 

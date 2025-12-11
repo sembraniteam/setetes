@@ -1,20 +1,22 @@
 package response
 
 var (
-	MsgUnknownError        = NewMessage("UNKNOWN_ERROR", "Unknown error", nil)
-	MsgToManyRequest       = NewMessage("TO_MANY_REQUEST", "To many request", nil)
-	MsgInternalServerError = NewMessage("INTERNAL_ERROR", "Internal server error", nil)
-	MsgPong                = NewMessage("PONG", "PONG", nil)
-	MsgUnauthorized        = NewMessage("UNAUTHORIZED", "Unauthorized", nil)
-	MsgInvalidBody         = NewMessage("INVALID_BODY", "Invalid request body", nil)
-	MsgInvalidRequestID    = NewMessage("INVALID_X_REQUEST_ID", "Invalid header value", nil)
+	MsgPong                = NewMessage("PONG", "PONG")
+	MsgUnknownError        = NewMessage("UNKNOWN_ERROR", "Unknown error")
+	MsgToManyRequest       = NewMessage("TO_MANY_REQUEST", "To many request")
+	MsgInternalServerError = NewMessage("INTERNAL_ERROR", "Internal server error")
+	MsgUnauthorized        = NewMessage("UNAUTHORIZED", "Unauthorized")
+	MsgInvalidBody         = NewMessage("INVALID_BODY", "Invalid request body")
+	MsgInvalidRequestID    = NewMessage("INVALID_X_REQUEST_ID", "Invalid X-Request-ID value")
+	MsgInvalidJSON         = NewMessage("INVALID_JSON", "Invalid JSON format")
+	MsgInvalidForm         = NewMessage("INVALID_FORM", "Invalid FORM format")
+	MsgInvalidQuery        = NewMessage("INVALID_QUERY_PARAM", "Invalid query param format")
 )
 
 type (
 	Message struct {
-		Key         string  `json:"key"`
-		Description string  `json:"description"`
-		Field       *string `json:"field"`
+		Key         string `json:"key"`
+		Description string `json:"description"`
 	}
 
 	Base struct {
@@ -23,32 +25,11 @@ type (
 		Message   *Message `json:"message"`
 		Result    any      `json:"result"`
 	}
-
-	BaseEntries[T any] struct {
-		Entries       []T   `json:"entries"`
-		HasReachedMax bool  `json:"has_reached_max"`
-		TotalPages    int64 `json:"total_pages"`
-	}
 )
 
-func NewMessage(key, description string, field *string) *Message {
+func NewMessage(key, description string) *Message {
 	return &Message{
 		Key:         key,
 		Description: description,
-		Field:       field,
-	}
-}
-
-func (m *Message) WithField(s string) *Message {
-	cp := *m
-	cp.Field = &s
-	return &cp
-}
-
-func Entries[T any](entries []T, hasReachedMax bool, totalPages int64) *BaseEntries[T] {
-	return &BaseEntries[T]{
-		Entries:       entries,
-		HasReachedMax: hasReachedMax,
-		TotalPages:    totalPages,
 	}
 }
