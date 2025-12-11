@@ -8,18 +8,6 @@ import (
 	"entgo.io/ent/schema/field"
 )
 
-const (
-	RhesusPositive = "POSITIVE"
-	RhesusNegative = "NEGATIVE"
-)
-
-const (
-	BloodA  = "A"
-	BloodB  = "B"
-	BloodAB = "AB"
-	BloodO  = "O"
-)
-
 // BloodType holds the schema definition for the BloodType entity.
 type BloodType struct {
 	ent.Schema
@@ -36,11 +24,19 @@ func (BloodType) Mixin() []ent.Mixin {
 func (BloodType) Fields() []ent.Field {
 	return []ent.Field{
 		field.Enum("group").
-			Values(BloodA, BloodB, BloodAB, BloodO).
+			NamedValues(
+				"BloodA", "A",
+				"BloodB", "B",
+				"BloodAB", "AB",
+				"BloodO", "O",
+			).
 			StructTag(`json:"group"`).
 			Comment("comment:The ABO blood group classification (A, B, AB, or O)."),
 		field.Enum("rhesus").
-			Values(RhesusPositive, RhesusNegative).
+			NamedValues(
+				"Positive", "POSITIVE",
+				"Negative", "NEGATIVE",
+			).
 			StructTag(`json:"rhesus"`).
 			Nillable().
 			Comment("The Rhesus (Rh) factor of the blood group, either POSITIVE or NEGATIVE."),

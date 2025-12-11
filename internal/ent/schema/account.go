@@ -8,11 +8,6 @@ import (
 	"entgo.io/ent/schema/field"
 )
 
-const (
-	Female = "FEMALE"
-	Male   = "MALE"
-)
-
 // Account holds the schema definition for the Account entity.
 type Account struct {
 	ent.Schema
@@ -38,7 +33,12 @@ func (Account) Fields() []ent.Field {
 			MinLen(3).
 			MaxLen(164).
 			StructTag(`json:"full_name"`),
-		field.Enum("gender").Values(Female, Male).StructTag(`json:"gender"`),
+		field.Enum("gender").
+			NamedValues(
+				"Female", "FEMALE",
+				"Male", "MALE",
+			).
+			StructTag(`json:"gender"`),
 		field.String("email").
 			MinLen(3).
 			MaxLen(164).

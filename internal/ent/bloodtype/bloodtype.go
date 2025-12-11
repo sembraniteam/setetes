@@ -84,10 +84,10 @@ type Group string
 
 // Group values.
 const (
-	GroupA  Group = "A"
-	GroupB  Group = "B"
-	GroupAB Group = "AB"
-	GroupO  Group = "O"
+	GroupBloodA  Group = "A"
+	GroupBloodB  Group = "B"
+	GroupBloodAB Group = "AB"
+	GroupBloodO  Group = "O"
 )
 
 func (gr Group) String() string {
@@ -97,7 +97,7 @@ func (gr Group) String() string {
 // GroupValidator is a validator for the "group" field enum values. It is called by the builders before save.
 func GroupValidator(gr Group) error {
 	switch gr {
-	case GroupA, GroupB, GroupAB, GroupO:
+	case GroupBloodA, GroupBloodB, GroupBloodAB, GroupBloodO:
 		return nil
 	default:
 		return fmt.Errorf("bloodtype: invalid enum value for group field: %q", gr)
@@ -109,8 +109,8 @@ type Rhesus string
 
 // Rhesus values.
 const (
-	RhesusPOSITIVE Rhesus = "POSITIVE"
-	RhesusNEGATIVE Rhesus = "NEGATIVE"
+	RhesusPositive Rhesus = "POSITIVE"
+	RhesusNegative Rhesus = "NEGATIVE"
 )
 
 func (r Rhesus) String() string {
@@ -120,7 +120,7 @@ func (r Rhesus) String() string {
 // RhesusValidator is a validator for the "rhesus" field enum values. It is called by the builders before save.
 func RhesusValidator(r Rhesus) error {
 	switch r {
-	case RhesusPOSITIVE, RhesusNEGATIVE:
+	case RhesusPositive, RhesusNegative:
 		return nil
 	default:
 		return fmt.Errorf("bloodtype: invalid enum value for rhesus field: %q", r)

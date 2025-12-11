@@ -122,8 +122,8 @@ type Gender string
 
 // Gender values.
 const (
-	GenderFEMALE Gender = "FEMALE"
-	GenderMALE   Gender = "MALE"
+	GenderFemale Gender = "FEMALE"
+	GenderMale   Gender = "MALE"
 )
 
 func (ge Gender) String() string {
@@ -133,7 +133,7 @@ func (ge Gender) String() string {
 // GenderValidator is a validator for the "gender" field enum values. It is called by the builders before save.
 func GenderValidator(ge Gender) error {
 	switch ge {
-	case GenderFEMALE, GenderMALE:
+	case GenderFemale, GenderMale:
 		return nil
 	default:
 		return fmt.Errorf("account: invalid enum value for gender field: %q", ge)
