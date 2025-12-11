@@ -8,7 +8,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-//go:embed ascii
+//go:embed ASCII
 var ascii embed.FS
 
 func main() {
@@ -18,7 +18,7 @@ func main() {
 		Version: "0.0.1",
 	}
 
-	data, _ := ascii.ReadFile("ascii")
+	data, _ := ascii.ReadFile("ASCII")
 	println(string(data))
 
 	cmd.CompletionOptions.DisableDefaultCmd = true
