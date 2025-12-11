@@ -64,7 +64,7 @@ func (a App) Init() error {
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	select {
-	case _ = <-quit:
+	case <-quit:
 		fmt.Println("shutting down...")
 
 	case err = <-serverErrors:

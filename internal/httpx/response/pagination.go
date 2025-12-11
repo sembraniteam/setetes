@@ -8,10 +8,10 @@ import (
 
 type (
 	Pagination struct {
-		page   int    `form:"page" validate:"omitempty,numeric,min=1"`
-		limit  int    `form:"limit" validate:"omitempty,numeric,min=1,max=1000"`
+		page   int    `form:"page"   validate:"omitempty,numeric,min=1"`
+		limit  int    `form:"limit"  validate:"omitempty,numeric,min=1,max=1000"`
 		search string `form:"search" validate:"omitempty,max=100"`
-		sort   string `form:"sort" validate:"omitempty,oneof=ASC DESC" reason:"oneof=Order must be one of ASC, DESC"`
+		sort   string `form:"sort"   validate:"omitempty,oneof=ASC DESC"         reason:"oneof=Order must be one of ASC, DESC"`
 	}
 
 	BaseEntries[T any] struct {
@@ -21,7 +21,11 @@ type (
 	}
 )
 
-func Entries[T any](entries []T, hasReachedMax bool, totalPages int64) *BaseEntries[T] {
+func Entries[T any](
+	entries []T,
+	hasReachedMax bool,
+	totalPages int64,
+) *BaseEntries[T] {
 	return &BaseEntries[T]{
 		Entries:       entries,
 		HasReachedMax: hasReachedMax,
@@ -47,7 +51,9 @@ func (p *Pagination) GetLimit() int {
 
 func (p *Pagination) GetSearch() string {
 	s := strings.ToLower(strings.TrimSpace(p.search))
-	if (len(s)) > 100 {
+	maxLen := 100
+
+	if (len(s)) > maxLen {
 		s = s[:100]
 	}
 

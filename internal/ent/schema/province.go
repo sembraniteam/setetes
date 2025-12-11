@@ -17,9 +17,16 @@ type Province struct {
 // Fields of the Province.
 func (Province) Fields() []ent.Field {
 	return []ent.Field{
-		field.UUID("id", uuid.UUID{}).Immutable().Unique().StructTag(`json:"id"`).
+		field.UUID("id", uuid.UUID{}).
+			Immutable().
+			Unique().
+			StructTag(`json:"id"`).
 			Annotations(entsql.DefaultExpr("uuid_generate_v4()")),
-		field.String("bps_code").MaxLen(2).Unique().Annotations(entsql.IndexType("HASH")).StructTag(`json:"bps_code"`).
+		field.String("bps_code").
+			MaxLen(2).
+			Unique().
+			Annotations(entsql.IndexType("HASH")).
+			StructTag(`json:"bps_code"`).
 			SchemaType(map[string]string{dialect.Postgres: "char(2)"}),
 		field.String("name").StructTag(`json:"name"`),
 	}

@@ -1,0 +1,61 @@
+version: "2"
+
+linters:
+  enable:
+    - asciicheck
+    - gocheckcompilerdirectives
+    - godot
+    - godox
+    - mnd
+    - modernize
+    - nakedret
+    - nilerr
+    - nilnesserr
+    - nolintlint
+    - nlreturn
+    - reassign
+    - sqlclosecheck
+    - staticcheck
+    - unused
+    - whitespace
+
+  settings:
+    mnd:
+      checks:
+        - argument
+        - case
+        - condition
+        - operation
+        - return
+        - assign
+
+      ignored-files:
+        - 'internal/ent/schema/.+\.go$'
+
+    nakedret:
+      max-func-lines: 35
+
+formatters:
+  enable:
+    - gci
+    - gofmt
+    - gofumpt
+    - goimports
+    - golines
+
+  settings:
+    gofmt:
+      simplify: true
+      rewrite-rules:
+        - pattern: 'interface{}'
+          replacement: 'any'
+        - pattern: 'a[b:len(a)]'
+          replacement: 'a[b:]'
+
+    gofumpt:
+      module-path: github.com/megalodev/setetes
+      extra-rules: true
+
+    golines:
+      max-len: 80
+      shorten-comments: true

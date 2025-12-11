@@ -22,7 +22,10 @@ func (Password) Mixin() []ent.Mixin {
 // Fields of the Password.
 func (Password) Fields() []ent.Field {
 	return []ent.Field{
-		field.String("hash").Unique().Sensitive().Comment("Hashed password using Argon2.").
+		field.String("hash").
+			Unique().
+			Sensitive().
+			Comment("Hashed password using Argon2.").
 			Annotations(entsql.WithComments(true)),
 	}
 }

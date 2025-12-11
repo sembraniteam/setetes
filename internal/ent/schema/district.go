@@ -17,9 +17,16 @@ type District struct {
 // Fields of the District.
 func (District) Fields() []ent.Field {
 	return []ent.Field{
-		field.UUID("id", uuid.UUID{}).Immutable().Unique().StructTag(`json:"id"`).
+		field.UUID("id", uuid.UUID{}).
+			Immutable().
+			Unique().
+			StructTag(`json:"id"`).
 			Annotations(entsql.DefaultExpr("uuid_generate_v4()")),
-		field.String("bps_code").MaxLen(7).Unique().Annotations(entsql.IndexType("HASH")).StructTag(`json:"bps_code"`).
+		field.String("bps_code").
+			MaxLen(7).
+			Unique().
+			Annotations(entsql.IndexType("HASH")).
+			StructTag(`json:"bps_code"`).
 			SchemaType(map[string]string{dialect.Postgres: "char(7)"}),
 		field.String("name").StructTag(`json:"name"`),
 	}
@@ -28,7 +35,12 @@ func (District) Fields() []ent.Field {
 // Edges of the District.
 func (District) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.To("city", City.Type).StorageKey(edge.Column("city_id")).Annotations(entsql.OnDelete(entsql.NoAction)),
-		edge.From("subdistrict", Subdistrict.Type).Ref("district").Unique().Required(),
+		edge.To("city", City.Type).
+			StorageKey(edge.Column("city_id")).
+			Annotations(entsql.OnDelete(entsql.NoAction)),
+		edge.From("subdistrict", Subdistrict.Type).
+			Ref("district").
+			Unique().
+			Required(),
 	}
 }

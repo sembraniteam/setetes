@@ -14,6 +14,8 @@ import (
 	"github.com/megalodev/setetes/internal/httpx"
 )
 
+const n = 2
+
 var (
 	trans    ut.Translator
 	validate = validator.New()
@@ -41,9 +43,9 @@ func init() {
 	}
 
 	validate.RegisterTagNameFunc(func(fld reflect.StructField) string {
-		name := strings.SplitN(fld.Tag.Get("form"), ",", 2)[0]
+		name := strings.SplitN(fld.Tag.Get("form"), ",", n)[0]
 		if name == "" || name == "-" {
-			name = strings.SplitN(fld.Tag.Get("json"), ",", 2)[0]
+			name = strings.SplitN(fld.Tag.Get("json"), ",", n)[0]
 		}
 
 		if name == "-" {
@@ -121,10 +123,10 @@ func validateStruct(data any) (*int16, *Message) {
 
 func customReason(field reflect.StructField, tag string) string {
 	reasonTag := field.Tag.Get("reason")
-	rules := strings.Split(reasonTag, ";")
+	rules := strings.SplitSeq(reasonTag, ";")
 
-	for _, rule := range rules {
-		parts := strings.SplitN(rule, "=", 2)
+	for rule := range rules {
+		parts := strings.SplitN(rule, "=", n)
 		if len(parts) == 2 && parts[0] == tag {
 			return parts[1]
 		}

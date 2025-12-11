@@ -31,14 +31,12 @@ func exceeded(ctx *gin.Context, t *TokenBucket, key string) {
 	ctx.Header(headerRateLimitUsed, fmt.Sprintf("%d", used))
 
 	if !allowed {
-		retryAfter := int(expiry.Unix() - time.Now().Unix())
-		if retryAfter < 0 {
-			retryAfter = 0
-		}
+		retryAfter := max(int(expiry.Unix()-time.Now().Unix()), 0)
 
 		ctx.Header(headerRetryAfter, fmt.Sprintf("%d", retryAfter))
 		ctx.Abort()
 		response.ToManyRequest(ctx)
+
 		return
 	}
 

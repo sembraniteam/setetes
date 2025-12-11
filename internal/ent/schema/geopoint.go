@@ -20,9 +20,10 @@ func (g GeoPoint) Value() (driver.Value, error) {
 	return wkt.Marshal(g.Point)
 }
 
-func (g *GeoPoint) Scan(src interface{}) error {
+func (g *GeoPoint) Scan(src any) error {
 	if src == nil {
 		g.Point = nil
+
 		return nil
 	}
 

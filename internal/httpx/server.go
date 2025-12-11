@@ -12,6 +12,8 @@ import (
 	"github.com/samber/do/v2"
 )
 
+const Timeout = time.Second * 30
+
 type (
 	Router func(e *gin.Engine, i do.Injector)
 
@@ -37,10 +39,10 @@ func NewServer(c *internal.Config, opts ...Option) Server {
 		mode: c.App.Mode,
 		Server: &http.Server{
 			Addr:              fmt.Sprintf("%s:%d", c.App.Host, c.App.Port),
-			ReadTimeout:       time.Second * 30,
-			WriteTimeout:      time.Second * 30,
-			ReadHeaderTimeout: time.Second * 30,
-			IdleTimeout:       time.Second * 30,
+			ReadTimeout:       Timeout,
+			WriteTimeout:      Timeout,
+			ReadHeaderTimeout: Timeout,
+			IdleTimeout:       Timeout,
 		},
 	}
 
@@ -49,17 +51,18 @@ func NewServer(c *internal.Config, opts ...Option) Server {
 	}
 
 	config.engine = config.buildEngine()
-	config.Server.Handler = config.engine
+	config.Handler = config.engine
+
 	return config
 }
 
 func (c *Config) Run() error {
 	var err error
 
-	if c.Server.TLSConfig != nil {
-		err = c.Server.ListenAndServeTLS("", "")
+	if c.TLSConfig != nil {
+		err = c.ListenAndServeTLS("", "")
 	} else {
-		err = c.Server.ListenAndServe()
+		err = c.ListenAndServe()
 	}
 
 	if err != nil && !errors.Is(err, http.ErrServerClosed) {
@@ -70,11 +73,12 @@ func (c *Config) Run() error {
 }
 
 func (c *Config) Stop() error {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), Timeout)
 	defer cancel()
 
-	if err := c.Server.Shutdown(ctx); err != nil {
-		_ = c.Server.Close()
+	err := c.Shutdown(ctx)
+	if err != nil {
+		_ = c.Close()
 	}
 
 	return nil
@@ -111,5 +115,6 @@ func (c *Config) buildEngine() *gin.Engine {
 	g := gin.Default()
 	g.Use(c.middleware...)
 	c.routerFunc(g, c.injector)
+
 	return g
 }

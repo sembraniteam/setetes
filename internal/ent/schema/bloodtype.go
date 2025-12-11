@@ -35,9 +35,14 @@ func (BloodType) Mixin() []ent.Mixin {
 // Fields of the BloodType.
 func (BloodType) Fields() []ent.Field {
 	return []ent.Field{
-		field.Enum("group").Values(BloodA, BloodB, BloodAB, BloodO).StructTag(`json:"group"`).
+		field.Enum("group").
+			Values(BloodA, BloodB, BloodAB, BloodO).
+			StructTag(`json:"group"`).
 			Comment("comment:The ABO blood group classification (A, B, AB, or O)."),
-		field.Enum("rhesus").Values(RhesusPositive, RhesusNegative).StructTag(`json:"rhesus"`).Nillable().
+		field.Enum("rhesus").
+			Values(RhesusPositive, RhesusNegative).
+			StructTag(`json:"rhesus"`).
+			Nillable().
 			Comment("The Rhesus (Rh) factor of the blood group, either POSITIVE or NEGATIVE."),
 	}
 }
@@ -45,13 +50,17 @@ func (BloodType) Fields() []ent.Field {
 // Edges of the BloodType.
 func (BloodType) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.From("account", Account.Type).Ref("blood_type").Unique().Required(),
+		edge.From("account", Account.Type).
+			Ref("blood_type").
+			Unique().
+			Required(),
 	}
 }
 
 // Annotations ot the BloodType.
 func (BloodType) Annotations() []schema.Annotation {
 	withComment := true
+
 	return []schema.Annotation{
 		&entsql.Annotation{
 			WithComments: &withComment,

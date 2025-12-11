@@ -4,13 +4,22 @@ var (
 	MsgPong                = NewMessage("PONG", "PONG")
 	MsgUnknownError        = NewMessage("UNKNOWN_ERROR", "Unknown error")
 	MsgToManyRequest       = NewMessage("TO_MANY_REQUEST", "To many request")
-	MsgInternalServerError = NewMessage("INTERNAL_ERROR", "Internal server error")
-	MsgUnauthorized        = NewMessage("UNAUTHORIZED", "Unauthorized")
-	MsgInvalidBody         = NewMessage("INVALID_BODY", "Invalid request body")
-	MsgInvalidRequestID    = NewMessage("INVALID_X_REQUEST_ID", "Invalid X-Request-ID value")
-	MsgInvalidJSON         = NewMessage("INVALID_JSON", "Invalid JSON format")
-	MsgInvalidForm         = NewMessage("INVALID_FORM", "Invalid FORM format")
-	MsgInvalidQuery        = NewMessage("INVALID_QUERY_PARAM", "Invalid query param format")
+	MsgInternalServerError = NewMessage(
+		"INTERNAL_ERROR",
+		"Internal server error",
+	)
+	MsgUnauthorized     = NewMessage("UNAUTHORIZED", "Unauthorized")
+	MsgInvalidBody      = NewMessage("INVALID_BODY", "Invalid request body")
+	MsgInvalidRequestID = NewMessage(
+		"INVALID_X_REQUEST_ID",
+		"Invalid X-Request-ID value",
+	)
+	MsgInvalidJSON  = NewMessage("INVALID_JSON", "Invalid JSON format")
+	MsgInvalidForm  = NewMessage("INVALID_FORM", "Invalid FORM format")
+	MsgInvalidQuery = NewMessage(
+		"INVALID_QUERY_PARAM",
+		"Invalid query param format",
+	)
 )
 
 type (

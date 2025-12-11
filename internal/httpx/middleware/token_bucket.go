@@ -5,6 +5,11 @@ import (
 	"time"
 )
 
+const (
+	threshold = 20
+	ttl       = time.Minute * 1
+)
+
 type (
 	TokenInfo struct {
 		RemainingTokens int32
@@ -36,7 +41,7 @@ func NewTokenBucket(threshold int32, ttl time.Duration) *TokenBucket {
 }
 
 func Default() *TokenBucket {
-	return NewTokenBucket(20, 1*time.Minute)
+	return NewTokenBucket(threshold, ttl)
 }
 
 func (t *TokenBucket) Allow(key string) bool {
@@ -52,6 +57,7 @@ func (t *TokenBucket) Allow(key string) bool {
 		}
 
 		t.tokens[key] = info
+
 		return true
 	}
 
@@ -62,6 +68,7 @@ func (t *TokenBucket) Allow(key string) bool {
 		}
 
 		t.tokens[key] = info
+
 		return true
 	}
 
@@ -89,6 +96,7 @@ func (t *TokenBucket) cleanupExpiredTokens() {
 			t.mx.Unlock()
 		case <-t.stopCleanup:
 			t.cleanupTicker.Stop()
+
 			return
 		}
 	}
@@ -98,7 +106,9 @@ func (t *TokenBucket) Stop() {
 	close(t.stopCleanup)
 }
 
-func (t *TokenBucket) GetTokenInfo(key string) (remaining int32, expiry time.Time, limit int32) {
+func (t *TokenBucket) GetTokenInfo(
+	key string,
+) (remaining int32, expiry time.Time, limit int32) {
 	t.mx.RLock()
 	defer t.mx.RUnlock()
 
@@ -112,7 +122,9 @@ func (t *TokenBucket) GetTokenInfo(key string) (remaining int32, expiry time.Tim
 	return info.RemainingTokens, info.Expiry, t.threshold
 }
 
-func (t *TokenBucket) AllowAndGetInfo(key string) (allowed bool, remaining int32, expiry time.Time, limit int32, used int32) {
+func (t *TokenBucket) AllowAndGetInfo(
+	key string,
+) (allowed bool, remaining int32, expiry time.Time, limit, used int32) {
 	t.mx.Lock()
 	defer t.mx.Unlock()
 
@@ -125,6 +137,7 @@ func (t *TokenBucket) AllowAndGetInfo(key string) (allowed bool, remaining int32
 			Expiry:          now.Add(t.ttl),
 		}
 		t.tokens[key] = info
+
 		return true, info.RemainingTokens, info.Expiry, t.threshold, 1
 	}
 
@@ -134,6 +147,7 @@ func (t *TokenBucket) AllowAndGetInfo(key string) (allowed bool, remaining int32
 			Expiry:          now.Add(t.ttl),
 		}
 		t.tokens[key] = info
+
 		return true, info.RemainingTokens, info.Expiry, t.threshold, 1
 	}
 
@@ -141,9 +155,11 @@ func (t *TokenBucket) AllowAndGetInfo(key string) (allowed bool, remaining int32
 		info.RemainingTokens--
 		t.tokens[key] = info
 		usedTokens := t.threshold - info.RemainingTokens
+
 		return true, info.RemainingTokens, info.Expiry, t.threshold, usedTokens
 	}
 
 	usedTokens := t.threshold - info.RemainingTokens
+
 	return false, 0, info.Expiry, t.threshold, usedTokens
 }
