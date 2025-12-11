@@ -1,6 +1,16 @@
+# Jetbrains IDE configurations
 .idea
-docker/postgres/password
-migrations/
 
-atlas.hcl
+# Docker default password
+docker/postgres/password
+
+# Application migrations
+migrations/*
+
+# Application configurations
 config.yml
+
+# Atlas configurations
+atlas.hcl
+
+.DS_Store
