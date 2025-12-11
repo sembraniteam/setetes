@@ -8,8 +8,9 @@ import (
 
 func Routes(e *gin.Engine, i do.Injector) {
 	v1 := e.Group("/v1")
-
-	v1.GET("/ping", func(c *gin.Context) {
-		response.Ok(c, response.MsgPong, nil)
-	})
+	{
+		v1.GET("/ping", func(c *gin.Context) {
+			response.Ok(c, response.MsgPong, nil)
+		})
+	}
 }
