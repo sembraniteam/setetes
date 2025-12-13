@@ -43,3 +43,14 @@ func RandToken() string {
 
 	return base64.URLEncoding.EncodeToString(b)
 }
+
+// RandBytes returns n-length crypto-random bytes.
+func RandBytes(n uint32) ([]byte, error) {
+	b := make([]byte, n)
+	_, err := rand.Read(b)
+	if err != nil {
+		return nil, err
+	}
+
+	return b, nil
+}

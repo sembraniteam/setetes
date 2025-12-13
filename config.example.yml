@@ -15,3 +15,12 @@ postgres:
   max_idle_connections: 5
   connection_max_lifetime: 10 # in minutes
   connection_max_idle_time: 15 # in minutes
+
+password:
+  pepper: MIN_32_CHARACTERS
+  argon2:
+    memory: 12288 # in KiB
+    iterations: 3
+    parallelism: 1
+    salt_length: 16 # min. 16 length
+    key_length: 16 # min. 16 length
