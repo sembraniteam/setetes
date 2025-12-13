@@ -89,7 +89,7 @@ func (c *Config) validate() error {
 }
 
 func (c *Config) Hash(text, salt []byte) (*Raw, error) {
-	if text == nil || len(text) == 0 {
+	if len(text) == 0 {
 		return nil, errors.New("invalid password")
 	}
 
