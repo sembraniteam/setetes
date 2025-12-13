@@ -3,10 +3,9 @@ package rbac
 import (
 	_ "embed"
 
-	"github.com/casbin/casbin/v2"
-	"github.com/casbin/casbin/v2/model"
-	entadapter "github.com/casbin/ent-adapter"
-	"github.com/casbin/ent-adapter/ent"
+	"github.com/casbin/casbin/v3"
+	"github.com/casbin/casbin/v3/model"
+	"github.com/megalodev/setetes/internal/ent"
 )
 
 //go:embed model.conf
@@ -17,7 +16,7 @@ type Manager struct {
 }
 
 func New(client *ent.Client) (*Manager, error) {
-	a, err := entadapter.NewAdapterWithClient(client)
+	a, err := NewAdapter(client)
 	if err != nil {
 		return nil, err
 	}
@@ -27,16 +26,16 @@ func New(client *ent.Client) (*Manager, error) {
 		return nil, err
 	}
 
-	enforcer, err := casbin.NewSyncedEnforcer(m, a)
+	e, err := casbin.NewSyncedEnforcer(m, a)
 	if err != nil {
 		return nil, err
 	}
 
-	if err = enforcer.LoadPolicy(); err != nil {
+	if err = e.LoadPolicy(); err != nil {
 		return nil, err
 	}
 
-	return &Manager{enforcer: enforcer}, nil
+	return &Manager{enforcer: e}, nil
 }
 
 func (m *Manager) GetEnforcer() casbin.IEnforcer {

@@ -14,6 +14,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"github.com/megalodev/setetes/internal/ent/account"
 	"github.com/megalodev/setetes/internal/ent/bloodtype"
+	"github.com/megalodev/setetes/internal/ent/casbinrule"
 	"github.com/megalodev/setetes/internal/ent/city"
 	"github.com/megalodev/setetes/internal/ent/district"
 	"github.com/megalodev/setetes/internal/ent/password"
@@ -82,6 +83,7 @@ func checkColumn(t, c string) error {
 		columnCheck = sql.NewColumnCheck(map[string]func(string) bool{
 			account.Table:     account.ValidColumn,
 			bloodtype.Table:   bloodtype.ValidColumn,
+			casbinrule.Table:  casbinrule.ValidColumn,
 			city.Table:        city.ValidColumn,
 			district.Table:    district.ValidColumn,
 			pmilocation.Table: pmilocation.ValidColumn,

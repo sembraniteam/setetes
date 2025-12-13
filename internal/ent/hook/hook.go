@@ -33,6 +33,18 @@ func (f BloodTypeFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, e
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.BloodTypeMutation", m)
 }
 
+// The CasbinRuleFunc type is an adapter to allow the use of ordinary
+// function as CasbinRule mutator.
+type CasbinRuleFunc func(context.Context, *ent.CasbinRuleMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f CasbinRuleFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.CasbinRuleMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.CasbinRuleMutation", m)
+}
+
 // The CityFunc type is an adapter to allow the use of ordinary
 // function as City mutator.
 type CityFunc func(context.Context, *ent.CityMutation) (ent.Value, error)

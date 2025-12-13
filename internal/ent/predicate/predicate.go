@@ -12,6 +12,9 @@ type Account func(*sql.Selector)
 // BloodType is the predicate function for bloodtype builders.
 type BloodType func(*sql.Selector)
 
+// CasbinRule is the predicate function for casbinrule builders.
+type CasbinRule func(*sql.Selector)
+
 // City is the predicate function for city builders.
 type City func(*sql.Selector)
 

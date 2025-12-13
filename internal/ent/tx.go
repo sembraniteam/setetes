@@ -16,6 +16,8 @@ type Tx struct {
 	Account *AccountClient
 	// BloodType is the client for interacting with the BloodType builders.
 	BloodType *BloodTypeClient
+	// CasbinRule is the client for interacting with the CasbinRule builders.
+	CasbinRule *CasbinRuleClient
 	// City is the client for interacting with the City builders.
 	City *CityClient
 	// District is the client for interacting with the District builders.
@@ -161,6 +163,7 @@ func (tx *Tx) Client() *Client {
 func (tx *Tx) init() {
 	tx.Account = NewAccountClient(tx.config)
 	tx.BloodType = NewBloodTypeClient(tx.config)
+	tx.CasbinRule = NewCasbinRuleClient(tx.config)
 	tx.City = NewCityClient(tx.config)
 	tx.District = NewDistrictClient(tx.config)
 	tx.PMILocation = NewPMILocationClient(tx.config)

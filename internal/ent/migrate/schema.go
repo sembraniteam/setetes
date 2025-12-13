@@ -70,6 +70,23 @@ var (
 			},
 		},
 	}
+	// CasbinRuleColumns holds the columns for the "casbin_rule" table.
+	CasbinRuleColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "ptype", Type: field.TypeString, Default: ""},
+		{Name: "v0", Type: field.TypeString, Default: ""},
+		{Name: "v1", Type: field.TypeString, Default: ""},
+		{Name: "v2", Type: field.TypeString, Default: ""},
+		{Name: "v3", Type: field.TypeString, Default: ""},
+		{Name: "v4", Type: field.TypeString, Default: ""},
+		{Name: "v5", Type: field.TypeString, Default: ""},
+	}
+	// CasbinRuleTable holds the schema information for the "casbin_rule" table.
+	CasbinRuleTable = &schema.Table{
+		Name:       "casbin_rule",
+		Columns:    CasbinRuleColumns,
+		PrimaryKey: []*schema.Column{CasbinRuleColumns[0]},
+	}
 	// CitiesColumns holds the columns for the "cities" table.
 	CitiesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUUID, Unique: true, Default: schema.Expr("uuid_generate_v4()")},
@@ -218,6 +235,7 @@ var (
 	Tables = []*schema.Table{
 		AccountsTable,
 		BloodTypesTable,
+		CasbinRuleTable,
 		CitiesTable,
 		DistrictsTable,
 		PmiLocationsTable,
@@ -236,6 +254,9 @@ func init() {
 		"phone_number":     "length(phone_number) >= 11 and length(phone_number) <= 13",
 	}
 	BloodTypesTable.ForeignKeys[0].RefTable = AccountsTable
+	CasbinRuleTable.Annotation = &entsql.Annotation{
+		Table: "casbin_rule",
+	}
 	CitiesTable.ForeignKeys[0].RefTable = DistrictsTable
 	DistrictsTable.ForeignKeys[0].RefTable = SubdistrictsTable
 	PmiLocationsTable.Annotation = &entsql.Annotation{}
