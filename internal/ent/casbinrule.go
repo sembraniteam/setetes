@@ -17,19 +17,19 @@ type CasbinRule struct {
 	// ID of the ent.
 	ID int `json:"id,omitempty"`
 	// Ptype holds the value of the "Ptype" field.
-	Ptype string `json:"Ptype,omitempty"`
+	Ptype string `json:"-"`
 	// V0 holds the value of the "V0" field.
-	V0 string `json:"V0,omitempty"`
+	V0 string `json:"-"`
 	// V1 holds the value of the "V1" field.
-	V1 string `json:"V1,omitempty"`
+	V1 string `json:"-"`
 	// V2 holds the value of the "V2" field.
-	V2 string `json:"V2,omitempty"`
+	V2 string `json:"-"`
 	// V3 holds the value of the "V3" field.
-	V3 string `json:"V3,omitempty"`
+	V3 string `json:"-"`
 	// V4 holds the value of the "V4" field.
-	V4 string `json:"V4,omitempty"`
+	V4 string `json:"-"`
 	// V5 holds the value of the "V5" field.
-	V5           string `json:"V5,omitempty"`
+	V5           string `json:"-"`
 	selectValues sql.SelectValues
 }
 
@@ -141,26 +141,19 @@ func (_m *CasbinRule) String() string {
 	var builder strings.Builder
 	builder.WriteString("CasbinRule(")
 	builder.WriteString(fmt.Sprintf("id=%v, ", _m.ID))
-	builder.WriteString("Ptype=")
-	builder.WriteString(_m.Ptype)
+	builder.WriteString("Ptype=<sensitive>")
 	builder.WriteString(", ")
-	builder.WriteString("V0=")
-	builder.WriteString(_m.V0)
+	builder.WriteString("V0=<sensitive>")
 	builder.WriteString(", ")
-	builder.WriteString("V1=")
-	builder.WriteString(_m.V1)
+	builder.WriteString("V1=<sensitive>")
 	builder.WriteString(", ")
-	builder.WriteString("V2=")
-	builder.WriteString(_m.V2)
+	builder.WriteString("V2=<sensitive>")
 	builder.WriteString(", ")
-	builder.WriteString("V3=")
-	builder.WriteString(_m.V3)
+	builder.WriteString("V3=<sensitive>")
 	builder.WriteString(", ")
-	builder.WriteString("V4=")
-	builder.WriteString(_m.V4)
+	builder.WriteString("V4=<sensitive>")
 	builder.WriteString(", ")
-	builder.WriteString("V5=")
-	builder.WriteString(_m.V5)
+	builder.WriteString("V5=<sensitive>")
 	builder.WriteByte(')')
 	return builder.String()
 }
