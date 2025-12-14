@@ -5,6 +5,7 @@ import (
 	"encoding/base64"
 	"errors"
 	"fmt"
+	"math"
 	"strings"
 
 	"github.com/megalodev/setetes/internal"
@@ -156,6 +157,11 @@ func (c *Config) VerifyString(text []byte, hashString string) (bool, error) {
 		return false, err
 	}
 
+	hashLen := len(params.hash)
+	if hashLen > math.MaxUint32 {
+		return false, errors.New("hash length overflow")
+	}
+
 	raw := &Raw{
 		config: Config{
 			pepper:      c.pepper,
@@ -163,7 +169,7 @@ func (c *Config) VerifyString(text []byte, hashString string) (bool, error) {
 			iterations:  params.iterations,
 			parallelism: params.parallelism,
 			saltLength:  c.saltLength,
-			keyLength:   uint32(len(params.hash)),
+			keyLength:   uint32(hashLen),
 		},
 		salt: params.salt,
 		hash: params.hash,
