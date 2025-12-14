@@ -1,0 +1,23 @@
+# This CITATION.cff file was generated with cffinit.
+# Visit https://bit.ly/cffinit to generate yours today!
+
+cff-version: 1.2.0
+title: Setetes
+message: >-
+  If you use this software, please cite it using the
+  metadata from this file.
+type: software
+authors:
+  - given-names: Ahmad
+    family-names: Rifa'i
+    email: develop.rifai@gmail.com
+    affiliation: Megalodev
+repository-code: 'https://github.com/megalodev/setetes'
+keywords:
+  - blood-donation
+  - palang-merah-indonesia
+  - setetes
+license: Apache-2.0
+commit: 13c257978c63094ecd649ac4be89694c2948f442
+version: 0.0.1
+date-released: '2025-12-14'
