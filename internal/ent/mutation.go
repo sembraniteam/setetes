@@ -48,34 +48,35 @@ const (
 // AccountMutation represents an operation that mutates the Account nodes in the graph.
 type AccountMutation struct {
 	config
-	op                Op
-	typ               string
-	id                *uuid.UUID
-	created_at        *int64
-	addcreated_at     *int64
-	updated_at        *int64
-	addupdated_at     *int64
-	deleted_at        *int64
-	adddeleted_at     *int64
-	national_id_hash  *string
-	full_name         *string
-	gender            *account.Gender
-	email             *string
-	country_iso_code  *string
-	dial_code         *string
-	phone_number      *string
-	activated         *bool
-	locked            *bool
-	temp_locked_at    *int64
-	addtemp_locked_at *int64
-	clearedFields     map[string]struct{}
-	blood_type        *uuid.UUID
-	clearedblood_type bool
-	password          *uuid.UUID
-	clearedpassword   bool
-	done              bool
-	oldValue          func(context.Context) (*Account, error)
-	predicates        []predicate.Account
+	op                 Op
+	typ                string
+	id                 *uuid.UUID
+	created_at         *int64
+	addcreated_at      *int64
+	updated_at         *int64
+	addupdated_at      *int64
+	deleted_at         *int64
+	adddeleted_at      *int64
+	national_id_hash   *string
+	national_id_masked *string
+	full_name          *string
+	gender             *account.Gender
+	email              *string
+	country_iso_code   *string
+	dial_code          *string
+	phone_number       *string
+	activated          *bool
+	locked             *bool
+	temp_locked_at     *int64
+	addtemp_locked_at  *int64
+	clearedFields      map[string]struct{}
+	blood_type         *uuid.UUID
+	clearedblood_type  bool
+	password           *uuid.UUID
+	clearedpassword    bool
+	done               bool
+	oldValue           func(context.Context) (*Account, error)
+	predicates         []predicate.Account
 }
 
 var _ ent.Mutation = (*AccountMutation)(nil)
@@ -384,6 +385,42 @@ func (m *AccountMutation) OldNationalIDHash(ctx context.Context) (v string, err 
 // ResetNationalIDHash resets all changes to the "national_id_hash" field.
 func (m *AccountMutation) ResetNationalIDHash() {
 	m.national_id_hash = nil
+}
+
+// SetNationalIDMasked sets the "national_id_masked" field.
+func (m *AccountMutation) SetNationalIDMasked(s string) {
+	m.national_id_masked = &s
+}
+
+// NationalIDMasked returns the value of the "national_id_masked" field in the mutation.
+func (m *AccountMutation) NationalIDMasked() (r string, exists bool) {
+	v := m.national_id_masked
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldNationalIDMasked returns the old "national_id_masked" field's value of the Account entity.
+// If the Account object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AccountMutation) OldNationalIDMasked(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldNationalIDMasked is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldNationalIDMasked requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldNationalIDMasked: %w", err)
+	}
+	return oldValue.NationalIDMasked, nil
+}
+
+// ResetNationalIDMasked resets all changes to the "national_id_masked" field.
+func (m *AccountMutation) ResetNationalIDMasked() {
+	m.national_id_masked = nil
 }
 
 // SetFullName sets the "full_name" field.
@@ -842,7 +879,7 @@ func (m *AccountMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *AccountMutation) Fields() []string {
-	fields := make([]string, 0, 13)
+	fields := make([]string, 0, 14)
 	if m.created_at != nil {
 		fields = append(fields, account.FieldCreatedAt)
 	}
@@ -854,6 +891,9 @@ func (m *AccountMutation) Fields() []string {
 	}
 	if m.national_id_hash != nil {
 		fields = append(fields, account.FieldNationalIDHash)
+	}
+	if m.national_id_masked != nil {
+		fields = append(fields, account.FieldNationalIDMasked)
 	}
 	if m.full_name != nil {
 		fields = append(fields, account.FieldFullName)
@@ -898,6 +938,8 @@ func (m *AccountMutation) Field(name string) (ent.Value, bool) {
 		return m.DeletedAt()
 	case account.FieldNationalIDHash:
 		return m.NationalIDHash()
+	case account.FieldNationalIDMasked:
+		return m.NationalIDMasked()
 	case account.FieldFullName:
 		return m.FullName()
 	case account.FieldGender:
@@ -933,6 +975,8 @@ func (m *AccountMutation) OldField(ctx context.Context, name string) (ent.Value,
 		return m.OldDeletedAt(ctx)
 	case account.FieldNationalIDHash:
 		return m.OldNationalIDHash(ctx)
+	case account.FieldNationalIDMasked:
+		return m.OldNationalIDMasked(ctx)
 	case account.FieldFullName:
 		return m.OldFullName(ctx)
 	case account.FieldGender:
@@ -987,6 +1031,13 @@ func (m *AccountMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetNationalIDHash(v)
+		return nil
+	case account.FieldNationalIDMasked:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetNationalIDMasked(v)
 		return nil
 	case account.FieldFullName:
 		v, ok := value.(string)
@@ -1162,6 +1213,9 @@ func (m *AccountMutation) ResetField(name string) error {
 		return nil
 	case account.FieldNationalIDHash:
 		m.ResetNationalIDHash()
+		return nil
+	case account.FieldNationalIDMasked:
+		m.ResetNationalIDMasked()
 		return nil
 	case account.FieldFullName:
 		m.ResetFullName()

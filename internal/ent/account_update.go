@@ -78,6 +78,20 @@ func (_u *AccountUpdate) SetNillableNationalIDHash(v *string) *AccountUpdate {
 	return _u
 }
 
+// SetNationalIDMasked sets the "national_id_masked" field.
+func (_u *AccountUpdate) SetNationalIDMasked(v string) *AccountUpdate {
+	_u.mutation.SetNationalIDMasked(v)
+	return _u
+}
+
+// SetNillableNationalIDMasked sets the "national_id_masked" field if the given value is not nil.
+func (_u *AccountUpdate) SetNillableNationalIDMasked(v *string) *AccountUpdate {
+	if v != nil {
+		_u.SetNationalIDMasked(*v)
+	}
+	return _u
+}
+
 // SetFullName sets the "full_name" field.
 func (_u *AccountUpdate) SetFullName(v string) *AccountUpdate {
 	_u.mutation.SetFullName(v)
@@ -319,6 +333,11 @@ func (_u *AccountUpdate) check() error {
 			return &ValidationError{Name: "national_id_hash", err: fmt.Errorf(`ent: validator failed for field "Account.national_id_hash": %w`, err)}
 		}
 	}
+	if v, ok := _u.mutation.NationalIDMasked(); ok {
+		if err := account.NationalIDMaskedValidator(v); err != nil {
+			return &ValidationError{Name: "national_id_masked", err: fmt.Errorf(`ent: validator failed for field "Account.national_id_masked": %w`, err)}
+		}
+	}
 	if v, ok := _u.mutation.FullName(); ok {
 		if err := account.FullNameValidator(v); err != nil {
 			return &ValidationError{Name: "full_name", err: fmt.Errorf(`ent: validator failed for field "Account.full_name": %w`, err)}
@@ -337,6 +356,11 @@ func (_u *AccountUpdate) check() error {
 	if v, ok := _u.mutation.CountryIsoCode(); ok {
 		if err := account.CountryIsoCodeValidator(v); err != nil {
 			return &ValidationError{Name: "country_iso_code", err: fmt.Errorf(`ent: validator failed for field "Account.country_iso_code": %w`, err)}
+		}
+	}
+	if v, ok := _u.mutation.DialCode(); ok {
+		if err := account.DialCodeValidator(v); err != nil {
+			return &ValidationError{Name: "dial_code", err: fmt.Errorf(`ent: validator failed for field "Account.dial_code": %w`, err)}
 		}
 	}
 	if v, ok := _u.mutation.PhoneNumber(); ok {
@@ -378,6 +402,9 @@ func (_u *AccountUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if value, ok := _u.mutation.NationalIDHash(); ok {
 		_spec.SetField(account.FieldNationalIDHash, field.TypeString, value)
+	}
+	if value, ok := _u.mutation.NationalIDMasked(); ok {
+		_spec.SetField(account.FieldNationalIDMasked, field.TypeString, value)
 	}
 	if value, ok := _u.mutation.FullName(); ok {
 		_spec.SetField(account.FieldFullName, field.TypeString, value)
@@ -531,6 +558,20 @@ func (_u *AccountUpdateOne) SetNationalIDHash(v string) *AccountUpdateOne {
 func (_u *AccountUpdateOne) SetNillableNationalIDHash(v *string) *AccountUpdateOne {
 	if v != nil {
 		_u.SetNationalIDHash(*v)
+	}
+	return _u
+}
+
+// SetNationalIDMasked sets the "national_id_masked" field.
+func (_u *AccountUpdateOne) SetNationalIDMasked(v string) *AccountUpdateOne {
+	_u.mutation.SetNationalIDMasked(v)
+	return _u
+}
+
+// SetNillableNationalIDMasked sets the "national_id_masked" field if the given value is not nil.
+func (_u *AccountUpdateOne) SetNillableNationalIDMasked(v *string) *AccountUpdateOne {
+	if v != nil {
+		_u.SetNationalIDMasked(*v)
 	}
 	return _u
 }
@@ -789,6 +830,11 @@ func (_u *AccountUpdateOne) check() error {
 			return &ValidationError{Name: "national_id_hash", err: fmt.Errorf(`ent: validator failed for field "Account.national_id_hash": %w`, err)}
 		}
 	}
+	if v, ok := _u.mutation.NationalIDMasked(); ok {
+		if err := account.NationalIDMaskedValidator(v); err != nil {
+			return &ValidationError{Name: "national_id_masked", err: fmt.Errorf(`ent: validator failed for field "Account.national_id_masked": %w`, err)}
+		}
+	}
 	if v, ok := _u.mutation.FullName(); ok {
 		if err := account.FullNameValidator(v); err != nil {
 			return &ValidationError{Name: "full_name", err: fmt.Errorf(`ent: validator failed for field "Account.full_name": %w`, err)}
@@ -807,6 +853,11 @@ func (_u *AccountUpdateOne) check() error {
 	if v, ok := _u.mutation.CountryIsoCode(); ok {
 		if err := account.CountryIsoCodeValidator(v); err != nil {
 			return &ValidationError{Name: "country_iso_code", err: fmt.Errorf(`ent: validator failed for field "Account.country_iso_code": %w`, err)}
+		}
+	}
+	if v, ok := _u.mutation.DialCode(); ok {
+		if err := account.DialCodeValidator(v); err != nil {
+			return &ValidationError{Name: "dial_code", err: fmt.Errorf(`ent: validator failed for field "Account.dial_code": %w`, err)}
 		}
 	}
 	if v, ok := _u.mutation.PhoneNumber(); ok {
@@ -865,6 +916,9 @@ func (_u *AccountUpdateOne) sqlSave(ctx context.Context) (_node *Account, err er
 	}
 	if value, ok := _u.mutation.NationalIDHash(); ok {
 		_spec.SetField(account.FieldNationalIDHash, field.TypeString, value)
+	}
+	if value, ok := _u.mutation.NationalIDMasked(); ok {
+		_spec.SetField(account.FieldNationalIDMasked, field.TypeString, value)
 	}
 	if value, ok := _u.mutation.FullName(); ok {
 		_spec.SetField(account.FieldFullName, field.TypeString, value)

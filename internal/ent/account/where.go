@@ -74,6 +74,11 @@ func NationalIDHash(v string) predicate.Account {
 	return predicate.Account(sql.FieldEQ(FieldNationalIDHash, v))
 }
 
+// NationalIDMasked applies equality check predicate on the "national_id_masked" field. It's identical to NationalIDMaskedEQ.
+func NationalIDMasked(v string) predicate.Account {
+	return predicate.Account(sql.FieldEQ(FieldNationalIDMasked, v))
+}
+
 // FullName applies equality check predicate on the "full_name" field. It's identical to FullNameEQ.
 func FullName(v string) predicate.Account {
 	return predicate.Account(sql.FieldEQ(FieldFullName, v))
@@ -297,6 +302,71 @@ func NationalIDHashEqualFold(v string) predicate.Account {
 // NationalIDHashContainsFold applies the ContainsFold predicate on the "national_id_hash" field.
 func NationalIDHashContainsFold(v string) predicate.Account {
 	return predicate.Account(sql.FieldContainsFold(FieldNationalIDHash, v))
+}
+
+// NationalIDMaskedEQ applies the EQ predicate on the "national_id_masked" field.
+func NationalIDMaskedEQ(v string) predicate.Account {
+	return predicate.Account(sql.FieldEQ(FieldNationalIDMasked, v))
+}
+
+// NationalIDMaskedNEQ applies the NEQ predicate on the "national_id_masked" field.
+func NationalIDMaskedNEQ(v string) predicate.Account {
+	return predicate.Account(sql.FieldNEQ(FieldNationalIDMasked, v))
+}
+
+// NationalIDMaskedIn applies the In predicate on the "national_id_masked" field.
+func NationalIDMaskedIn(vs ...string) predicate.Account {
+	return predicate.Account(sql.FieldIn(FieldNationalIDMasked, vs...))
+}
+
+// NationalIDMaskedNotIn applies the NotIn predicate on the "national_id_masked" field.
+func NationalIDMaskedNotIn(vs ...string) predicate.Account {
+	return predicate.Account(sql.FieldNotIn(FieldNationalIDMasked, vs...))
+}
+
+// NationalIDMaskedGT applies the GT predicate on the "national_id_masked" field.
+func NationalIDMaskedGT(v string) predicate.Account {
+	return predicate.Account(sql.FieldGT(FieldNationalIDMasked, v))
+}
+
+// NationalIDMaskedGTE applies the GTE predicate on the "national_id_masked" field.
+func NationalIDMaskedGTE(v string) predicate.Account {
+	return predicate.Account(sql.FieldGTE(FieldNationalIDMasked, v))
+}
+
+// NationalIDMaskedLT applies the LT predicate on the "national_id_masked" field.
+func NationalIDMaskedLT(v string) predicate.Account {
+	return predicate.Account(sql.FieldLT(FieldNationalIDMasked, v))
+}
+
+// NationalIDMaskedLTE applies the LTE predicate on the "national_id_masked" field.
+func NationalIDMaskedLTE(v string) predicate.Account {
+	return predicate.Account(sql.FieldLTE(FieldNationalIDMasked, v))
+}
+
+// NationalIDMaskedContains applies the Contains predicate on the "national_id_masked" field.
+func NationalIDMaskedContains(v string) predicate.Account {
+	return predicate.Account(sql.FieldContains(FieldNationalIDMasked, v))
+}
+
+// NationalIDMaskedHasPrefix applies the HasPrefix predicate on the "national_id_masked" field.
+func NationalIDMaskedHasPrefix(v string) predicate.Account {
+	return predicate.Account(sql.FieldHasPrefix(FieldNationalIDMasked, v))
+}
+
+// NationalIDMaskedHasSuffix applies the HasSuffix predicate on the "national_id_masked" field.
+func NationalIDMaskedHasSuffix(v string) predicate.Account {
+	return predicate.Account(sql.FieldHasSuffix(FieldNationalIDMasked, v))
+}
+
+// NationalIDMaskedEqualFold applies the EqualFold predicate on the "national_id_masked" field.
+func NationalIDMaskedEqualFold(v string) predicate.Account {
+	return predicate.Account(sql.FieldEqualFold(FieldNationalIDMasked, v))
+}
+
+// NationalIDMaskedContainsFold applies the ContainsFold predicate on the "national_id_masked" field.
+func NationalIDMaskedContainsFold(v string) predicate.Account {
+	return predicate.Account(sql.FieldContainsFold(FieldNationalIDMasked, v))
 }
 
 // FullNameEQ applies the EQ predicate on the "full_name" field.

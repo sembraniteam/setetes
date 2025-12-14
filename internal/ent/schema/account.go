@@ -2,6 +2,7 @@ package schema
 
 import (
 	"entgo.io/ent"
+	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/entsql"
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
@@ -29,6 +30,12 @@ func (Account) Fields() []ent.Field {
 			Unique().
 			Sensitive().
 			Comment("SHA256 hash of a user's national identity number (e.g., KTP). Stored securely to avoid saving raw identity numbers."),
+		field.String("national_id_masked").
+			MaxLen(8).
+			NotEmpty().
+			Comment("Masked of national identity number (e.g., KTP).").
+			StructTag(`json:"national_id_masked"`).
+			SchemaType(map[string]string{dialect.Postgres: "char(8)"}),
 		field.String("full_name").
 			MinLen(3).
 			MaxLen(164).
@@ -49,8 +56,13 @@ func (Account) Fields() []ent.Field {
 			NotEmpty().
 			StructTag(`json:"country_iso_code"`).
 			Comment("ISO 3166-1 alpha-2 country code representing the user's country (e.g., ID for Indonesia, US for United States)."),
-		field.String("dial_code").StructTag(`json:"dial_code"`).
-			Comment("International dialing code of the user's country (e.g., +62 for Indonesia, +1 for United States). Used for constructing complete phone numbers."),
+		field.String("dial_code").
+			StructTag(`json:"dial_code"`).
+			MinLen(1).
+			MaxLen(6).
+			Comment(
+				"International dialing code of the user's country (e.g., 62 for Indonesia, 1 for United States). Used for constructing complete phone numbers.",
+			),
 		field.String("phone_number").
 			MinLen(11).
 			MaxLen(13).
@@ -91,10 +103,11 @@ func (Account) Annotations() []schema.Annotation {
 		&entsql.Annotation{
 			WithComments: &withComment,
 			Checks: map[string]string{
-				"full_name":        "length(full_name) >= 3 and length(full_name) <= 164",
-				"email":            "length(email) >= 3 and length(email) <= 164",
-				"country_iso_code": "length(country_iso_code) = 2",
-				"phone_number":     "length(phone_number) >= 11 and length(phone_number) <= 13",
+				"national_id_masked": "length(national_id_masked) = 8",
+				"full_name":          "length(full_name) >= 3 and length(full_name) <= 164",
+				"email":              "length(email) >= 3 and length(email) <= 164",
+				"country_iso_code":   "length(country_iso_code) = 2",
+				"phone_number":       "length(phone_number) >= 11 and length(phone_number) <= 13",
 			},
 		},
 	}

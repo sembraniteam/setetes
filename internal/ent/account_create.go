@@ -46,6 +46,12 @@ func (_c *AccountCreate) SetNationalIDHash(v string) *AccountCreate {
 	return _c
 }
 
+// SetNationalIDMasked sets the "national_id_masked" field.
+func (_c *AccountCreate) SetNationalIDMasked(v string) *AccountCreate {
+	_c.mutation.SetNationalIDMasked(v)
+	return _c
+}
+
 // SetFullName sets the "full_name" field.
 func (_c *AccountCreate) SetFullName(v string) *AccountCreate {
 	_c.mutation.SetFullName(v)
@@ -236,6 +242,14 @@ func (_c *AccountCreate) check() error {
 			return &ValidationError{Name: "national_id_hash", err: fmt.Errorf(`ent: validator failed for field "Account.national_id_hash": %w`, err)}
 		}
 	}
+	if _, ok := _c.mutation.NationalIDMasked(); !ok {
+		return &ValidationError{Name: "national_id_masked", err: errors.New(`ent: missing required field "Account.national_id_masked"`)}
+	}
+	if v, ok := _c.mutation.NationalIDMasked(); ok {
+		if err := account.NationalIDMaskedValidator(v); err != nil {
+			return &ValidationError{Name: "national_id_masked", err: fmt.Errorf(`ent: validator failed for field "Account.national_id_masked": %w`, err)}
+		}
+	}
 	if _, ok := _c.mutation.FullName(); !ok {
 		return &ValidationError{Name: "full_name", err: errors.New(`ent: missing required field "Account.full_name"`)}
 	}
@@ -270,6 +284,11 @@ func (_c *AccountCreate) check() error {
 	}
 	if _, ok := _c.mutation.DialCode(); !ok {
 		return &ValidationError{Name: "dial_code", err: errors.New(`ent: missing required field "Account.dial_code"`)}
+	}
+	if v, ok := _c.mutation.DialCode(); ok {
+		if err := account.DialCodeValidator(v); err != nil {
+			return &ValidationError{Name: "dial_code", err: fmt.Errorf(`ent: validator failed for field "Account.dial_code": %w`, err)}
+		}
 	}
 	if _, ok := _c.mutation.PhoneNumber(); !ok {
 		return &ValidationError{Name: "phone_number", err: errors.New(`ent: missing required field "Account.phone_number"`)}
@@ -343,6 +362,10 @@ func (_c *AccountCreate) createSpec() (*Account, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.NationalIDHash(); ok {
 		_spec.SetField(account.FieldNationalIDHash, field.TypeString, value)
 		_node.NationalIDHash = value
+	}
+	if value, ok := _c.mutation.NationalIDMasked(); ok {
+		_spec.SetField(account.FieldNationalIDMasked, field.TypeString, value)
+		_node.NationalIDMasked = value
 	}
 	if value, ok := _c.mutation.FullName(); ok {
 		_spec.SetField(account.FieldFullName, field.TypeString, value)

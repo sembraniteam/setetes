@@ -56,8 +56,26 @@ func init() {
 			return nil
 		}
 	}()
+	// accountDescNationalIDMasked is the schema descriptor for national_id_masked field.
+	accountDescNationalIDMasked := accountFields[1].Descriptor()
+	// account.NationalIDMaskedValidator is a validator for the "national_id_masked" field. It is called by the builders before save.
+	account.NationalIDMaskedValidator = func() func(string) error {
+		validators := accountDescNationalIDMasked.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+		}
+		return func(national_id_masked string) error {
+			for _, fn := range fns {
+				if err := fn(national_id_masked); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
 	// accountDescFullName is the schema descriptor for full_name field.
-	accountDescFullName := accountFields[1].Descriptor()
+	accountDescFullName := accountFields[2].Descriptor()
 	// account.FullNameValidator is a validator for the "full_name" field. It is called by the builders before save.
 	account.FullNameValidator = func() func(string) error {
 		validators := accountDescFullName.Validators
@@ -75,7 +93,7 @@ func init() {
 		}
 	}()
 	// accountDescEmail is the schema descriptor for email field.
-	accountDescEmail := accountFields[3].Descriptor()
+	accountDescEmail := accountFields[4].Descriptor()
 	// account.EmailValidator is a validator for the "email" field. It is called by the builders before save.
 	account.EmailValidator = func() func(string) error {
 		validators := accountDescEmail.Validators
@@ -93,7 +111,7 @@ func init() {
 		}
 	}()
 	// accountDescCountryIsoCode is the schema descriptor for country_iso_code field.
-	accountDescCountryIsoCode := accountFields[4].Descriptor()
+	accountDescCountryIsoCode := accountFields[5].Descriptor()
 	// account.CountryIsoCodeValidator is a validator for the "country_iso_code" field. It is called by the builders before save.
 	account.CountryIsoCodeValidator = func() func(string) error {
 		validators := accountDescCountryIsoCode.Validators
@@ -110,8 +128,26 @@ func init() {
 			return nil
 		}
 	}()
+	// accountDescDialCode is the schema descriptor for dial_code field.
+	accountDescDialCode := accountFields[6].Descriptor()
+	// account.DialCodeValidator is a validator for the "dial_code" field. It is called by the builders before save.
+	account.DialCodeValidator = func() func(string) error {
+		validators := accountDescDialCode.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+		}
+		return func(dial_code string) error {
+			for _, fn := range fns {
+				if err := fn(dial_code); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
 	// accountDescPhoneNumber is the schema descriptor for phone_number field.
-	accountDescPhoneNumber := accountFields[6].Descriptor()
+	accountDescPhoneNumber := accountFields[7].Descriptor()
 	// account.PhoneNumberValidator is a validator for the "phone_number" field. It is called by the builders before save.
 	account.PhoneNumberValidator = func() func(string) error {
 		validators := accountDescPhoneNumber.Validators
@@ -129,15 +165,15 @@ func init() {
 		}
 	}()
 	// accountDescActivated is the schema descriptor for activated field.
-	accountDescActivated := accountFields[7].Descriptor()
+	accountDescActivated := accountFields[8].Descriptor()
 	// account.DefaultActivated holds the default value on creation for the activated field.
 	account.DefaultActivated = accountDescActivated.Default.(bool)
 	// accountDescLocked is the schema descriptor for locked field.
-	accountDescLocked := accountFields[8].Descriptor()
+	accountDescLocked := accountFields[9].Descriptor()
 	// account.DefaultLocked holds the default value on creation for the locked field.
 	account.DefaultLocked = accountDescLocked.Default.(bool)
 	// accountDescTempLockedAt is the schema descriptor for temp_locked_at field.
-	accountDescTempLockedAt := accountFields[9].Descriptor()
+	accountDescTempLockedAt := accountFields[10].Descriptor()
 	// account.TempLockedAtValidator is a validator for the "temp_locked_at" field. It is called by the builders before save.
 	account.TempLockedAtValidator = accountDescTempLockedAt.Validators[0].(func(int64) error)
 	bloodtypeMixin := schema.BloodType{}.Mixin()

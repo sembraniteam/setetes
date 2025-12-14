@@ -16,11 +16,12 @@ var (
 		{Name: "updated_at", Type: field.TypeInt64},
 		{Name: "deleted_at", Type: field.TypeInt64, Comment: "Represents soft delete timestamp in milliseconds."},
 		{Name: "national_id_hash", Type: field.TypeString, Unique: true, Size: 64, Comment: "SHA256 hash of a user's national identity number (e.g., KTP). Stored securely to avoid saving raw identity numbers."},
+		{Name: "national_id_masked", Type: field.TypeString, Size: 8, Comment: "Masked of national identity number (e.g., KTP).", SchemaType: map[string]string{"postgres": "char(8)"}},
 		{Name: "full_name", Type: field.TypeString, Size: 164},
 		{Name: "gender", Type: field.TypeEnum, Enums: []string{"FEMALE", "MALE"}},
 		{Name: "email", Type: field.TypeString, Unique: true, Size: 164},
 		{Name: "country_iso_code", Type: field.TypeString, Size: 2, Comment: "ISO 3166-1 alpha-2 country code representing the user's country (e.g., ID for Indonesia, US for United States)."},
-		{Name: "dial_code", Type: field.TypeString, Comment: "International dialing code of the user's country (e.g., +62 for Indonesia, +1 for United States). Used for constructing complete phone numbers."},
+		{Name: "dial_code", Type: field.TypeString, Size: 6, Comment: "International dialing code of the user's country (e.g., 62 for Indonesia, 1 for United States). Used for constructing complete phone numbers."},
 		{Name: "phone_number", Type: field.TypeString, Unique: true, Size: 13},
 		{Name: "activated", Type: field.TypeBool, Default: false},
 		{Name: "locked", Type: field.TypeBool, Comment: "Permanently locked by this account.", Default: false},
@@ -248,10 +249,11 @@ var (
 func init() {
 	AccountsTable.Annotation = &entsql.Annotation{}
 	AccountsTable.Annotation.Checks = map[string]string{
-		"country_iso_code": "length(country_iso_code) = 2",
-		"email":            "length(email) >= 3 and length(email) <= 164",
-		"full_name":        "length(full_name) >= 3 and length(full_name) <= 164",
-		"phone_number":     "length(phone_number) >= 11 and length(phone_number) <= 13",
+		"country_iso_code":   "length(country_iso_code) = 2",
+		"email":              "length(email) >= 3 and length(email) <= 164",
+		"full_name":          "length(full_name) >= 3 and length(full_name) <= 164",
+		"national_id_masked": "length(national_id_masked) = 8",
+		"phone_number":       "length(phone_number) >= 11 and length(phone_number) <= 13",
 	}
 	BloodTypesTable.ForeignKeys[0].RefTable = AccountsTable
 	CasbinRuleTable.Annotation = &entsql.Annotation{

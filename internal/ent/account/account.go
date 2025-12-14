@@ -22,6 +22,8 @@ const (
 	FieldDeletedAt = "deleted_at"
 	// FieldNationalIDHash holds the string denoting the national_id_hash field in the database.
 	FieldNationalIDHash = "national_id_hash"
+	// FieldNationalIDMasked holds the string denoting the national_id_masked field in the database.
+	FieldNationalIDMasked = "national_id_masked"
 	// FieldFullName holds the string denoting the full_name field in the database.
 	FieldFullName = "full_name"
 	// FieldGender holds the string denoting the gender field in the database.
@@ -69,6 +71,7 @@ var Columns = []string{
 	FieldUpdatedAt,
 	FieldDeletedAt,
 	FieldNationalIDHash,
+	FieldNationalIDMasked,
 	FieldFullName,
 	FieldGender,
 	FieldEmail,
@@ -101,12 +104,16 @@ var (
 	DeletedAtValidator func(int64) error
 	// NationalIDHashValidator is a validator for the "national_id_hash" field. It is called by the builders before save.
 	NationalIDHashValidator func(string) error
+	// NationalIDMaskedValidator is a validator for the "national_id_masked" field. It is called by the builders before save.
+	NationalIDMaskedValidator func(string) error
 	// FullNameValidator is a validator for the "full_name" field. It is called by the builders before save.
 	FullNameValidator func(string) error
 	// EmailValidator is a validator for the "email" field. It is called by the builders before save.
 	EmailValidator func(string) error
 	// CountryIsoCodeValidator is a validator for the "country_iso_code" field. It is called by the builders before save.
 	CountryIsoCodeValidator func(string) error
+	// DialCodeValidator is a validator for the "dial_code" field. It is called by the builders before save.
+	DialCodeValidator func(string) error
 	// PhoneNumberValidator is a validator for the "phone_number" field. It is called by the builders before save.
 	PhoneNumberValidator func(string) error
 	// DefaultActivated holds the default value on creation for the "activated" field.
@@ -166,6 +173,11 @@ func ByDeletedAt(opts ...sql.OrderTermOption) OrderOption {
 // ByNationalIDHash orders the results by the national_id_hash field.
 func ByNationalIDHash(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldNationalIDHash, opts...).ToFunc()
+}
+
+// ByNationalIDMasked orders the results by the national_id_masked field.
+func ByNationalIDMasked(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldNationalIDMasked, opts...).ToFunc()
 }
 
 // ByFullName orders the results by the full_name field.

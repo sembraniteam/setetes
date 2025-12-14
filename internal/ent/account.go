@@ -27,6 +27,8 @@ type Account struct {
 	DeletedAt *int64 `json:"deleted_at"`
 	// SHA256 hash of a user's national identity number (e.g., KTP). Stored securely to avoid saving raw identity numbers.
 	NationalIDHash string `json:"-"`
+	// Masked of national identity number (e.g., KTP).
+	NationalIDMasked string `json:"national_id_masked"`
 	// FullName holds the value of the "full_name" field.
 	FullName string `json:"full_name"`
 	// Gender holds the value of the "gender" field.
@@ -35,7 +37,7 @@ type Account struct {
 	Email string `json:"email"`
 	// ISO 3166-1 alpha-2 country code representing the user's country (e.g., ID for Indonesia, US for United States).
 	CountryIsoCode string `json:"country_iso_code"`
-	// International dialing code of the user's country (e.g., +62 for Indonesia, +1 for United States). Used for constructing complete phone numbers.
+	// International dialing code of the user's country (e.g., 62 for Indonesia, 1 for United States). Used for constructing complete phone numbers.
 	DialCode string `json:"dial_code"`
 	// PhoneNumber holds the value of the "phone_number" field.
 	PhoneNumber string `json:"phone_number"`
@@ -93,7 +95,7 @@ func (*Account) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullBool)
 		case account.FieldCreatedAt, account.FieldUpdatedAt, account.FieldDeletedAt, account.FieldTempLockedAt:
 			values[i] = new(sql.NullInt64)
-		case account.FieldNationalIDHash, account.FieldFullName, account.FieldGender, account.FieldEmail, account.FieldCountryIsoCode, account.FieldDialCode, account.FieldPhoneNumber:
+		case account.FieldNationalIDHash, account.FieldNationalIDMasked, account.FieldFullName, account.FieldGender, account.FieldEmail, account.FieldCountryIsoCode, account.FieldDialCode, account.FieldPhoneNumber:
 			values[i] = new(sql.NullString)
 		case account.FieldID:
 			values[i] = new(uuid.UUID)
@@ -143,6 +145,12 @@ func (_m *Account) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field national_id_hash", values[i])
 			} else if value.Valid {
 				_m.NationalIDHash = value.String
+			}
+		case account.FieldNationalIDMasked:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field national_id_masked", values[i])
+			} else if value.Valid {
+				_m.NationalIDMasked = value.String
 			}
 		case account.FieldFullName:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -259,6 +267,9 @@ func (_m *Account) String() string {
 	}
 	builder.WriteString(", ")
 	builder.WriteString("national_id_hash=<sensitive>")
+	builder.WriteString(", ")
+	builder.WriteString("national_id_masked=")
+	builder.WriteString(_m.NationalIDMasked)
 	builder.WriteString(", ")
 	builder.WriteString("full_name=")
 	builder.WriteString(_m.FullName)
