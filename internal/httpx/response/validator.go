@@ -56,7 +56,7 @@ func init() {
 	})
 }
 
-func ValidateJson[T any](c *gin.Context) (*T, *int16, *Message) {
+func ValidateJSON[T any](c *gin.Context) (*T, *int16, *Message) {
 	body := new(T)
 	if err := c.ShouldBindJSON(body); err != nil {
 		return nil, &httpx.InvalidJSONCode, MsgInvalidJSON
