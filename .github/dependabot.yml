@@ -1,0 +1,20 @@
+version: 2
+updates:
+  - package-ecosystem: gomod
+    directory: /
+    target-branch: main
+    open-pull-requests-limit: 20
+    schedule:
+      interval: weekly
+      day: monday
+      time: 09:00
+      timezone: Asia/Jakarta
+    commit-message:
+      prefix: bump
+      prefix-development: bump
+      include: scope
+    reviewers:
+      - geekswamp
+    labels:
+      - bump
+      - dependabot
