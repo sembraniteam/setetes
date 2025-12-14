@@ -1,0 +1,31 @@
+name: Go linter with Golangci-lint
+on:
+  push:
+    branches:
+      - main
+      - develop
+
+  pull_request:
+    types:
+      - opened
+      - reopened
+    branches:
+      - main
+      - develop
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6.0.1
+      - uses: actions/setup-go@v6.1.0
+        with:
+          go-version: stable
+      - uses: golangci/golangci-lint-action@v9.2.0
+        with:
+          verify: true
+          version: v2.7.2
