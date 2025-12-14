@@ -1,11 +1,20 @@
 version: "2"
 
+run:
+  timeout: 2m
+  tests: true
+
+output:
+  formats:
+    text:
+      path: stdout
+      colors: true
+
 linters:
   enable:
-    - asciicheck
-    - gocheckcompilerdirectives
-    - godot
+    - gosec
     - godox
+    - govet
     - mnd
     - modernize
     - nakedret
@@ -17,6 +26,7 @@ linters:
     - sqlclosecheck
     - staticcheck
     - unused
+    - revive
     - whitespace
 
   settings:
@@ -34,6 +44,18 @@ linters:
 
     nakedret:
       max-func-lines: 35
+
+    gosec:
+      severity: medium
+      confidence: medium
+
+    revive:
+      rules:
+        - name: var-naming
+        - name: package-comments
+          disabled: true
+        - name: line-length-limit
+          disabled: true
 
 formatters:
   enable:

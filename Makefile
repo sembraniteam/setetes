@@ -1,4 +1,13 @@
+lint:
+	golangci-lint run
+
+fmt:
+	go fmt ./...
+	goimports -w .
+
+check: lint fmt
+
 ent-gen:
 	ent generate ./internal/ent/schema
 
-.PHONY: ent-gen
+.PHONY: lint fmt check ent-gen
