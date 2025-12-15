@@ -7,6 +7,8 @@ import (
 	"github.com/spf13/viper"
 )
 
+var config = new(Config)
+
 type Config struct {
 	App struct {
 		Mode string `mapstructure:"mode"`
@@ -38,6 +40,10 @@ type Config struct {
 			KeyLength   uint32 `mapstructure:"key_length"`
 		} `mapstructure:"argon2"`
 	} `mapstructure:"password"`
+}
+
+func Get() Config {
+	return *config
 }
 
 func LoadConfig(path string) (*Config, error) {
