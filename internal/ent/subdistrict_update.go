@@ -72,30 +72,30 @@ func (_u *SubdistrictUpdate) SetNillableName(v *string) *SubdistrictUpdate {
 	return _u
 }
 
-// AddDistrictIDs adds the "district" edge to the District entity by IDs.
-func (_u *SubdistrictUpdate) AddDistrictIDs(ids ...uuid.UUID) *SubdistrictUpdate {
-	_u.mutation.AddDistrictIDs(ids...)
+// SetDistrictID sets the "district" edge to the District entity by ID.
+func (_u *SubdistrictUpdate) SetDistrictID(id uuid.UUID) *SubdistrictUpdate {
+	_u.mutation.SetDistrictID(id)
 	return _u
 }
 
-// AddDistrict adds the "district" edges to the District entity.
-func (_u *SubdistrictUpdate) AddDistrict(v ...*District) *SubdistrictUpdate {
+// SetDistrict sets the "district" edge to the District entity.
+func (_u *SubdistrictUpdate) SetDistrict(v *District) *SubdistrictUpdate {
+	return _u.SetDistrictID(v.ID)
+}
+
+// AddPmiLocationIDs adds the "pmi_location" edge to the PMILocation entity by IDs.
+func (_u *SubdistrictUpdate) AddPmiLocationIDs(ids ...uuid.UUID) *SubdistrictUpdate {
+	_u.mutation.AddPmiLocationIDs(ids...)
+	return _u
+}
+
+// AddPmiLocation adds the "pmi_location" edges to the PMILocation entity.
+func (_u *SubdistrictUpdate) AddPmiLocation(v ...*PMILocation) *SubdistrictUpdate {
 	ids := make([]uuid.UUID, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
-	return _u.AddDistrictIDs(ids...)
-}
-
-// SetPmiLocationID sets the "pmi_location" edge to the PMILocation entity by ID.
-func (_u *SubdistrictUpdate) SetPmiLocationID(id uuid.UUID) *SubdistrictUpdate {
-	_u.mutation.SetPmiLocationID(id)
-	return _u
-}
-
-// SetPmiLocation sets the "pmi_location" edge to the PMILocation entity.
-func (_u *SubdistrictUpdate) SetPmiLocation(v *PMILocation) *SubdistrictUpdate {
-	return _u.SetPmiLocationID(v.ID)
+	return _u.AddPmiLocationIDs(ids...)
 }
 
 // Mutation returns the SubdistrictMutation object of the builder.
@@ -103,31 +103,31 @@ func (_u *SubdistrictUpdate) Mutation() *SubdistrictMutation {
 	return _u.mutation
 }
 
-// ClearDistrict clears all "district" edges to the District entity.
+// ClearDistrict clears the "district" edge to the District entity.
 func (_u *SubdistrictUpdate) ClearDistrict() *SubdistrictUpdate {
 	_u.mutation.ClearDistrict()
 	return _u
 }
 
-// RemoveDistrictIDs removes the "district" edge to District entities by IDs.
-func (_u *SubdistrictUpdate) RemoveDistrictIDs(ids ...uuid.UUID) *SubdistrictUpdate {
-	_u.mutation.RemoveDistrictIDs(ids...)
+// ClearPmiLocation clears all "pmi_location" edges to the PMILocation entity.
+func (_u *SubdistrictUpdate) ClearPmiLocation() *SubdistrictUpdate {
+	_u.mutation.ClearPmiLocation()
 	return _u
 }
 
-// RemoveDistrict removes "district" edges to District entities.
-func (_u *SubdistrictUpdate) RemoveDistrict(v ...*District) *SubdistrictUpdate {
+// RemovePmiLocationIDs removes the "pmi_location" edge to PMILocation entities by IDs.
+func (_u *SubdistrictUpdate) RemovePmiLocationIDs(ids ...uuid.UUID) *SubdistrictUpdate {
+	_u.mutation.RemovePmiLocationIDs(ids...)
+	return _u
+}
+
+// RemovePmiLocation removes "pmi_location" edges to PMILocation entities.
+func (_u *SubdistrictUpdate) RemovePmiLocation(v ...*PMILocation) *SubdistrictUpdate {
 	ids := make([]uuid.UUID, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
-	return _u.RemoveDistrictIDs(ids...)
-}
-
-// ClearPmiLocation clears the "pmi_location" edge to the PMILocation entity.
-func (_u *SubdistrictUpdate) ClearPmiLocation() *SubdistrictUpdate {
-	_u.mutation.ClearPmiLocation()
-	return _u
+	return _u.RemovePmiLocationIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -169,8 +169,8 @@ func (_u *SubdistrictUpdate) check() error {
 			return &ValidationError{Name: "postal_code", err: fmt.Errorf(`ent: validator failed for field "Subdistrict.postal_code": %w`, err)}
 		}
 	}
-	if _u.mutation.PmiLocationCleared() && len(_u.mutation.PmiLocationIDs()) > 0 {
-		return errors.New(`ent: clearing a required unique edge "Subdistrict.pmi_location"`)
+	if _u.mutation.DistrictCleared() && len(_u.mutation.DistrictIDs()) > 0 {
+		return errors.New(`ent: clearing a required unique edge "Subdistrict.district"`)
 	}
 	return nil
 }
@@ -198,37 +198,21 @@ func (_u *SubdistrictUpdate) sqlSave(ctx context.Context) (_node int, err error)
 	}
 	if _u.mutation.DistrictCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
 			Table:   subdistrict.DistrictTable,
 			Columns: []string{subdistrict.DistrictColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(district.FieldID, field.TypeUUID),
 			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := _u.mutation.RemovedDistrictIDs(); len(nodes) > 0 && !_u.mutation.DistrictCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   subdistrict.DistrictTable,
-			Columns: []string{subdistrict.DistrictColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(district.FieldID, field.TypeUUID),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
 	if nodes := _u.mutation.DistrictIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
 			Table:   subdistrict.DistrictTable,
 			Columns: []string{subdistrict.DistrictColumn},
 			Bidi:    false,
@@ -243,8 +227,8 @@ func (_u *SubdistrictUpdate) sqlSave(ctx context.Context) (_node int, err error)
 	}
 	if _u.mutation.PmiLocationCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
 			Table:   subdistrict.PmiLocationTable,
 			Columns: []string{subdistrict.PmiLocationColumn},
 			Bidi:    false,
@@ -254,10 +238,26 @@ func (_u *SubdistrictUpdate) sqlSave(ctx context.Context) (_node int, err error)
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
+	if nodes := _u.mutation.RemovedPmiLocationIDs(); len(nodes) > 0 && !_u.mutation.PmiLocationCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   subdistrict.PmiLocationTable,
+			Columns: []string{subdistrict.PmiLocationColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(pmilocation.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
 	if nodes := _u.mutation.PmiLocationIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
 			Table:   subdistrict.PmiLocationTable,
 			Columns: []string{subdistrict.PmiLocationColumn},
 			Bidi:    false,
@@ -332,30 +332,30 @@ func (_u *SubdistrictUpdateOne) SetNillableName(v *string) *SubdistrictUpdateOne
 	return _u
 }
 
-// AddDistrictIDs adds the "district" edge to the District entity by IDs.
-func (_u *SubdistrictUpdateOne) AddDistrictIDs(ids ...uuid.UUID) *SubdistrictUpdateOne {
-	_u.mutation.AddDistrictIDs(ids...)
+// SetDistrictID sets the "district" edge to the District entity by ID.
+func (_u *SubdistrictUpdateOne) SetDistrictID(id uuid.UUID) *SubdistrictUpdateOne {
+	_u.mutation.SetDistrictID(id)
 	return _u
 }
 
-// AddDistrict adds the "district" edges to the District entity.
-func (_u *SubdistrictUpdateOne) AddDistrict(v ...*District) *SubdistrictUpdateOne {
+// SetDistrict sets the "district" edge to the District entity.
+func (_u *SubdistrictUpdateOne) SetDistrict(v *District) *SubdistrictUpdateOne {
+	return _u.SetDistrictID(v.ID)
+}
+
+// AddPmiLocationIDs adds the "pmi_location" edge to the PMILocation entity by IDs.
+func (_u *SubdistrictUpdateOne) AddPmiLocationIDs(ids ...uuid.UUID) *SubdistrictUpdateOne {
+	_u.mutation.AddPmiLocationIDs(ids...)
+	return _u
+}
+
+// AddPmiLocation adds the "pmi_location" edges to the PMILocation entity.
+func (_u *SubdistrictUpdateOne) AddPmiLocation(v ...*PMILocation) *SubdistrictUpdateOne {
 	ids := make([]uuid.UUID, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
-	return _u.AddDistrictIDs(ids...)
-}
-
-// SetPmiLocationID sets the "pmi_location" edge to the PMILocation entity by ID.
-func (_u *SubdistrictUpdateOne) SetPmiLocationID(id uuid.UUID) *SubdistrictUpdateOne {
-	_u.mutation.SetPmiLocationID(id)
-	return _u
-}
-
-// SetPmiLocation sets the "pmi_location" edge to the PMILocation entity.
-func (_u *SubdistrictUpdateOne) SetPmiLocation(v *PMILocation) *SubdistrictUpdateOne {
-	return _u.SetPmiLocationID(v.ID)
+	return _u.AddPmiLocationIDs(ids...)
 }
 
 // Mutation returns the SubdistrictMutation object of the builder.
@@ -363,31 +363,31 @@ func (_u *SubdistrictUpdateOne) Mutation() *SubdistrictMutation {
 	return _u.mutation
 }
 
-// ClearDistrict clears all "district" edges to the District entity.
+// ClearDistrict clears the "district" edge to the District entity.
 func (_u *SubdistrictUpdateOne) ClearDistrict() *SubdistrictUpdateOne {
 	_u.mutation.ClearDistrict()
 	return _u
 }
 
-// RemoveDistrictIDs removes the "district" edge to District entities by IDs.
-func (_u *SubdistrictUpdateOne) RemoveDistrictIDs(ids ...uuid.UUID) *SubdistrictUpdateOne {
-	_u.mutation.RemoveDistrictIDs(ids...)
+// ClearPmiLocation clears all "pmi_location" edges to the PMILocation entity.
+func (_u *SubdistrictUpdateOne) ClearPmiLocation() *SubdistrictUpdateOne {
+	_u.mutation.ClearPmiLocation()
 	return _u
 }
 
-// RemoveDistrict removes "district" edges to District entities.
-func (_u *SubdistrictUpdateOne) RemoveDistrict(v ...*District) *SubdistrictUpdateOne {
+// RemovePmiLocationIDs removes the "pmi_location" edge to PMILocation entities by IDs.
+func (_u *SubdistrictUpdateOne) RemovePmiLocationIDs(ids ...uuid.UUID) *SubdistrictUpdateOne {
+	_u.mutation.RemovePmiLocationIDs(ids...)
+	return _u
+}
+
+// RemovePmiLocation removes "pmi_location" edges to PMILocation entities.
+func (_u *SubdistrictUpdateOne) RemovePmiLocation(v ...*PMILocation) *SubdistrictUpdateOne {
 	ids := make([]uuid.UUID, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
-	return _u.RemoveDistrictIDs(ids...)
-}
-
-// ClearPmiLocation clears the "pmi_location" edge to the PMILocation entity.
-func (_u *SubdistrictUpdateOne) ClearPmiLocation() *SubdistrictUpdateOne {
-	_u.mutation.ClearPmiLocation()
-	return _u
+	return _u.RemovePmiLocationIDs(ids...)
 }
 
 // Where appends a list predicates to the SubdistrictUpdate builder.
@@ -442,8 +442,8 @@ func (_u *SubdistrictUpdateOne) check() error {
 			return &ValidationError{Name: "postal_code", err: fmt.Errorf(`ent: validator failed for field "Subdistrict.postal_code": %w`, err)}
 		}
 	}
-	if _u.mutation.PmiLocationCleared() && len(_u.mutation.PmiLocationIDs()) > 0 {
-		return errors.New(`ent: clearing a required unique edge "Subdistrict.pmi_location"`)
+	if _u.mutation.DistrictCleared() && len(_u.mutation.DistrictIDs()) > 0 {
+		return errors.New(`ent: clearing a required unique edge "Subdistrict.district"`)
 	}
 	return nil
 }
@@ -488,37 +488,21 @@ func (_u *SubdistrictUpdateOne) sqlSave(ctx context.Context) (_node *Subdistrict
 	}
 	if _u.mutation.DistrictCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
 			Table:   subdistrict.DistrictTable,
 			Columns: []string{subdistrict.DistrictColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(district.FieldID, field.TypeUUID),
 			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := _u.mutation.RemovedDistrictIDs(); len(nodes) > 0 && !_u.mutation.DistrictCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   subdistrict.DistrictTable,
-			Columns: []string{subdistrict.DistrictColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(district.FieldID, field.TypeUUID),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
 	if nodes := _u.mutation.DistrictIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
 			Table:   subdistrict.DistrictTable,
 			Columns: []string{subdistrict.DistrictColumn},
 			Bidi:    false,
@@ -533,8 +517,8 @@ func (_u *SubdistrictUpdateOne) sqlSave(ctx context.Context) (_node *Subdistrict
 	}
 	if _u.mutation.PmiLocationCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
 			Table:   subdistrict.PmiLocationTable,
 			Columns: []string{subdistrict.PmiLocationColumn},
 			Bidi:    false,
@@ -544,10 +528,26 @@ func (_u *SubdistrictUpdateOne) sqlSave(ctx context.Context) (_node *Subdistrict
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
+	if nodes := _u.mutation.RemovedPmiLocationIDs(); len(nodes) > 0 && !_u.mutation.PmiLocationCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   subdistrict.PmiLocationTable,
+			Columns: []string{subdistrict.PmiLocationColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(pmilocation.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
 	if nodes := _u.mutation.PmiLocationIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
 			Table:   subdistrict.PmiLocationTable,
 			Columns: []string{subdistrict.PmiLocationColumn},
 			Bidi:    false,

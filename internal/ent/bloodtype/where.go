@@ -149,6 +149,16 @@ func UpdatedAtLTE(v int64) predicate.BloodType {
 	return predicate.BloodType(sql.FieldLTE(FieldUpdatedAt, v))
 }
 
+// UpdatedAtIsNil applies the IsNil predicate on the "updated_at" field.
+func UpdatedAtIsNil() predicate.BloodType {
+	return predicate.BloodType(sql.FieldIsNull(FieldUpdatedAt))
+}
+
+// UpdatedAtNotNil applies the NotNil predicate on the "updated_at" field.
+func UpdatedAtNotNil() predicate.BloodType {
+	return predicate.BloodType(sql.FieldNotNull(FieldUpdatedAt))
+}
+
 // DeletedAtEQ applies the EQ predicate on the "deleted_at" field.
 func DeletedAtEQ(v int64) predicate.BloodType {
 	return predicate.BloodType(sql.FieldEQ(FieldDeletedAt, v))
@@ -189,6 +199,16 @@ func DeletedAtLTE(v int64) predicate.BloodType {
 	return predicate.BloodType(sql.FieldLTE(FieldDeletedAt, v))
 }
 
+// DeletedAtIsNil applies the IsNil predicate on the "deleted_at" field.
+func DeletedAtIsNil() predicate.BloodType {
+	return predicate.BloodType(sql.FieldIsNull(FieldDeletedAt))
+}
+
+// DeletedAtNotNil applies the NotNil predicate on the "deleted_at" field.
+func DeletedAtNotNil() predicate.BloodType {
+	return predicate.BloodType(sql.FieldNotNull(FieldDeletedAt))
+}
+
 // GroupEQ applies the EQ predicate on the "group" field.
 func GroupEQ(v Group) predicate.BloodType {
 	return predicate.BloodType(sql.FieldEQ(FieldGroup, v))
@@ -227,6 +247,16 @@ func RhesusIn(vs ...Rhesus) predicate.BloodType {
 // RhesusNotIn applies the NotIn predicate on the "rhesus" field.
 func RhesusNotIn(vs ...Rhesus) predicate.BloodType {
 	return predicate.BloodType(sql.FieldNotIn(FieldRhesus, vs...))
+}
+
+// RhesusIsNil applies the IsNil predicate on the "rhesus" field.
+func RhesusIsNil() predicate.BloodType {
+	return predicate.BloodType(sql.FieldIsNull(FieldRhesus))
+}
+
+// RhesusNotNil applies the NotNil predicate on the "rhesus" field.
+func RhesusNotNil() predicate.BloodType {
+	return predicate.BloodType(sql.FieldNotNull(FieldRhesus))
 }
 
 // HasAccount applies the HasEdge predicate on the "account" edge.

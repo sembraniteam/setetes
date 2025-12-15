@@ -40,30 +40,30 @@ func (_c *CityCreate) SetID(v uuid.UUID) *CityCreate {
 	return _c
 }
 
-// AddProvinceIDs adds the "province" edge to the Province entity by IDs.
-func (_c *CityCreate) AddProvinceIDs(ids ...uuid.UUID) *CityCreate {
-	_c.mutation.AddProvinceIDs(ids...)
+// SetProvinceID sets the "province" edge to the Province entity by ID.
+func (_c *CityCreate) SetProvinceID(id uuid.UUID) *CityCreate {
+	_c.mutation.SetProvinceID(id)
 	return _c
 }
 
-// AddProvince adds the "province" edges to the Province entity.
-func (_c *CityCreate) AddProvince(v ...*Province) *CityCreate {
+// SetProvince sets the "province" edge to the Province entity.
+func (_c *CityCreate) SetProvince(v *Province) *CityCreate {
+	return _c.SetProvinceID(v.ID)
+}
+
+// AddDistrictIDs adds the "district" edge to the District entity by IDs.
+func (_c *CityCreate) AddDistrictIDs(ids ...uuid.UUID) *CityCreate {
+	_c.mutation.AddDistrictIDs(ids...)
+	return _c
+}
+
+// AddDistrict adds the "district" edges to the District entity.
+func (_c *CityCreate) AddDistrict(v ...*District) *CityCreate {
 	ids := make([]uuid.UUID, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
-	return _c.AddProvinceIDs(ids...)
-}
-
-// SetDistrictID sets the "district" edge to the District entity by ID.
-func (_c *CityCreate) SetDistrictID(id uuid.UUID) *CityCreate {
-	_c.mutation.SetDistrictID(id)
-	return _c
-}
-
-// SetDistrict sets the "district" edge to the District entity.
-func (_c *CityCreate) SetDistrict(v *District) *CityCreate {
-	return _c.SetDistrictID(v.ID)
+	return _c.AddDistrictIDs(ids...)
 }
 
 // Mutation returns the CityMutation object of the builder.
@@ -111,8 +111,8 @@ func (_c *CityCreate) check() error {
 	if _, ok := _c.mutation.Name(); !ok {
 		return &ValidationError{Name: "name", err: errors.New(`ent: missing required field "City.name"`)}
 	}
-	if len(_c.mutation.DistrictIDs()) == 0 {
-		return &ValidationError{Name: "district", err: errors.New(`ent: missing required edge "City.district"`)}
+	if len(_c.mutation.ProvinceIDs()) == 0 {
+		return &ValidationError{Name: "province", err: errors.New(`ent: missing required edge "City.province"`)}
 	}
 	return nil
 }
@@ -159,8 +159,8 @@ func (_c *CityCreate) createSpec() (*City, *sqlgraph.CreateSpec) {
 	}
 	if nodes := _c.mutation.ProvinceIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
 			Table:   city.ProvinceTable,
 			Columns: []string{city.ProvinceColumn},
 			Bidi:    false,
@@ -171,12 +171,13 @@ func (_c *CityCreate) createSpec() (*City, *sqlgraph.CreateSpec) {
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
+		_node.province_id = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	if nodes := _c.mutation.DistrictIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
 			Table:   city.DistrictTable,
 			Columns: []string{city.DistrictColumn},
 			Bidi:    false,
@@ -187,7 +188,6 @@ func (_c *CityCreate) createSpec() (*City, *sqlgraph.CreateSpec) {
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
-		_node.city_id = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec

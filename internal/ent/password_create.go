@@ -33,9 +33,25 @@ func (_c *PasswordCreate) SetUpdatedAt(v int64) *PasswordCreate {
 	return _c
 }
 
+// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
+func (_c *PasswordCreate) SetNillableUpdatedAt(v *int64) *PasswordCreate {
+	if v != nil {
+		_c.SetUpdatedAt(*v)
+	}
+	return _c
+}
+
 // SetDeletedAt sets the "deleted_at" field.
 func (_c *PasswordCreate) SetDeletedAt(v int64) *PasswordCreate {
 	_c.mutation.SetDeletedAt(v)
+	return _c
+}
+
+// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
+func (_c *PasswordCreate) SetNillableDeletedAt(v *int64) *PasswordCreate {
+	if v != nil {
+		_c.SetDeletedAt(*v)
+	}
 	return _c
 }
 
@@ -101,16 +117,10 @@ func (_c *PasswordCreate) check() error {
 			return &ValidationError{Name: "created_at", err: fmt.Errorf(`ent: validator failed for field "Password.created_at": %w`, err)}
 		}
 	}
-	if _, ok := _c.mutation.UpdatedAt(); !ok {
-		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "Password.updated_at"`)}
-	}
 	if v, ok := _c.mutation.UpdatedAt(); ok {
 		if err := password.UpdatedAtValidator(v); err != nil {
 			return &ValidationError{Name: "updated_at", err: fmt.Errorf(`ent: validator failed for field "Password.updated_at": %w`, err)}
 		}
-	}
-	if _, ok := _c.mutation.DeletedAt(); !ok {
-		return &ValidationError{Name: "deleted_at", err: errors.New(`ent: missing required field "Password.deleted_at"`)}
 	}
 	if v, ok := _c.mutation.DeletedAt(); ok {
 		if err := password.DeletedAtValidator(v); err != nil {
@@ -164,11 +174,11 @@ func (_c *PasswordCreate) createSpec() (*Password, *sqlgraph.CreateSpec) {
 	}
 	if value, ok := _c.mutation.UpdatedAt(); ok {
 		_spec.SetField(password.FieldUpdatedAt, field.TypeInt64, value)
-		_node.UpdatedAt = &value
+		_node.UpdatedAt = value
 	}
 	if value, ok := _c.mutation.DeletedAt(); ok {
 		_spec.SetField(password.FieldDeletedAt, field.TypeInt64, value)
-		_node.DeletedAt = &value
+		_node.DeletedAt = value
 	}
 	if value, ok := _c.mutation.Hash(); ok {
 		_spec.SetField(password.FieldHash, field.TypeString, value)
@@ -188,7 +198,7 @@ func (_c *PasswordCreate) createSpec() (*Password, *sqlgraph.CreateSpec) {
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
-		_node.password_id = &nodes[0]
+		_node.account_id = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec

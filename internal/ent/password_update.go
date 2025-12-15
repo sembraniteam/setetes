@@ -42,6 +42,12 @@ func (_u *PasswordUpdate) AddUpdatedAt(v int64) *PasswordUpdate {
 	return _u
 }
 
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (_u *PasswordUpdate) ClearUpdatedAt() *PasswordUpdate {
+	_u.mutation.ClearUpdatedAt()
+	return _u
+}
+
 // SetDeletedAt sets the "deleted_at" field.
 func (_u *PasswordUpdate) SetDeletedAt(v int64) *PasswordUpdate {
 	_u.mutation.ResetDeletedAt()
@@ -60,6 +66,12 @@ func (_u *PasswordUpdate) SetNillableDeletedAt(v *int64) *PasswordUpdate {
 // AddDeletedAt adds value to the "deleted_at" field.
 func (_u *PasswordUpdate) AddDeletedAt(v int64) *PasswordUpdate {
 	_u.mutation.AddDeletedAt(v)
+	return _u
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (_u *PasswordUpdate) ClearDeletedAt() *PasswordUpdate {
+	_u.mutation.ClearDeletedAt()
 	return _u
 }
 
@@ -129,7 +141,7 @@ func (_u *PasswordUpdate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (_u *PasswordUpdate) defaults() {
-	if _, ok := _u.mutation.UpdatedAt(); !ok {
+	if _, ok := _u.mutation.UpdatedAt(); !ok && !_u.mutation.UpdatedAtCleared() {
 		v := password.UpdateDefaultUpdatedAt()
 		_u.mutation.SetUpdatedAt(v)
 	}
@@ -171,11 +183,17 @@ func (_u *PasswordUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	if value, ok := _u.mutation.AddedUpdatedAt(); ok {
 		_spec.AddField(password.FieldUpdatedAt, field.TypeInt64, value)
 	}
+	if _u.mutation.UpdatedAtCleared() {
+		_spec.ClearField(password.FieldUpdatedAt, field.TypeInt64)
+	}
 	if value, ok := _u.mutation.DeletedAt(); ok {
 		_spec.SetField(password.FieldDeletedAt, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedAt(); ok {
 		_spec.AddField(password.FieldDeletedAt, field.TypeInt64, value)
+	}
+	if _u.mutation.DeletedAtCleared() {
+		_spec.ClearField(password.FieldDeletedAt, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.Hash(); ok {
 		_spec.SetField(password.FieldHash, field.TypeString, value)
@@ -242,6 +260,12 @@ func (_u *PasswordUpdateOne) AddUpdatedAt(v int64) *PasswordUpdateOne {
 	return _u
 }
 
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (_u *PasswordUpdateOne) ClearUpdatedAt() *PasswordUpdateOne {
+	_u.mutation.ClearUpdatedAt()
+	return _u
+}
+
 // SetDeletedAt sets the "deleted_at" field.
 func (_u *PasswordUpdateOne) SetDeletedAt(v int64) *PasswordUpdateOne {
 	_u.mutation.ResetDeletedAt()
@@ -260,6 +284,12 @@ func (_u *PasswordUpdateOne) SetNillableDeletedAt(v *int64) *PasswordUpdateOne {
 // AddDeletedAt adds value to the "deleted_at" field.
 func (_u *PasswordUpdateOne) AddDeletedAt(v int64) *PasswordUpdateOne {
 	_u.mutation.AddDeletedAt(v)
+	return _u
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (_u *PasswordUpdateOne) ClearDeletedAt() *PasswordUpdateOne {
+	_u.mutation.ClearDeletedAt()
 	return _u
 }
 
@@ -342,7 +372,7 @@ func (_u *PasswordUpdateOne) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (_u *PasswordUpdateOne) defaults() {
-	if _, ok := _u.mutation.UpdatedAt(); !ok {
+	if _, ok := _u.mutation.UpdatedAt(); !ok && !_u.mutation.UpdatedAtCleared() {
 		v := password.UpdateDefaultUpdatedAt()
 		_u.mutation.SetUpdatedAt(v)
 	}
@@ -401,11 +431,17 @@ func (_u *PasswordUpdateOne) sqlSave(ctx context.Context) (_node *Password, err 
 	if value, ok := _u.mutation.AddedUpdatedAt(); ok {
 		_spec.AddField(password.FieldUpdatedAt, field.TypeInt64, value)
 	}
+	if _u.mutation.UpdatedAtCleared() {
+		_spec.ClearField(password.FieldUpdatedAt, field.TypeInt64)
+	}
 	if value, ok := _u.mutation.DeletedAt(); ok {
 		_spec.SetField(password.FieldDeletedAt, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedAt(); ok {
 		_spec.AddField(password.FieldDeletedAt, field.TypeInt64, value)
+	}
+	if _u.mutation.DeletedAtCleared() {
+		_spec.ClearField(password.FieldDeletedAt, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.Hash(); ok {
 		_spec.SetField(password.FieldHash, field.TypeString, value)

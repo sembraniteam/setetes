@@ -10,7 +10,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"github.com/google/uuid"
 	"github.com/megalodev/setetes/internal/ent/city"
-	"github.com/megalodev/setetes/internal/ent/district"
+	"github.com/megalodev/setetes/internal/ent/province"
 )
 
 // City is the model entity for the City schema.
@@ -25,37 +25,37 @@ type City struct {
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the CityQuery when eager-loading is set.
 	Edges        CityEdges `json:"edges"`
-	city_id      *uuid.UUID
+	province_id  *uuid.UUID
 	selectValues sql.SelectValues
 }
 
 // CityEdges holds the relations/edges for other nodes in the graph.
 type CityEdges struct {
 	// Province holds the value of the province edge.
-	Province []*Province `json:"province,omitempty"`
+	Province *Province `json:"province,omitempty"`
 	// District holds the value of the district edge.
-	District *District `json:"district,omitempty"`
+	District []*District `json:"district,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [2]bool
 }
 
 // ProvinceOrErr returns the Province value or an error if the edge
-// was not loaded in eager-loading.
-func (e CityEdges) ProvinceOrErr() ([]*Province, error) {
-	if e.loadedTypes[0] {
+// was not loaded in eager-loading, or loaded but was not found.
+func (e CityEdges) ProvinceOrErr() (*Province, error) {
+	if e.Province != nil {
 		return e.Province, nil
+	} else if e.loadedTypes[0] {
+		return nil, &NotFoundError{label: province.Label}
 	}
 	return nil, &NotLoadedError{edge: "province"}
 }
 
 // DistrictOrErr returns the District value or an error if the edge
-// was not loaded in eager-loading, or loaded but was not found.
-func (e CityEdges) DistrictOrErr() (*District, error) {
-	if e.District != nil {
+// was not loaded in eager-loading.
+func (e CityEdges) DistrictOrErr() ([]*District, error) {
+	if e.loadedTypes[1] {
 		return e.District, nil
-	} else if e.loadedTypes[1] {
-		return nil, &NotFoundError{label: district.Label}
 	}
 	return nil, &NotLoadedError{edge: "district"}
 }
@@ -69,7 +69,7 @@ func (*City) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullString)
 		case city.FieldID:
 			values[i] = new(uuid.UUID)
-		case city.ForeignKeys[0]: // city_id
+		case city.ForeignKeys[0]: // province_id
 			values[i] = &sql.NullScanner{S: new(uuid.UUID)}
 		default:
 			values[i] = new(sql.UnknownType)
@@ -106,10 +106,10 @@ func (_m *City) assignValues(columns []string, values []any) error {
 			}
 		case city.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullScanner); !ok {
-				return fmt.Errorf("unexpected type %T for field city_id", values[i])
+				return fmt.Errorf("unexpected type %T for field province_id", values[i])
 			} else if value.Valid {
-				_m.city_id = new(uuid.UUID)
-				*_m.city_id = *value.S.(*uuid.UUID)
+				_m.province_id = new(uuid.UUID)
+				*_m.province_id = *value.S.(*uuid.UUID)
 			}
 		default:
 			_m.selectValues.Set(columns[i], values[i])

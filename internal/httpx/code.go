@@ -6,6 +6,7 @@ var (
 	UnauthorizedCode      int16 = 1001
 	TooManyRequestsCode   int16 = 1002
 	InternalErrorCode     int16 = 1003
+	DuplicateKeyCode      int16 = 1004
 	InvalidBodyCode       int16 = 1100
 	RequiredKeyCode       int16 = 1101
 	InvalidJSONCode       int16 = 1102

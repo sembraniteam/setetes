@@ -154,6 +154,16 @@ func UpdatedAtLTE(v int64) predicate.Password {
 	return predicate.Password(sql.FieldLTE(FieldUpdatedAt, v))
 }
 
+// UpdatedAtIsNil applies the IsNil predicate on the "updated_at" field.
+func UpdatedAtIsNil() predicate.Password {
+	return predicate.Password(sql.FieldIsNull(FieldUpdatedAt))
+}
+
+// UpdatedAtNotNil applies the NotNil predicate on the "updated_at" field.
+func UpdatedAtNotNil() predicate.Password {
+	return predicate.Password(sql.FieldNotNull(FieldUpdatedAt))
+}
+
 // DeletedAtEQ applies the EQ predicate on the "deleted_at" field.
 func DeletedAtEQ(v int64) predicate.Password {
 	return predicate.Password(sql.FieldEQ(FieldDeletedAt, v))
@@ -192,6 +202,16 @@ func DeletedAtLT(v int64) predicate.Password {
 // DeletedAtLTE applies the LTE predicate on the "deleted_at" field.
 func DeletedAtLTE(v int64) predicate.Password {
 	return predicate.Password(sql.FieldLTE(FieldDeletedAt, v))
+}
+
+// DeletedAtIsNil applies the IsNil predicate on the "deleted_at" field.
+func DeletedAtIsNil() predicate.Password {
+	return predicate.Password(sql.FieldIsNull(FieldDeletedAt))
+}
+
+// DeletedAtNotNil applies the NotNil predicate on the "deleted_at" field.
+func DeletedAtNotNil() predicate.Password {
+	return predicate.Password(sql.FieldNotNull(FieldDeletedAt))
 }
 
 // HashEQ applies the EQ predicate on the "hash" field.

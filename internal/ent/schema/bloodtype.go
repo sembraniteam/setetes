@@ -38,7 +38,7 @@ func (BloodType) Fields() []ent.Field {
 				"Negative", "NEGATIVE",
 			).
 			StructTag(`json:"rhesus"`).
-			Nillable().
+			Optional().
 			Comment("The Rhesus (Rh) factor of the blood group, either POSITIVE or NEGATIVE."),
 	}
 }

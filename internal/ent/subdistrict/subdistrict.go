@@ -25,14 +25,14 @@ const (
 	// Table holds the table name of the subdistrict in the database.
 	Table = "subdistricts"
 	// DistrictTable is the table that holds the district relation/edge.
-	DistrictTable = "districts"
+	DistrictTable = "subdistricts"
 	// DistrictInverseTable is the table name for the District entity.
 	// It exists in this package in order to avoid circular dependency with the "district" package.
 	DistrictInverseTable = "districts"
 	// DistrictColumn is the table column denoting the district relation/edge.
 	DistrictColumn = "district_id"
 	// PmiLocationTable is the table that holds the pmi_location relation/edge.
-	PmiLocationTable = "subdistricts"
+	PmiLocationTable = "pmi_locations"
 	// PmiLocationInverseTable is the table name for the PMILocation entity.
 	// It exists in this package in order to avoid circular dependency with the "pmilocation" package.
 	PmiLocationInverseTable = "pmi_locations"
@@ -51,7 +51,7 @@ var Columns = []string{
 // ForeignKeys holds the SQL foreign-keys that are owned by the "subdistricts"
 // table and are not defined as standalone fields in the schema.
 var ForeignKeys = []string{
-	"subdistrict_id",
+	"district_id",
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -99,37 +99,37 @@ func ByName(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldName, opts...).ToFunc()
 }
 
-// ByDistrictCount orders the results by district count.
-func ByDistrictCount(opts ...sql.OrderTermOption) OrderOption {
+// ByDistrictField orders the results by district field.
+func ByDistrictField(field string, opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborsCount(s, newDistrictStep(), opts...)
+		sqlgraph.OrderByNeighborTerms(s, newDistrictStep(), sql.OrderByField(field, opts...))
 	}
 }
 
-// ByDistrict orders the results by district terms.
-func ByDistrict(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+// ByPmiLocationCount orders the results by pmi_location count.
+func ByPmiLocationCount(opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newDistrictStep(), append([]sql.OrderTerm{term}, terms...)...)
+		sqlgraph.OrderByNeighborsCount(s, newPmiLocationStep(), opts...)
 	}
 }
 
-// ByPmiLocationField orders the results by pmi_location field.
-func ByPmiLocationField(field string, opts ...sql.OrderTermOption) OrderOption {
+// ByPmiLocation orders the results by pmi_location terms.
+func ByPmiLocation(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newPmiLocationStep(), sql.OrderByField(field, opts...))
+		sqlgraph.OrderByNeighborTerms(s, newPmiLocationStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
 func newDistrictStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(DistrictInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.O2M, false, DistrictTable, DistrictColumn),
+		sqlgraph.Edge(sqlgraph.M2O, true, DistrictTable, DistrictColumn),
 	)
 }
 func newPmiLocationStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(PmiLocationInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.M2O, true, PmiLocationTable, PmiLocationColumn),
+		sqlgraph.Edge(sqlgraph.O2M, false, PmiLocationTable, PmiLocationColumn),
 	)
 }

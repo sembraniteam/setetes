@@ -10,7 +10,9 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"github.com/google/uuid"
 	"github.com/megalodev/setetes/internal/ent/account"
+	"github.com/megalodev/setetes/internal/ent/activation"
 	"github.com/megalodev/setetes/internal/ent/bloodtype"
+	"github.com/megalodev/setetes/internal/ent/otp"
 	"github.com/megalodev/setetes/internal/ent/password"
 )
 
@@ -22,9 +24,9 @@ type Account struct {
 	// CreatedAt holds the value of the "created_at" field.
 	CreatedAt int64 `json:"created_at"`
 	// UpdatedAt holds the value of the "updated_at" field.
-	UpdatedAt *int64 `json:"updated_at"`
+	UpdatedAt int64 `json:"updated_at"`
 	// Represents soft delete timestamp in milliseconds.
-	DeletedAt *int64 `json:"deleted_at"`
+	DeletedAt int64 `json:"deleted_at"`
 	// SHA256 hash of a user's national identity number (e.g., KTP). Stored securely to avoid saving raw identity numbers.
 	NationalIDHash string `json:"-"`
 	// Masked of national identity number (e.g., KTP).
@@ -46,7 +48,7 @@ type Account struct {
 	// Permanently locked by this account.
 	Locked bool `json:"locked"`
 	// Temporary locked by this account based on time milliseconds.
-	TempLockedAt *int64 `json:"temp_locked_at"`
+	TempLockedAt int64 `json:"temp_locked_at"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the AccountQuery when eager-loading is set.
 	Edges        AccountEdges `json:"edges"`
@@ -59,9 +61,13 @@ type AccountEdges struct {
 	BloodType *BloodType `json:"blood_type,omitempty"`
 	// Password holds the value of the password edge.
 	Password *Password `json:"password,omitempty"`
+	// Otp holds the value of the otp edge.
+	Otp *OTP `json:"otp,omitempty"`
+	// Activation holds the value of the activation edge.
+	Activation *Activation `json:"activation,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [2]bool
+	loadedTypes [4]bool
 }
 
 // BloodTypeOrErr returns the BloodType value or an error if the edge
@@ -84,6 +90,28 @@ func (e AccountEdges) PasswordOrErr() (*Password, error) {
 		return nil, &NotFoundError{label: password.Label}
 	}
 	return nil, &NotLoadedError{edge: "password"}
+}
+
+// OtpOrErr returns the Otp value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e AccountEdges) OtpOrErr() (*OTP, error) {
+	if e.Otp != nil {
+		return e.Otp, nil
+	} else if e.loadedTypes[2] {
+		return nil, &NotFoundError{label: otp.Label}
+	}
+	return nil, &NotLoadedError{edge: "otp"}
+}
+
+// ActivationOrErr returns the Activation value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e AccountEdges) ActivationOrErr() (*Activation, error) {
+	if e.Activation != nil {
+		return e.Activation, nil
+	} else if e.loadedTypes[3] {
+		return nil, &NotFoundError{label: activation.Label}
+	}
+	return nil, &NotLoadedError{edge: "activation"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -130,15 +158,13 @@ func (_m *Account) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
 			} else if value.Valid {
-				_m.UpdatedAt = new(int64)
-				*_m.UpdatedAt = value.Int64
+				_m.UpdatedAt = value.Int64
 			}
 		case account.FieldDeletedAt:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field deleted_at", values[i])
 			} else if value.Valid {
-				_m.DeletedAt = new(int64)
-				*_m.DeletedAt = value.Int64
+				_m.DeletedAt = value.Int64
 			}
 		case account.FieldNationalIDHash:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -204,8 +230,7 @@ func (_m *Account) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field temp_locked_at", values[i])
 			} else if value.Valid {
-				_m.TempLockedAt = new(int64)
-				*_m.TempLockedAt = value.Int64
+				_m.TempLockedAt = value.Int64
 			}
 		default:
 			_m.selectValues.Set(columns[i], values[i])
@@ -228,6 +253,16 @@ func (_m *Account) QueryBloodType() *BloodTypeQuery {
 // QueryPassword queries the "password" edge of the Account entity.
 func (_m *Account) QueryPassword() *PasswordQuery {
 	return NewAccountClient(_m.config).QueryPassword(_m)
+}
+
+// QueryOtp queries the "otp" edge of the Account entity.
+func (_m *Account) QueryOtp() *OTPQuery {
+	return NewAccountClient(_m.config).QueryOtp(_m)
+}
+
+// QueryActivation queries the "activation" edge of the Account entity.
+func (_m *Account) QueryActivation() *ActivationQuery {
+	return NewAccountClient(_m.config).QueryActivation(_m)
 }
 
 // Update returns a builder for updating this Account.
@@ -256,15 +291,11 @@ func (_m *Account) String() string {
 	builder.WriteString("created_at=")
 	builder.WriteString(fmt.Sprintf("%v", _m.CreatedAt))
 	builder.WriteString(", ")
-	if v := _m.UpdatedAt; v != nil {
-		builder.WriteString("updated_at=")
-		builder.WriteString(fmt.Sprintf("%v", *v))
-	}
+	builder.WriteString("updated_at=")
+	builder.WriteString(fmt.Sprintf("%v", _m.UpdatedAt))
 	builder.WriteString(", ")
-	if v := _m.DeletedAt; v != nil {
-		builder.WriteString("deleted_at=")
-		builder.WriteString(fmt.Sprintf("%v", *v))
-	}
+	builder.WriteString("deleted_at=")
+	builder.WriteString(fmt.Sprintf("%v", _m.DeletedAt))
 	builder.WriteString(", ")
 	builder.WriteString("national_id_hash=<sensitive>")
 	builder.WriteString(", ")
@@ -295,10 +326,8 @@ func (_m *Account) String() string {
 	builder.WriteString("locked=")
 	builder.WriteString(fmt.Sprintf("%v", _m.Locked))
 	builder.WriteString(", ")
-	if v := _m.TempLockedAt; v != nil {
-		builder.WriteString("temp_locked_at=")
-		builder.WriteString(fmt.Sprintf("%v", *v))
-	}
+	builder.WriteString("temp_locked_at=")
+	builder.WriteString(fmt.Sprintf("%v", _m.TempLockedAt))
 	builder.WriteByte(')')
 	return builder.String()
 }

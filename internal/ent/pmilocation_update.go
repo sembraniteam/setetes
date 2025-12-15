@@ -44,6 +44,12 @@ func (_u *PMILocationUpdate) AddUpdatedAt(v int64) *PMILocationUpdate {
 	return _u
 }
 
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (_u *PMILocationUpdate) ClearUpdatedAt() *PMILocationUpdate {
+	_u.mutation.ClearUpdatedAt()
+	return _u
+}
+
 // SetDeletedAt sets the "deleted_at" field.
 func (_u *PMILocationUpdate) SetDeletedAt(v int64) *PMILocationUpdate {
 	_u.mutation.ResetDeletedAt()
@@ -62,6 +68,12 @@ func (_u *PMILocationUpdate) SetNillableDeletedAt(v *int64) *PMILocationUpdate {
 // AddDeletedAt adds value to the "deleted_at" field.
 func (_u *PMILocationUpdate) AddDeletedAt(v int64) *PMILocationUpdate {
 	_u.mutation.AddDeletedAt(v)
+	return _u
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (_u *PMILocationUpdate) ClearDeletedAt() *PMILocationUpdate {
+	_u.mutation.ClearDeletedAt()
 	return _u
 }
 
@@ -134,6 +146,12 @@ func (_u *PMILocationUpdate) SetNillableEmail(v *string) *PMILocationUpdate {
 	return _u
 }
 
+// ClearEmail clears the value of the "email" field.
+func (_u *PMILocationUpdate) ClearEmail() *PMILocationUpdate {
+	_u.mutation.ClearEmail()
+	return _u
+}
+
 // SetDialCode sets the "dial_code" field.
 func (_u *PMILocationUpdate) SetDialCode(v string) *PMILocationUpdate {
 	_u.mutation.SetDialCode(v)
@@ -190,19 +208,15 @@ func (_u *PMILocationUpdate) SetNillableClosesAt(v *time.Time) *PMILocationUpdat
 	return _u
 }
 
-// AddSubdistrictIDs adds the "subdistrict" edge to the Subdistrict entity by IDs.
-func (_u *PMILocationUpdate) AddSubdistrictIDs(ids ...uuid.UUID) *PMILocationUpdate {
-	_u.mutation.AddSubdistrictIDs(ids...)
+// SetSubdistrictID sets the "subdistrict" edge to the Subdistrict entity by ID.
+func (_u *PMILocationUpdate) SetSubdistrictID(id uuid.UUID) *PMILocationUpdate {
+	_u.mutation.SetSubdistrictID(id)
 	return _u
 }
 
-// AddSubdistrict adds the "subdistrict" edges to the Subdistrict entity.
-func (_u *PMILocationUpdate) AddSubdistrict(v ...*Subdistrict) *PMILocationUpdate {
-	ids := make([]uuid.UUID, len(v))
-	for i := range v {
-		ids[i] = v[i].ID
-	}
-	return _u.AddSubdistrictIDs(ids...)
+// SetSubdistrict sets the "subdistrict" edge to the Subdistrict entity.
+func (_u *PMILocationUpdate) SetSubdistrict(v *Subdistrict) *PMILocationUpdate {
+	return _u.SetSubdistrictID(v.ID)
 }
 
 // Mutation returns the PMILocationMutation object of the builder.
@@ -210,25 +224,10 @@ func (_u *PMILocationUpdate) Mutation() *PMILocationMutation {
 	return _u.mutation
 }
 
-// ClearSubdistrict clears all "subdistrict" edges to the Subdistrict entity.
+// ClearSubdistrict clears the "subdistrict" edge to the Subdistrict entity.
 func (_u *PMILocationUpdate) ClearSubdistrict() *PMILocationUpdate {
 	_u.mutation.ClearSubdistrict()
 	return _u
-}
-
-// RemoveSubdistrictIDs removes the "subdistrict" edge to Subdistrict entities by IDs.
-func (_u *PMILocationUpdate) RemoveSubdistrictIDs(ids ...uuid.UUID) *PMILocationUpdate {
-	_u.mutation.RemoveSubdistrictIDs(ids...)
-	return _u
-}
-
-// RemoveSubdistrict removes "subdistrict" edges to Subdistrict entities.
-func (_u *PMILocationUpdate) RemoveSubdistrict(v ...*Subdistrict) *PMILocationUpdate {
-	ids := make([]uuid.UUID, len(v))
-	for i := range v {
-		ids[i] = v[i].ID
-	}
-	return _u.RemoveSubdistrictIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -261,7 +260,7 @@ func (_u *PMILocationUpdate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (_u *PMILocationUpdate) defaults() {
-	if _, ok := _u.mutation.UpdatedAt(); !ok {
+	if _, ok := _u.mutation.UpdatedAt(); !ok && !_u.mutation.UpdatedAtCleared() {
 		v := pmilocation.UpdateDefaultUpdatedAt()
 		_u.mutation.SetUpdatedAt(v)
 	}
@@ -304,6 +303,9 @@ func (_u *PMILocationUpdate) check() error {
 			return &ValidationError{Name: "phone_number", err: fmt.Errorf(`ent: validator failed for field "PMILocation.phone_number": %w`, err)}
 		}
 	}
+	if _u.mutation.SubdistrictCleared() && len(_u.mutation.SubdistrictIDs()) > 0 {
+		return errors.New(`ent: clearing a required unique edge "PMILocation.subdistrict"`)
+	}
 	return nil
 }
 
@@ -325,11 +327,17 @@ func (_u *PMILocationUpdate) sqlSave(ctx context.Context) (_node int, err error)
 	if value, ok := _u.mutation.AddedUpdatedAt(); ok {
 		_spec.AddField(pmilocation.FieldUpdatedAt, field.TypeInt64, value)
 	}
+	if _u.mutation.UpdatedAtCleared() {
+		_spec.ClearField(pmilocation.FieldUpdatedAt, field.TypeInt64)
+	}
 	if value, ok := _u.mutation.DeletedAt(); ok {
 		_spec.SetField(pmilocation.FieldDeletedAt, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedAt(); ok {
 		_spec.AddField(pmilocation.FieldDeletedAt, field.TypeInt64, value)
+	}
+	if _u.mutation.DeletedAtCleared() {
+		_spec.ClearField(pmilocation.FieldDeletedAt, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(pmilocation.FieldName, field.TypeString, value)
@@ -349,6 +357,9 @@ func (_u *PMILocationUpdate) sqlSave(ctx context.Context) (_node int, err error)
 	if value, ok := _u.mutation.Email(); ok {
 		_spec.SetField(pmilocation.FieldEmail, field.TypeString, value)
 	}
+	if _u.mutation.EmailCleared() {
+		_spec.ClearField(pmilocation.FieldEmail, field.TypeString)
+	}
 	if value, ok := _u.mutation.DialCode(); ok {
 		_spec.SetField(pmilocation.FieldDialCode, field.TypeString, value)
 	}
@@ -363,37 +374,21 @@ func (_u *PMILocationUpdate) sqlSave(ctx context.Context) (_node int, err error)
 	}
 	if _u.mutation.SubdistrictCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
 			Table:   pmilocation.SubdistrictTable,
 			Columns: []string{pmilocation.SubdistrictColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(subdistrict.FieldID, field.TypeUUID),
 			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := _u.mutation.RemovedSubdistrictIDs(); len(nodes) > 0 && !_u.mutation.SubdistrictCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   pmilocation.SubdistrictTable,
-			Columns: []string{pmilocation.SubdistrictColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(subdistrict.FieldID, field.TypeUUID),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
 	if nodes := _u.mutation.SubdistrictIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
 			Table:   pmilocation.SubdistrictTable,
 			Columns: []string{pmilocation.SubdistrictColumn},
 			Bidi:    false,
@@ -439,6 +434,12 @@ func (_u *PMILocationUpdateOne) AddUpdatedAt(v int64) *PMILocationUpdateOne {
 	return _u
 }
 
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (_u *PMILocationUpdateOne) ClearUpdatedAt() *PMILocationUpdateOne {
+	_u.mutation.ClearUpdatedAt()
+	return _u
+}
+
 // SetDeletedAt sets the "deleted_at" field.
 func (_u *PMILocationUpdateOne) SetDeletedAt(v int64) *PMILocationUpdateOne {
 	_u.mutation.ResetDeletedAt()
@@ -457,6 +458,12 @@ func (_u *PMILocationUpdateOne) SetNillableDeletedAt(v *int64) *PMILocationUpdat
 // AddDeletedAt adds value to the "deleted_at" field.
 func (_u *PMILocationUpdateOne) AddDeletedAt(v int64) *PMILocationUpdateOne {
 	_u.mutation.AddDeletedAt(v)
+	return _u
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (_u *PMILocationUpdateOne) ClearDeletedAt() *PMILocationUpdateOne {
+	_u.mutation.ClearDeletedAt()
 	return _u
 }
 
@@ -529,6 +536,12 @@ func (_u *PMILocationUpdateOne) SetNillableEmail(v *string) *PMILocationUpdateOn
 	return _u
 }
 
+// ClearEmail clears the value of the "email" field.
+func (_u *PMILocationUpdateOne) ClearEmail() *PMILocationUpdateOne {
+	_u.mutation.ClearEmail()
+	return _u
+}
+
 // SetDialCode sets the "dial_code" field.
 func (_u *PMILocationUpdateOne) SetDialCode(v string) *PMILocationUpdateOne {
 	_u.mutation.SetDialCode(v)
@@ -585,19 +598,15 @@ func (_u *PMILocationUpdateOne) SetNillableClosesAt(v *time.Time) *PMILocationUp
 	return _u
 }
 
-// AddSubdistrictIDs adds the "subdistrict" edge to the Subdistrict entity by IDs.
-func (_u *PMILocationUpdateOne) AddSubdistrictIDs(ids ...uuid.UUID) *PMILocationUpdateOne {
-	_u.mutation.AddSubdistrictIDs(ids...)
+// SetSubdistrictID sets the "subdistrict" edge to the Subdistrict entity by ID.
+func (_u *PMILocationUpdateOne) SetSubdistrictID(id uuid.UUID) *PMILocationUpdateOne {
+	_u.mutation.SetSubdistrictID(id)
 	return _u
 }
 
-// AddSubdistrict adds the "subdistrict" edges to the Subdistrict entity.
-func (_u *PMILocationUpdateOne) AddSubdistrict(v ...*Subdistrict) *PMILocationUpdateOne {
-	ids := make([]uuid.UUID, len(v))
-	for i := range v {
-		ids[i] = v[i].ID
-	}
-	return _u.AddSubdistrictIDs(ids...)
+// SetSubdistrict sets the "subdistrict" edge to the Subdistrict entity.
+func (_u *PMILocationUpdateOne) SetSubdistrict(v *Subdistrict) *PMILocationUpdateOne {
+	return _u.SetSubdistrictID(v.ID)
 }
 
 // Mutation returns the PMILocationMutation object of the builder.
@@ -605,25 +614,10 @@ func (_u *PMILocationUpdateOne) Mutation() *PMILocationMutation {
 	return _u.mutation
 }
 
-// ClearSubdistrict clears all "subdistrict" edges to the Subdistrict entity.
+// ClearSubdistrict clears the "subdistrict" edge to the Subdistrict entity.
 func (_u *PMILocationUpdateOne) ClearSubdistrict() *PMILocationUpdateOne {
 	_u.mutation.ClearSubdistrict()
 	return _u
-}
-
-// RemoveSubdistrictIDs removes the "subdistrict" edge to Subdistrict entities by IDs.
-func (_u *PMILocationUpdateOne) RemoveSubdistrictIDs(ids ...uuid.UUID) *PMILocationUpdateOne {
-	_u.mutation.RemoveSubdistrictIDs(ids...)
-	return _u
-}
-
-// RemoveSubdistrict removes "subdistrict" edges to Subdistrict entities.
-func (_u *PMILocationUpdateOne) RemoveSubdistrict(v ...*Subdistrict) *PMILocationUpdateOne {
-	ids := make([]uuid.UUID, len(v))
-	for i := range v {
-		ids[i] = v[i].ID
-	}
-	return _u.RemoveSubdistrictIDs(ids...)
 }
 
 // Where appends a list predicates to the PMILocationUpdate builder.
@@ -669,7 +663,7 @@ func (_u *PMILocationUpdateOne) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (_u *PMILocationUpdateOne) defaults() {
-	if _, ok := _u.mutation.UpdatedAt(); !ok {
+	if _, ok := _u.mutation.UpdatedAt(); !ok && !_u.mutation.UpdatedAtCleared() {
 		v := pmilocation.UpdateDefaultUpdatedAt()
 		_u.mutation.SetUpdatedAt(v)
 	}
@@ -712,6 +706,9 @@ func (_u *PMILocationUpdateOne) check() error {
 			return &ValidationError{Name: "phone_number", err: fmt.Errorf(`ent: validator failed for field "PMILocation.phone_number": %w`, err)}
 		}
 	}
+	if _u.mutation.SubdistrictCleared() && len(_u.mutation.SubdistrictIDs()) > 0 {
+		return errors.New(`ent: clearing a required unique edge "PMILocation.subdistrict"`)
+	}
 	return nil
 }
 
@@ -750,11 +747,17 @@ func (_u *PMILocationUpdateOne) sqlSave(ctx context.Context) (_node *PMILocation
 	if value, ok := _u.mutation.AddedUpdatedAt(); ok {
 		_spec.AddField(pmilocation.FieldUpdatedAt, field.TypeInt64, value)
 	}
+	if _u.mutation.UpdatedAtCleared() {
+		_spec.ClearField(pmilocation.FieldUpdatedAt, field.TypeInt64)
+	}
 	if value, ok := _u.mutation.DeletedAt(); ok {
 		_spec.SetField(pmilocation.FieldDeletedAt, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedAt(); ok {
 		_spec.AddField(pmilocation.FieldDeletedAt, field.TypeInt64, value)
+	}
+	if _u.mutation.DeletedAtCleared() {
+		_spec.ClearField(pmilocation.FieldDeletedAt, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(pmilocation.FieldName, field.TypeString, value)
@@ -774,6 +777,9 @@ func (_u *PMILocationUpdateOne) sqlSave(ctx context.Context) (_node *PMILocation
 	if value, ok := _u.mutation.Email(); ok {
 		_spec.SetField(pmilocation.FieldEmail, field.TypeString, value)
 	}
+	if _u.mutation.EmailCleared() {
+		_spec.ClearField(pmilocation.FieldEmail, field.TypeString)
+	}
 	if value, ok := _u.mutation.DialCode(); ok {
 		_spec.SetField(pmilocation.FieldDialCode, field.TypeString, value)
 	}
@@ -788,37 +794,21 @@ func (_u *PMILocationUpdateOne) sqlSave(ctx context.Context) (_node *PMILocation
 	}
 	if _u.mutation.SubdistrictCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
 			Table:   pmilocation.SubdistrictTable,
 			Columns: []string{pmilocation.SubdistrictColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(subdistrict.FieldID, field.TypeUUID),
 			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := _u.mutation.RemovedSubdistrictIDs(); len(nodes) > 0 && !_u.mutation.SubdistrictCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   pmilocation.SubdistrictTable,
-			Columns: []string{pmilocation.SubdistrictColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(subdistrict.FieldID, field.TypeUUID),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
 	if nodes := _u.mutation.SubdistrictIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
 			Table:   pmilocation.SubdistrictTable,
 			Columns: []string{pmilocation.SubdistrictColumn},
 			Bidi:    false,

@@ -12,6 +12,10 @@ func BadRequest(c *gin.Context, code int16, message *Message) {
 	json(c, http.StatusBadRequest, code, message, nil)
 }
 
+func Created(c *gin.Context, message *Message, result any) {
+	json(c, http.StatusCreated, httpx.OKCode, message, result)
+}
+
 func Ok(c *gin.Context, message *Message, result any) {
 	json(c, http.StatusOK, httpx.OKCode, message, result)
 }
@@ -58,16 +62,20 @@ func Unauthorized(c *gin.Context) {
 
 func Error(c *gin.Context, errParam any) {
 	switch err := errParam.(type) {
-	case ErrorValidate:
+	case *ErrorValidate:
 		BadRequest(c, *err.GetCode(), err.GetMessage())
+		return
 	case error:
 		if err == io.EOF {
 			BadRequest(c, httpx.InvalidBodyCode, MsgInvalidBody)
+			return
 		}
 
 		InternalServerError(c)
+		return
 	default:
 		UnknownError(c)
+		return
 	}
 }
 

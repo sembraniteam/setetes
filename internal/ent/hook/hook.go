@@ -21,6 +21,18 @@ func (f AccountFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, err
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.AccountMutation", m)
 }
 
+// The ActivationFunc type is an adapter to allow the use of ordinary
+// function as Activation mutator.
+type ActivationFunc func(context.Context, *ent.ActivationMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f ActivationFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.ActivationMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ActivationMutation", m)
+}
+
 // The BloodTypeFunc type is an adapter to allow the use of ordinary
 // function as BloodType mutator.
 type BloodTypeFunc func(context.Context, *ent.BloodTypeMutation) (ent.Value, error)
@@ -67,6 +79,18 @@ func (f DistrictFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, er
 		return f(ctx, mv)
 	}
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.DistrictMutation", m)
+}
+
+// The OTPFunc type is an adapter to allow the use of ordinary
+// function as OTP mutator.
+type OTPFunc func(context.Context, *ent.OTPMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f OTPFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.OTPMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.OTPMutation", m)
 }
 
 // The PMILocationFunc type is an adapter to allow the use of ordinary

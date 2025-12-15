@@ -35,9 +35,12 @@ func (City) Fields() []ent.Field {
 // Edges of the City.
 func (City) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.To("province", Province.Type).
-			StorageKey(edge.Column("province_id")).
+		edge.From("province", Province.Type).
+			Ref("city").
+			Unique().
+			Required(),
+		edge.To("district", District.Type).
+			StorageKey(edge.Column("city_id")).
 			Annotations(entsql.OnDelete(entsql.NoAction)),
-		edge.From("district", District.Type).Ref("city").Unique().Required(),
 	}
 }

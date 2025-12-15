@@ -23,14 +23,14 @@ const (
 	// Table holds the table name of the city in the database.
 	Table = "cities"
 	// ProvinceTable is the table that holds the province relation/edge.
-	ProvinceTable = "provinces"
+	ProvinceTable = "cities"
 	// ProvinceInverseTable is the table name for the Province entity.
 	// It exists in this package in order to avoid circular dependency with the "province" package.
 	ProvinceInverseTable = "provinces"
 	// ProvinceColumn is the table column denoting the province relation/edge.
 	ProvinceColumn = "province_id"
 	// DistrictTable is the table that holds the district relation/edge.
-	DistrictTable = "cities"
+	DistrictTable = "districts"
 	// DistrictInverseTable is the table name for the District entity.
 	// It exists in this package in order to avoid circular dependency with the "district" package.
 	DistrictInverseTable = "districts"
@@ -48,7 +48,7 @@ var Columns = []string{
 // ForeignKeys holds the SQL foreign-keys that are owned by the "cities"
 // table and are not defined as standalone fields in the schema.
 var ForeignKeys = []string{
-	"city_id",
+	"province_id",
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -89,37 +89,37 @@ func ByName(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldName, opts...).ToFunc()
 }
 
-// ByProvinceCount orders the results by province count.
-func ByProvinceCount(opts ...sql.OrderTermOption) OrderOption {
+// ByProvinceField orders the results by province field.
+func ByProvinceField(field string, opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborsCount(s, newProvinceStep(), opts...)
+		sqlgraph.OrderByNeighborTerms(s, newProvinceStep(), sql.OrderByField(field, opts...))
 	}
 }
 
-// ByProvince orders the results by province terms.
-func ByProvince(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+// ByDistrictCount orders the results by district count.
+func ByDistrictCount(opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newProvinceStep(), append([]sql.OrderTerm{term}, terms...)...)
+		sqlgraph.OrderByNeighborsCount(s, newDistrictStep(), opts...)
 	}
 }
 
-// ByDistrictField orders the results by district field.
-func ByDistrictField(field string, opts ...sql.OrderTermOption) OrderOption {
+// ByDistrict orders the results by district terms.
+func ByDistrict(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newDistrictStep(), sql.OrderByField(field, opts...))
+		sqlgraph.OrderByNeighborTerms(s, newDistrictStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
 func newProvinceStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(ProvinceInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.O2M, false, ProvinceTable, ProvinceColumn),
+		sqlgraph.Edge(sqlgraph.M2O, true, ProvinceTable, ProvinceColumn),
 	)
 }
 func newDistrictStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(DistrictInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.M2O, true, DistrictTable, DistrictColumn),
+		sqlgraph.Edge(sqlgraph.O2M, false, DistrictTable, DistrictColumn),
 	)
 }

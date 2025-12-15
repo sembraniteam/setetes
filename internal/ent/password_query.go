@@ -414,10 +414,10 @@ func (_q *PasswordQuery) loadAccount(ctx context.Context, query *AccountQuery, n
 	ids := make([]uuid.UUID, 0, len(nodes))
 	nodeids := make(map[uuid.UUID][]*Password)
 	for i := range nodes {
-		if nodes[i].password_id == nil {
+		if nodes[i].account_id == nil {
 			continue
 		}
-		fk := *nodes[i].password_id
+		fk := *nodes[i].account_id
 		if _, ok := nodeids[fk]; !ok {
 			ids = append(ids, fk)
 		}
@@ -434,7 +434,7 @@ func (_q *PasswordQuery) loadAccount(ctx context.Context, query *AccountQuery, n
 	for _, n := range neighbors {
 		nodes, ok := nodeids[n.ID]
 		if !ok {
-			return fmt.Errorf(`unexpected foreign-key "password_id" returned %v`, n.ID)
+			return fmt.Errorf(`unexpected foreign-key "account_id" returned %v`, n.ID)
 		}
 		for i := range nodes {
 			assign(nodes[i], n)

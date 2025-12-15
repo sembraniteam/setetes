@@ -79,7 +79,7 @@ func (_q *DistrictQuery) QueryCity() *CityQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(district.Table, district.FieldID, selector),
 			sqlgraph.To(city.Table, city.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, district.CityTable, district.CityColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, district.CityTable, district.CityColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
 		return fromU, nil
@@ -101,7 +101,7 @@ func (_q *DistrictQuery) QuerySubdistrict() *SubdistrictQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(district.Table, district.FieldID, selector),
 			sqlgraph.To(subdistrict.Table, subdistrict.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, district.SubdistrictTable, district.SubdistrictColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, district.SubdistrictTable, district.SubdistrictColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
 		return fromU, nil
@@ -415,7 +415,7 @@ func (_q *DistrictQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Dis
 			_q.withSubdistrict != nil,
 		}
 	)
-	if _q.withSubdistrict != nil {
+	if _q.withCity != nil {
 		withFKs = true
 	}
 	if withFKs {
@@ -440,15 +440,15 @@ func (_q *DistrictQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Dis
 		return nodes, nil
 	}
 	if query := _q.withCity; query != nil {
-		if err := _q.loadCity(ctx, query, nodes,
-			func(n *District) { n.Edges.City = []*City{} },
-			func(n *District, e *City) { n.Edges.City = append(n.Edges.City, e) }); err != nil {
+		if err := _q.loadCity(ctx, query, nodes, nil,
+			func(n *District, e *City) { n.Edges.City = e }); err != nil {
 			return nil, err
 		}
 	}
 	if query := _q.withSubdistrict; query != nil {
-		if err := _q.loadSubdistrict(ctx, query, nodes, nil,
-			func(n *District, e *Subdistrict) { n.Edges.Subdistrict = e }); err != nil {
+		if err := _q.loadSubdistrict(ctx, query, nodes,
+			func(n *District) { n.Edges.Subdistrict = []*Subdistrict{} },
+			func(n *District, e *Subdistrict) { n.Edges.Subdistrict = append(n.Edges.Subdistrict, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -456,6 +456,38 @@ func (_q *DistrictQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Dis
 }
 
 func (_q *DistrictQuery) loadCity(ctx context.Context, query *CityQuery, nodes []*District, init func(*District), assign func(*District, *City)) error {
+	ids := make([]uuid.UUID, 0, len(nodes))
+	nodeids := make(map[uuid.UUID][]*District)
+	for i := range nodes {
+		if nodes[i].city_id == nil {
+			continue
+		}
+		fk := *nodes[i].city_id
+		if _, ok := nodeids[fk]; !ok {
+			ids = append(ids, fk)
+		}
+		nodeids[fk] = append(nodeids[fk], nodes[i])
+	}
+	if len(ids) == 0 {
+		return nil
+	}
+	query.Where(city.IDIn(ids...))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nodeids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected foreign-key "city_id" returned %v`, n.ID)
+		}
+		for i := range nodes {
+			assign(nodes[i], n)
+		}
+	}
+	return nil
+}
+func (_q *DistrictQuery) loadSubdistrict(ctx context.Context, query *SubdistrictQuery, nodes []*District, init func(*District), assign func(*District, *Subdistrict)) error {
 	fks := make([]driver.Value, 0, len(nodes))
 	nodeids := make(map[uuid.UUID]*District)
 	for i := range nodes {
@@ -466,55 +498,23 @@ func (_q *DistrictQuery) loadCity(ctx context.Context, query *CityQuery, nodes [
 		}
 	}
 	query.withFKs = true
-	query.Where(predicate.City(func(s *sql.Selector) {
-		s.Where(sql.InValues(s.C(district.CityColumn), fks...))
+	query.Where(predicate.Subdistrict(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(district.SubdistrictColumn), fks...))
 	}))
 	neighbors, err := query.All(ctx)
 	if err != nil {
 		return err
 	}
 	for _, n := range neighbors {
-		fk := n.city_id
+		fk := n.district_id
 		if fk == nil {
-			return fmt.Errorf(`foreign-key "city_id" is nil for node %v`, n.ID)
+			return fmt.Errorf(`foreign-key "district_id" is nil for node %v`, n.ID)
 		}
 		node, ok := nodeids[*fk]
 		if !ok {
-			return fmt.Errorf(`unexpected referenced foreign-key "city_id" returned %v for node %v`, *fk, n.ID)
+			return fmt.Errorf(`unexpected referenced foreign-key "district_id" returned %v for node %v`, *fk, n.ID)
 		}
 		assign(node, n)
-	}
-	return nil
-}
-func (_q *DistrictQuery) loadSubdistrict(ctx context.Context, query *SubdistrictQuery, nodes []*District, init func(*District), assign func(*District, *Subdistrict)) error {
-	ids := make([]uuid.UUID, 0, len(nodes))
-	nodeids := make(map[uuid.UUID][]*District)
-	for i := range nodes {
-		if nodes[i].district_id == nil {
-			continue
-		}
-		fk := *nodes[i].district_id
-		if _, ok := nodeids[fk]; !ok {
-			ids = append(ids, fk)
-		}
-		nodeids[fk] = append(nodeids[fk], nodes[i])
-	}
-	if len(ids) == 0 {
-		return nil
-	}
-	query.Where(subdistrict.IDIn(ids...))
-	neighbors, err := query.All(ctx)
-	if err != nil {
-		return err
-	}
-	for _, n := range neighbors {
-		nodes, ok := nodeids[n.ID]
-		if !ok {
-			return fmt.Errorf(`unexpected foreign-key "district_id" returned %v`, n.ID)
-		}
-		for i := range nodes {
-			assign(nodes[i], n)
-		}
 	}
 	return nil
 }

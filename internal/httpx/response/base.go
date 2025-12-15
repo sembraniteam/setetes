@@ -1,5 +1,10 @@
 package response
 
+const (
+	Required = "REQUIRED"
+	Warning  = "WARNING"
+)
+
 var (
 	MsgPong                = NewMessage("PONG", "PONG")
 	MsgUnknownError        = NewMessage("UNKNOWN_ERROR", "Unknown error")

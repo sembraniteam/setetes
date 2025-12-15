@@ -57,15 +57,19 @@ func (_u *ProvinceUpdate) SetNillableName(v *string) *ProvinceUpdate {
 	return _u
 }
 
-// SetCityID sets the "city" edge to the City entity by ID.
-func (_u *ProvinceUpdate) SetCityID(id uuid.UUID) *ProvinceUpdate {
-	_u.mutation.SetCityID(id)
+// AddCityIDs adds the "city" edge to the City entity by IDs.
+func (_u *ProvinceUpdate) AddCityIDs(ids ...uuid.UUID) *ProvinceUpdate {
+	_u.mutation.AddCityIDs(ids...)
 	return _u
 }
 
-// SetCity sets the "city" edge to the City entity.
-func (_u *ProvinceUpdate) SetCity(v *City) *ProvinceUpdate {
-	return _u.SetCityID(v.ID)
+// AddCity adds the "city" edges to the City entity.
+func (_u *ProvinceUpdate) AddCity(v ...*City) *ProvinceUpdate {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddCityIDs(ids...)
 }
 
 // Mutation returns the ProvinceMutation object of the builder.
@@ -73,10 +77,25 @@ func (_u *ProvinceUpdate) Mutation() *ProvinceMutation {
 	return _u.mutation
 }
 
-// ClearCity clears the "city" edge to the City entity.
+// ClearCity clears all "city" edges to the City entity.
 func (_u *ProvinceUpdate) ClearCity() *ProvinceUpdate {
 	_u.mutation.ClearCity()
 	return _u
+}
+
+// RemoveCityIDs removes the "city" edge to City entities by IDs.
+func (_u *ProvinceUpdate) RemoveCityIDs(ids ...uuid.UUID) *ProvinceUpdate {
+	_u.mutation.RemoveCityIDs(ids...)
+	return _u
+}
+
+// RemoveCity removes "city" edges to City entities.
+func (_u *ProvinceUpdate) RemoveCity(v ...*City) *ProvinceUpdate {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveCityIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -113,9 +132,6 @@ func (_u *ProvinceUpdate) check() error {
 			return &ValidationError{Name: "bps_code", err: fmt.Errorf(`ent: validator failed for field "Province.bps_code": %w`, err)}
 		}
 	}
-	if _u.mutation.CityCleared() && len(_u.mutation.CityIDs()) > 0 {
-		return errors.New(`ent: clearing a required unique edge "Province.city"`)
-	}
 	return nil
 }
 
@@ -139,8 +155,8 @@ func (_u *ProvinceUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if _u.mutation.CityCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
 			Table:   province.CityTable,
 			Columns: []string{province.CityColumn},
 			Bidi:    false,
@@ -150,10 +166,26 @@ func (_u *ProvinceUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
+	if nodes := _u.mutation.RemovedCityIDs(); len(nodes) > 0 && !_u.mutation.CityCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   province.CityTable,
+			Columns: []string{province.CityColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(city.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
 	if nodes := _u.mutation.CityIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
 			Table:   province.CityTable,
 			Columns: []string{province.CityColumn},
 			Bidi:    false,
@@ -214,15 +246,19 @@ func (_u *ProvinceUpdateOne) SetNillableName(v *string) *ProvinceUpdateOne {
 	return _u
 }
 
-// SetCityID sets the "city" edge to the City entity by ID.
-func (_u *ProvinceUpdateOne) SetCityID(id uuid.UUID) *ProvinceUpdateOne {
-	_u.mutation.SetCityID(id)
+// AddCityIDs adds the "city" edge to the City entity by IDs.
+func (_u *ProvinceUpdateOne) AddCityIDs(ids ...uuid.UUID) *ProvinceUpdateOne {
+	_u.mutation.AddCityIDs(ids...)
 	return _u
 }
 
-// SetCity sets the "city" edge to the City entity.
-func (_u *ProvinceUpdateOne) SetCity(v *City) *ProvinceUpdateOne {
-	return _u.SetCityID(v.ID)
+// AddCity adds the "city" edges to the City entity.
+func (_u *ProvinceUpdateOne) AddCity(v ...*City) *ProvinceUpdateOne {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddCityIDs(ids...)
 }
 
 // Mutation returns the ProvinceMutation object of the builder.
@@ -230,10 +266,25 @@ func (_u *ProvinceUpdateOne) Mutation() *ProvinceMutation {
 	return _u.mutation
 }
 
-// ClearCity clears the "city" edge to the City entity.
+// ClearCity clears all "city" edges to the City entity.
 func (_u *ProvinceUpdateOne) ClearCity() *ProvinceUpdateOne {
 	_u.mutation.ClearCity()
 	return _u
+}
+
+// RemoveCityIDs removes the "city" edge to City entities by IDs.
+func (_u *ProvinceUpdateOne) RemoveCityIDs(ids ...uuid.UUID) *ProvinceUpdateOne {
+	_u.mutation.RemoveCityIDs(ids...)
+	return _u
+}
+
+// RemoveCity removes "city" edges to City entities.
+func (_u *ProvinceUpdateOne) RemoveCity(v ...*City) *ProvinceUpdateOne {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveCityIDs(ids...)
 }
 
 // Where appends a list predicates to the ProvinceUpdate builder.
@@ -283,9 +334,6 @@ func (_u *ProvinceUpdateOne) check() error {
 			return &ValidationError{Name: "bps_code", err: fmt.Errorf(`ent: validator failed for field "Province.bps_code": %w`, err)}
 		}
 	}
-	if _u.mutation.CityCleared() && len(_u.mutation.CityIDs()) > 0 {
-		return errors.New(`ent: clearing a required unique edge "Province.city"`)
-	}
 	return nil
 }
 
@@ -326,8 +374,8 @@ func (_u *ProvinceUpdateOne) sqlSave(ctx context.Context) (_node *Province, err 
 	}
 	if _u.mutation.CityCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
 			Table:   province.CityTable,
 			Columns: []string{province.CityColumn},
 			Bidi:    false,
@@ -337,10 +385,26 @@ func (_u *ProvinceUpdateOne) sqlSave(ctx context.Context) (_node *Province, err 
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
+	if nodes := _u.mutation.RemovedCityIDs(); len(nodes) > 0 && !_u.mutation.CityCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   province.CityTable,
+			Columns: []string{province.CityColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(city.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
 	if nodes := _u.mutation.CityIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
 			Table:   province.CityTable,
 			Columns: []string{province.CityColumn},
 			Bidi:    false,

@@ -35,12 +35,12 @@ func (District) Fields() []ent.Field {
 // Edges of the District.
 func (District) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.To("city", City.Type).
-			StorageKey(edge.Column("city_id")).
-			Annotations(entsql.OnDelete(entsql.NoAction)),
-		edge.From("subdistrict", Subdistrict.Type).
+		edge.From("city", City.Type).
 			Ref("district").
 			Unique().
 			Required(),
+		edge.To("subdistrict", Subdistrict.Type).
+			StorageKey(edge.Column("district_id")).
+			Annotations(entsql.OnDelete(entsql.NoAction)),
 	}
 }

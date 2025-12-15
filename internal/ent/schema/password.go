@@ -22,7 +22,7 @@ func (Password) Mixin() []ent.Mixin {
 // Fields of the Password.
 func (Password) Fields() []ent.Field {
 	return []ent.Field{
-		field.String("hash").
+		field.Text("hash").
 			Unique().
 			Sensitive().
 			Comment("Hashed password using Argon2.").
@@ -33,6 +33,9 @@ func (Password) Fields() []ent.Field {
 // Edges of the Password.
 func (Password) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.From("account", Account.Type).Ref("password").Unique().Required(),
+		edge.From("account", Account.Type).
+			Ref("password").
+			Unique().
+			Required(),
 	}
 }

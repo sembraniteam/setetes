@@ -39,15 +39,19 @@ func (_c *ProvinceCreate) SetID(v uuid.UUID) *ProvinceCreate {
 	return _c
 }
 
-// SetCityID sets the "city" edge to the City entity by ID.
-func (_c *ProvinceCreate) SetCityID(id uuid.UUID) *ProvinceCreate {
-	_c.mutation.SetCityID(id)
+// AddCityIDs adds the "city" edge to the City entity by IDs.
+func (_c *ProvinceCreate) AddCityIDs(ids ...uuid.UUID) *ProvinceCreate {
+	_c.mutation.AddCityIDs(ids...)
 	return _c
 }
 
-// SetCity sets the "city" edge to the City entity.
-func (_c *ProvinceCreate) SetCity(v *City) *ProvinceCreate {
-	return _c.SetCityID(v.ID)
+// AddCity adds the "city" edges to the City entity.
+func (_c *ProvinceCreate) AddCity(v ...*City) *ProvinceCreate {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _c.AddCityIDs(ids...)
 }
 
 // Mutation returns the ProvinceMutation object of the builder.
@@ -95,9 +99,6 @@ func (_c *ProvinceCreate) check() error {
 	if _, ok := _c.mutation.Name(); !ok {
 		return &ValidationError{Name: "name", err: errors.New(`ent: missing required field "Province.name"`)}
 	}
-	if len(_c.mutation.CityIDs()) == 0 {
-		return &ValidationError{Name: "city", err: errors.New(`ent: missing required edge "Province.city"`)}
-	}
 	return nil
 }
 
@@ -143,8 +144,8 @@ func (_c *ProvinceCreate) createSpec() (*Province, *sqlgraph.CreateSpec) {
 	}
 	if nodes := _c.mutation.CityIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
 			Table:   province.CityTable,
 			Columns: []string{province.CityColumn},
 			Bidi:    false,
@@ -155,7 +156,6 @@ func (_c *ProvinceCreate) createSpec() (*Province, *sqlgraph.CreateSpec) {
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
-		_node.province_id = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec

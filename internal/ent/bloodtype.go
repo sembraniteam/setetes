@@ -21,17 +21,17 @@ type BloodType struct {
 	// CreatedAt holds the value of the "created_at" field.
 	CreatedAt int64 `json:"created_at"`
 	// UpdatedAt holds the value of the "updated_at" field.
-	UpdatedAt *int64 `json:"updated_at"`
+	UpdatedAt int64 `json:"updated_at"`
 	// Represents soft delete timestamp in milliseconds.
-	DeletedAt *int64 `json:"deleted_at"`
+	DeletedAt int64 `json:"deleted_at"`
 	// comment:The ABO blood group classification (A, B, AB, or O).
 	Group bloodtype.Group `json:"group"`
 	// The Rhesus (Rh) factor of the blood group, either POSITIVE or NEGATIVE.
-	Rhesus *bloodtype.Rhesus `json:"rhesus"`
+	Rhesus bloodtype.Rhesus `json:"rhesus"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the BloodTypeQuery when eager-loading is set.
 	Edges        BloodTypeEdges `json:"edges"`
-	blood_id     *uuid.UUID
+	account_id   *uuid.UUID
 	selectValues sql.SelectValues
 }
 
@@ -66,7 +66,7 @@ func (*BloodType) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullString)
 		case bloodtype.FieldID:
 			values[i] = new(uuid.UUID)
-		case bloodtype.ForeignKeys[0]: // blood_id
+		case bloodtype.ForeignKeys[0]: // account_id
 			values[i] = &sql.NullScanner{S: new(uuid.UUID)}
 		default:
 			values[i] = new(sql.UnknownType)
@@ -99,15 +99,13 @@ func (_m *BloodType) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
 			} else if value.Valid {
-				_m.UpdatedAt = new(int64)
-				*_m.UpdatedAt = value.Int64
+				_m.UpdatedAt = value.Int64
 			}
 		case bloodtype.FieldDeletedAt:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field deleted_at", values[i])
 			} else if value.Valid {
-				_m.DeletedAt = new(int64)
-				*_m.DeletedAt = value.Int64
+				_m.DeletedAt = value.Int64
 			}
 		case bloodtype.FieldGroup:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -119,15 +117,14 @@ func (_m *BloodType) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field rhesus", values[i])
 			} else if value.Valid {
-				_m.Rhesus = new(bloodtype.Rhesus)
-				*_m.Rhesus = bloodtype.Rhesus(value.String)
+				_m.Rhesus = bloodtype.Rhesus(value.String)
 			}
 		case bloodtype.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullScanner); !ok {
-				return fmt.Errorf("unexpected type %T for field blood_id", values[i])
+				return fmt.Errorf("unexpected type %T for field account_id", values[i])
 			} else if value.Valid {
-				_m.blood_id = new(uuid.UUID)
-				*_m.blood_id = *value.S.(*uuid.UUID)
+				_m.account_id = new(uuid.UUID)
+				*_m.account_id = *value.S.(*uuid.UUID)
 			}
 		default:
 			_m.selectValues.Set(columns[i], values[i])
@@ -173,23 +170,17 @@ func (_m *BloodType) String() string {
 	builder.WriteString("created_at=")
 	builder.WriteString(fmt.Sprintf("%v", _m.CreatedAt))
 	builder.WriteString(", ")
-	if v := _m.UpdatedAt; v != nil {
-		builder.WriteString("updated_at=")
-		builder.WriteString(fmt.Sprintf("%v", *v))
-	}
+	builder.WriteString("updated_at=")
+	builder.WriteString(fmt.Sprintf("%v", _m.UpdatedAt))
 	builder.WriteString(", ")
-	if v := _m.DeletedAt; v != nil {
-		builder.WriteString("deleted_at=")
-		builder.WriteString(fmt.Sprintf("%v", *v))
-	}
+	builder.WriteString("deleted_at=")
+	builder.WriteString(fmt.Sprintf("%v", _m.DeletedAt))
 	builder.WriteString(", ")
 	builder.WriteString("group=")
 	builder.WriteString(fmt.Sprintf("%v", _m.Group))
 	builder.WriteString(", ")
-	if v := _m.Rhesus; v != nil {
-		builder.WriteString("rhesus=")
-		builder.WriteString(fmt.Sprintf("%v", *v))
-	}
+	builder.WriteString("rhesus=")
+	builder.WriteString(fmt.Sprintf("%v", _m.Rhesus))
 	builder.WriteByte(')')
 	return builder.String()
 }

@@ -4,7 +4,6 @@ package ent
 
 import (
 	"context"
-	"database/sql/driver"
 	"fmt"
 	"math"
 
@@ -26,6 +25,7 @@ type PMILocationQuery struct {
 	inters          []Interceptor
 	predicates      []predicate.PMILocation
 	withSubdistrict *SubdistrictQuery
+	withFKs         bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -76,7 +76,7 @@ func (_q *PMILocationQuery) QuerySubdistrict() *SubdistrictQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(pmilocation.Table, pmilocation.FieldID, selector),
 			sqlgraph.To(subdistrict.Table, subdistrict.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, pmilocation.SubdistrictTable, pmilocation.SubdistrictColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, pmilocation.SubdistrictTable, pmilocation.SubdistrictColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
 		return fromU, nil
@@ -371,11 +371,18 @@ func (_q *PMILocationQuery) prepareQuery(ctx context.Context) error {
 func (_q *PMILocationQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*PMILocation, error) {
 	var (
 		nodes       = []*PMILocation{}
+		withFKs     = _q.withFKs
 		_spec       = _q.querySpec()
 		loadedTypes = [1]bool{
 			_q.withSubdistrict != nil,
 		}
 	)
+	if _q.withSubdistrict != nil {
+		withFKs = true
+	}
+	if withFKs {
+		_spec.Node.Columns = append(_spec.Node.Columns, pmilocation.ForeignKeys...)
+	}
 	_spec.ScanValues = func(columns []string) ([]any, error) {
 		return (*PMILocation).scanValues(nil, columns)
 	}
@@ -395,9 +402,8 @@ func (_q *PMILocationQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*
 		return nodes, nil
 	}
 	if query := _q.withSubdistrict; query != nil {
-		if err := _q.loadSubdistrict(ctx, query, nodes,
-			func(n *PMILocation) { n.Edges.Subdistrict = []*Subdistrict{} },
-			func(n *PMILocation, e *Subdistrict) { n.Edges.Subdistrict = append(n.Edges.Subdistrict, e) }); err != nil {
+		if err := _q.loadSubdistrict(ctx, query, nodes, nil,
+			func(n *PMILocation, e *Subdistrict) { n.Edges.Subdistrict = e }); err != nil {
 			return nil, err
 		}
 	}
@@ -405,33 +411,34 @@ func (_q *PMILocationQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*
 }
 
 func (_q *PMILocationQuery) loadSubdistrict(ctx context.Context, query *SubdistrictQuery, nodes []*PMILocation, init func(*PMILocation), assign func(*PMILocation, *Subdistrict)) error {
-	fks := make([]driver.Value, 0, len(nodes))
-	nodeids := make(map[uuid.UUID]*PMILocation)
+	ids := make([]uuid.UUID, 0, len(nodes))
+	nodeids := make(map[uuid.UUID][]*PMILocation)
 	for i := range nodes {
-		fks = append(fks, nodes[i].ID)
-		nodeids[nodes[i].ID] = nodes[i]
-		if init != nil {
-			init(nodes[i])
+		if nodes[i].subdistrict_id == nil {
+			continue
 		}
+		fk := *nodes[i].subdistrict_id
+		if _, ok := nodeids[fk]; !ok {
+			ids = append(ids, fk)
+		}
+		nodeids[fk] = append(nodeids[fk], nodes[i])
 	}
-	query.withFKs = true
-	query.Where(predicate.Subdistrict(func(s *sql.Selector) {
-		s.Where(sql.InValues(s.C(pmilocation.SubdistrictColumn), fks...))
-	}))
+	if len(ids) == 0 {
+		return nil
+	}
+	query.Where(subdistrict.IDIn(ids...))
 	neighbors, err := query.All(ctx)
 	if err != nil {
 		return err
 	}
 	for _, n := range neighbors {
-		fk := n.subdistrict_id
-		if fk == nil {
-			return fmt.Errorf(`foreign-key "subdistrict_id" is nil for node %v`, n.ID)
-		}
-		node, ok := nodeids[*fk]
+		nodes, ok := nodeids[n.ID]
 		if !ok {
-			return fmt.Errorf(`unexpected referenced foreign-key "subdistrict_id" returned %v for node %v`, *fk, n.ID)
+			return fmt.Errorf(`unexpected foreign-key "subdistrict_id" returned %v`, n.ID)
 		}
-		assign(node, n)
+		for i := range nodes {
+			assign(nodes[i], n)
+		}
 	}
 	return nil
 }

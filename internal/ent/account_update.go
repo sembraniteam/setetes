@@ -12,7 +12,9 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
 	"github.com/megalodev/setetes/internal/ent/account"
+	"github.com/megalodev/setetes/internal/ent/activation"
 	"github.com/megalodev/setetes/internal/ent/bloodtype"
+	"github.com/megalodev/setetes/internal/ent/otp"
 	"github.com/megalodev/setetes/internal/ent/password"
 	"github.com/megalodev/setetes/internal/ent/predicate"
 )
@@ -43,6 +45,12 @@ func (_u *AccountUpdate) AddUpdatedAt(v int64) *AccountUpdate {
 	return _u
 }
 
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (_u *AccountUpdate) ClearUpdatedAt() *AccountUpdate {
+	_u.mutation.ClearUpdatedAt()
+	return _u
+}
+
 // SetDeletedAt sets the "deleted_at" field.
 func (_u *AccountUpdate) SetDeletedAt(v int64) *AccountUpdate {
 	_u.mutation.ResetDeletedAt()
@@ -61,6 +69,12 @@ func (_u *AccountUpdate) SetNillableDeletedAt(v *int64) *AccountUpdate {
 // AddDeletedAt adds value to the "deleted_at" field.
 func (_u *AccountUpdate) AddDeletedAt(v int64) *AccountUpdate {
 	_u.mutation.AddDeletedAt(v)
+	return _u
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (_u *AccountUpdate) ClearDeletedAt() *AccountUpdate {
+	_u.mutation.ClearDeletedAt()
 	return _u
 }
 
@@ -225,6 +239,12 @@ func (_u *AccountUpdate) AddTempLockedAt(v int64) *AccountUpdate {
 	return _u
 }
 
+// ClearTempLockedAt clears the value of the "temp_locked_at" field.
+func (_u *AccountUpdate) ClearTempLockedAt() *AccountUpdate {
+	_u.mutation.ClearTempLockedAt()
+	return _u
+}
+
 // SetBloodTypeID sets the "blood_type" edge to the BloodType entity by ID.
 func (_u *AccountUpdate) SetBloodTypeID(id uuid.UUID) *AccountUpdate {
 	_u.mutation.SetBloodTypeID(id)
@@ -263,6 +283,44 @@ func (_u *AccountUpdate) SetPassword(v *Password) *AccountUpdate {
 	return _u.SetPasswordID(v.ID)
 }
 
+// SetOtpID sets the "otp" edge to the OTP entity by ID.
+func (_u *AccountUpdate) SetOtpID(id uuid.UUID) *AccountUpdate {
+	_u.mutation.SetOtpID(id)
+	return _u
+}
+
+// SetNillableOtpID sets the "otp" edge to the OTP entity by ID if the given value is not nil.
+func (_u *AccountUpdate) SetNillableOtpID(id *uuid.UUID) *AccountUpdate {
+	if id != nil {
+		_u = _u.SetOtpID(*id)
+	}
+	return _u
+}
+
+// SetOtp sets the "otp" edge to the OTP entity.
+func (_u *AccountUpdate) SetOtp(v *OTP) *AccountUpdate {
+	return _u.SetOtpID(v.ID)
+}
+
+// SetActivationID sets the "activation" edge to the Activation entity by ID.
+func (_u *AccountUpdate) SetActivationID(id uuid.UUID) *AccountUpdate {
+	_u.mutation.SetActivationID(id)
+	return _u
+}
+
+// SetNillableActivationID sets the "activation" edge to the Activation entity by ID if the given value is not nil.
+func (_u *AccountUpdate) SetNillableActivationID(id *uuid.UUID) *AccountUpdate {
+	if id != nil {
+		_u = _u.SetActivationID(*id)
+	}
+	return _u
+}
+
+// SetActivation sets the "activation" edge to the Activation entity.
+func (_u *AccountUpdate) SetActivation(v *Activation) *AccountUpdate {
+	return _u.SetActivationID(v.ID)
+}
+
 // Mutation returns the AccountMutation object of the builder.
 func (_u *AccountUpdate) Mutation() *AccountMutation {
 	return _u.mutation
@@ -277,6 +335,18 @@ func (_u *AccountUpdate) ClearBloodType() *AccountUpdate {
 // ClearPassword clears the "password" edge to the Password entity.
 func (_u *AccountUpdate) ClearPassword() *AccountUpdate {
 	_u.mutation.ClearPassword()
+	return _u
+}
+
+// ClearOtp clears the "otp" edge to the OTP entity.
+func (_u *AccountUpdate) ClearOtp() *AccountUpdate {
+	_u.mutation.ClearOtp()
+	return _u
+}
+
+// ClearActivation clears the "activation" edge to the Activation entity.
+func (_u *AccountUpdate) ClearActivation() *AccountUpdate {
+	_u.mutation.ClearActivation()
 	return _u
 }
 
@@ -310,7 +380,7 @@ func (_u *AccountUpdate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (_u *AccountUpdate) defaults() {
-	if _, ok := _u.mutation.UpdatedAt(); !ok {
+	if _, ok := _u.mutation.UpdatedAt(); !ok && !_u.mutation.UpdatedAtCleared() {
 		v := account.UpdateDefaultUpdatedAt()
 		_u.mutation.SetUpdatedAt(v)
 	}
@@ -394,11 +464,17 @@ func (_u *AccountUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	if value, ok := _u.mutation.AddedUpdatedAt(); ok {
 		_spec.AddField(account.FieldUpdatedAt, field.TypeInt64, value)
 	}
+	if _u.mutation.UpdatedAtCleared() {
+		_spec.ClearField(account.FieldUpdatedAt, field.TypeInt64)
+	}
 	if value, ok := _u.mutation.DeletedAt(); ok {
 		_spec.SetField(account.FieldDeletedAt, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedAt(); ok {
 		_spec.AddField(account.FieldDeletedAt, field.TypeInt64, value)
+	}
+	if _u.mutation.DeletedAtCleared() {
+		_spec.ClearField(account.FieldDeletedAt, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.NationalIDHash(); ok {
 		_spec.SetField(account.FieldNationalIDHash, field.TypeString, value)
@@ -435,6 +511,9 @@ func (_u *AccountUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if value, ok := _u.mutation.AddedTempLockedAt(); ok {
 		_spec.AddField(account.FieldTempLockedAt, field.TypeInt64, value)
+	}
+	if _u.mutation.TempLockedAtCleared() {
+		_spec.ClearField(account.FieldTempLockedAt, field.TypeInt64)
 	}
 	if _u.mutation.BloodTypeCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -494,6 +573,64 @@ func (_u *AccountUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if _u.mutation.OtpCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   account.OtpTable,
+			Columns: []string{account.OtpColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(otp.FieldID, field.TypeUUID),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.OtpIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   account.OtpTable,
+			Columns: []string{account.OtpColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(otp.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.ActivationCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   account.ActivationTable,
+			Columns: []string{account.ActivationColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(activation.FieldID, field.TypeUUID),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.ActivationIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   account.ActivationTable,
+			Columns: []string{account.ActivationColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(activation.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{account.Label}
@@ -527,6 +664,12 @@ func (_u *AccountUpdateOne) AddUpdatedAt(v int64) *AccountUpdateOne {
 	return _u
 }
 
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (_u *AccountUpdateOne) ClearUpdatedAt() *AccountUpdateOne {
+	_u.mutation.ClearUpdatedAt()
+	return _u
+}
+
 // SetDeletedAt sets the "deleted_at" field.
 func (_u *AccountUpdateOne) SetDeletedAt(v int64) *AccountUpdateOne {
 	_u.mutation.ResetDeletedAt()
@@ -545,6 +688,12 @@ func (_u *AccountUpdateOne) SetNillableDeletedAt(v *int64) *AccountUpdateOne {
 // AddDeletedAt adds value to the "deleted_at" field.
 func (_u *AccountUpdateOne) AddDeletedAt(v int64) *AccountUpdateOne {
 	_u.mutation.AddDeletedAt(v)
+	return _u
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (_u *AccountUpdateOne) ClearDeletedAt() *AccountUpdateOne {
+	_u.mutation.ClearDeletedAt()
 	return _u
 }
 
@@ -709,6 +858,12 @@ func (_u *AccountUpdateOne) AddTempLockedAt(v int64) *AccountUpdateOne {
 	return _u
 }
 
+// ClearTempLockedAt clears the value of the "temp_locked_at" field.
+func (_u *AccountUpdateOne) ClearTempLockedAt() *AccountUpdateOne {
+	_u.mutation.ClearTempLockedAt()
+	return _u
+}
+
 // SetBloodTypeID sets the "blood_type" edge to the BloodType entity by ID.
 func (_u *AccountUpdateOne) SetBloodTypeID(id uuid.UUID) *AccountUpdateOne {
 	_u.mutation.SetBloodTypeID(id)
@@ -747,6 +902,44 @@ func (_u *AccountUpdateOne) SetPassword(v *Password) *AccountUpdateOne {
 	return _u.SetPasswordID(v.ID)
 }
 
+// SetOtpID sets the "otp" edge to the OTP entity by ID.
+func (_u *AccountUpdateOne) SetOtpID(id uuid.UUID) *AccountUpdateOne {
+	_u.mutation.SetOtpID(id)
+	return _u
+}
+
+// SetNillableOtpID sets the "otp" edge to the OTP entity by ID if the given value is not nil.
+func (_u *AccountUpdateOne) SetNillableOtpID(id *uuid.UUID) *AccountUpdateOne {
+	if id != nil {
+		_u = _u.SetOtpID(*id)
+	}
+	return _u
+}
+
+// SetOtp sets the "otp" edge to the OTP entity.
+func (_u *AccountUpdateOne) SetOtp(v *OTP) *AccountUpdateOne {
+	return _u.SetOtpID(v.ID)
+}
+
+// SetActivationID sets the "activation" edge to the Activation entity by ID.
+func (_u *AccountUpdateOne) SetActivationID(id uuid.UUID) *AccountUpdateOne {
+	_u.mutation.SetActivationID(id)
+	return _u
+}
+
+// SetNillableActivationID sets the "activation" edge to the Activation entity by ID if the given value is not nil.
+func (_u *AccountUpdateOne) SetNillableActivationID(id *uuid.UUID) *AccountUpdateOne {
+	if id != nil {
+		_u = _u.SetActivationID(*id)
+	}
+	return _u
+}
+
+// SetActivation sets the "activation" edge to the Activation entity.
+func (_u *AccountUpdateOne) SetActivation(v *Activation) *AccountUpdateOne {
+	return _u.SetActivationID(v.ID)
+}
+
 // Mutation returns the AccountMutation object of the builder.
 func (_u *AccountUpdateOne) Mutation() *AccountMutation {
 	return _u.mutation
@@ -761,6 +954,18 @@ func (_u *AccountUpdateOne) ClearBloodType() *AccountUpdateOne {
 // ClearPassword clears the "password" edge to the Password entity.
 func (_u *AccountUpdateOne) ClearPassword() *AccountUpdateOne {
 	_u.mutation.ClearPassword()
+	return _u
+}
+
+// ClearOtp clears the "otp" edge to the OTP entity.
+func (_u *AccountUpdateOne) ClearOtp() *AccountUpdateOne {
+	_u.mutation.ClearOtp()
+	return _u
+}
+
+// ClearActivation clears the "activation" edge to the Activation entity.
+func (_u *AccountUpdateOne) ClearActivation() *AccountUpdateOne {
+	_u.mutation.ClearActivation()
 	return _u
 }
 
@@ -807,7 +1012,7 @@ func (_u *AccountUpdateOne) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (_u *AccountUpdateOne) defaults() {
-	if _, ok := _u.mutation.UpdatedAt(); !ok {
+	if _, ok := _u.mutation.UpdatedAt(); !ok && !_u.mutation.UpdatedAtCleared() {
 		v := account.UpdateDefaultUpdatedAt()
 		_u.mutation.SetUpdatedAt(v)
 	}
@@ -908,11 +1113,17 @@ func (_u *AccountUpdateOne) sqlSave(ctx context.Context) (_node *Account, err er
 	if value, ok := _u.mutation.AddedUpdatedAt(); ok {
 		_spec.AddField(account.FieldUpdatedAt, field.TypeInt64, value)
 	}
+	if _u.mutation.UpdatedAtCleared() {
+		_spec.ClearField(account.FieldUpdatedAt, field.TypeInt64)
+	}
 	if value, ok := _u.mutation.DeletedAt(); ok {
 		_spec.SetField(account.FieldDeletedAt, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedAt(); ok {
 		_spec.AddField(account.FieldDeletedAt, field.TypeInt64, value)
+	}
+	if _u.mutation.DeletedAtCleared() {
+		_spec.ClearField(account.FieldDeletedAt, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.NationalIDHash(); ok {
 		_spec.SetField(account.FieldNationalIDHash, field.TypeString, value)
@@ -949,6 +1160,9 @@ func (_u *AccountUpdateOne) sqlSave(ctx context.Context) (_node *Account, err er
 	}
 	if value, ok := _u.mutation.AddedTempLockedAt(); ok {
 		_spec.AddField(account.FieldTempLockedAt, field.TypeInt64, value)
+	}
+	if _u.mutation.TempLockedAtCleared() {
+		_spec.ClearField(account.FieldTempLockedAt, field.TypeInt64)
 	}
 	if _u.mutation.BloodTypeCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -1001,6 +1215,64 @@ func (_u *AccountUpdateOne) sqlSave(ctx context.Context) (_node *Account, err er
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(password.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.OtpCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   account.OtpTable,
+			Columns: []string{account.OtpColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(otp.FieldID, field.TypeUUID),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.OtpIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   account.OtpTable,
+			Columns: []string{account.OtpColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(otp.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.ActivationCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   account.ActivationTable,
+			Columns: []string{account.ActivationColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(activation.FieldID, field.TypeUUID),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.ActivationIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   account.ActivationTable,
+			Columns: []string{account.ActivationColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(activation.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {

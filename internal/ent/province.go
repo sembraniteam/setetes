@@ -9,7 +9,6 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"github.com/google/uuid"
-	"github.com/megalodev/setetes/internal/ent/city"
 	"github.com/megalodev/setetes/internal/ent/province"
 )
 
@@ -25,26 +24,23 @@ type Province struct {
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the ProvinceQuery when eager-loading is set.
 	Edges        ProvinceEdges `json:"edges"`
-	province_id  *uuid.UUID
 	selectValues sql.SelectValues
 }
 
 // ProvinceEdges holds the relations/edges for other nodes in the graph.
 type ProvinceEdges struct {
 	// City holds the value of the city edge.
-	City *City `json:"city,omitempty"`
+	City []*City `json:"city,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [1]bool
 }
 
 // CityOrErr returns the City value or an error if the edge
-// was not loaded in eager-loading, or loaded but was not found.
-func (e ProvinceEdges) CityOrErr() (*City, error) {
-	if e.City != nil {
+// was not loaded in eager-loading.
+func (e ProvinceEdges) CityOrErr() ([]*City, error) {
+	if e.loadedTypes[0] {
 		return e.City, nil
-	} else if e.loadedTypes[0] {
-		return nil, &NotFoundError{label: city.Label}
 	}
 	return nil, &NotLoadedError{edge: "city"}
 }
@@ -58,8 +54,6 @@ func (*Province) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullString)
 		case province.FieldID:
 			values[i] = new(uuid.UUID)
-		case province.ForeignKeys[0]: // province_id
-			values[i] = &sql.NullScanner{S: new(uuid.UUID)}
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -92,13 +86,6 @@ func (_m *Province) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field name", values[i])
 			} else if value.Valid {
 				_m.Name = value.String
-			}
-		case province.ForeignKeys[0]:
-			if value, ok := values[i].(*sql.NullScanner); !ok {
-				return fmt.Errorf("unexpected type %T for field province_id", values[i])
-			} else if value.Valid {
-				_m.province_id = new(uuid.UUID)
-				*_m.province_id = *value.S.(*uuid.UUID)
 			}
 		default:
 			_m.selectValues.Set(columns[i], values[i])

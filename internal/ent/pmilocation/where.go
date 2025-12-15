@@ -197,6 +197,16 @@ func UpdatedAtLTE(v int64) predicate.PMILocation {
 	return predicate.PMILocation(sql.FieldLTE(FieldUpdatedAt, v))
 }
 
+// UpdatedAtIsNil applies the IsNil predicate on the "updated_at" field.
+func UpdatedAtIsNil() predicate.PMILocation {
+	return predicate.PMILocation(sql.FieldIsNull(FieldUpdatedAt))
+}
+
+// UpdatedAtNotNil applies the NotNil predicate on the "updated_at" field.
+func UpdatedAtNotNil() predicate.PMILocation {
+	return predicate.PMILocation(sql.FieldNotNull(FieldUpdatedAt))
+}
+
 // DeletedAtEQ applies the EQ predicate on the "deleted_at" field.
 func DeletedAtEQ(v int64) predicate.PMILocation {
 	return predicate.PMILocation(sql.FieldEQ(FieldDeletedAt, v))
@@ -235,6 +245,16 @@ func DeletedAtLT(v int64) predicate.PMILocation {
 // DeletedAtLTE applies the LTE predicate on the "deleted_at" field.
 func DeletedAtLTE(v int64) predicate.PMILocation {
 	return predicate.PMILocation(sql.FieldLTE(FieldDeletedAt, v))
+}
+
+// DeletedAtIsNil applies the IsNil predicate on the "deleted_at" field.
+func DeletedAtIsNil() predicate.PMILocation {
+	return predicate.PMILocation(sql.FieldIsNull(FieldDeletedAt))
+}
+
+// DeletedAtNotNil applies the NotNil predicate on the "deleted_at" field.
+func DeletedAtNotNil() predicate.PMILocation {
+	return predicate.PMILocation(sql.FieldNotNull(FieldDeletedAt))
 }
 
 // NameEQ applies the EQ predicate on the "name" field.
@@ -502,6 +522,16 @@ func EmailHasSuffix(v string) predicate.PMILocation {
 	return predicate.PMILocation(sql.FieldHasSuffix(FieldEmail, v))
 }
 
+// EmailIsNil applies the IsNil predicate on the "email" field.
+func EmailIsNil() predicate.PMILocation {
+	return predicate.PMILocation(sql.FieldIsNull(FieldEmail))
+}
+
+// EmailNotNil applies the NotNil predicate on the "email" field.
+func EmailNotNil() predicate.PMILocation {
+	return predicate.PMILocation(sql.FieldNotNull(FieldEmail))
+}
+
 // EmailEqualFold applies the EqualFold predicate on the "email" field.
 func EmailEqualFold(v string) predicate.PMILocation {
 	return predicate.PMILocation(sql.FieldEqualFold(FieldEmail, v))
@@ -727,7 +757,7 @@ func HasSubdistrict() predicate.PMILocation {
 	return predicate.PMILocation(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, SubdistrictTable, SubdistrictColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, SubdistrictTable, SubdistrictColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})

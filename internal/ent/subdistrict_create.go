@@ -46,30 +46,30 @@ func (_c *SubdistrictCreate) SetID(v uuid.UUID) *SubdistrictCreate {
 	return _c
 }
 
-// AddDistrictIDs adds the "district" edge to the District entity by IDs.
-func (_c *SubdistrictCreate) AddDistrictIDs(ids ...uuid.UUID) *SubdistrictCreate {
-	_c.mutation.AddDistrictIDs(ids...)
+// SetDistrictID sets the "district" edge to the District entity by ID.
+func (_c *SubdistrictCreate) SetDistrictID(id uuid.UUID) *SubdistrictCreate {
+	_c.mutation.SetDistrictID(id)
 	return _c
 }
 
-// AddDistrict adds the "district" edges to the District entity.
-func (_c *SubdistrictCreate) AddDistrict(v ...*District) *SubdistrictCreate {
+// SetDistrict sets the "district" edge to the District entity.
+func (_c *SubdistrictCreate) SetDistrict(v *District) *SubdistrictCreate {
+	return _c.SetDistrictID(v.ID)
+}
+
+// AddPmiLocationIDs adds the "pmi_location" edge to the PMILocation entity by IDs.
+func (_c *SubdistrictCreate) AddPmiLocationIDs(ids ...uuid.UUID) *SubdistrictCreate {
+	_c.mutation.AddPmiLocationIDs(ids...)
+	return _c
+}
+
+// AddPmiLocation adds the "pmi_location" edges to the PMILocation entity.
+func (_c *SubdistrictCreate) AddPmiLocation(v ...*PMILocation) *SubdistrictCreate {
 	ids := make([]uuid.UUID, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
-	return _c.AddDistrictIDs(ids...)
-}
-
-// SetPmiLocationID sets the "pmi_location" edge to the PMILocation entity by ID.
-func (_c *SubdistrictCreate) SetPmiLocationID(id uuid.UUID) *SubdistrictCreate {
-	_c.mutation.SetPmiLocationID(id)
-	return _c
-}
-
-// SetPmiLocation sets the "pmi_location" edge to the PMILocation entity.
-func (_c *SubdistrictCreate) SetPmiLocation(v *PMILocation) *SubdistrictCreate {
-	return _c.SetPmiLocationID(v.ID)
+	return _c.AddPmiLocationIDs(ids...)
 }
 
 // Mutation returns the SubdistrictMutation object of the builder.
@@ -125,8 +125,8 @@ func (_c *SubdistrictCreate) check() error {
 	if _, ok := _c.mutation.Name(); !ok {
 		return &ValidationError{Name: "name", err: errors.New(`ent: missing required field "Subdistrict.name"`)}
 	}
-	if len(_c.mutation.PmiLocationIDs()) == 0 {
-		return &ValidationError{Name: "pmi_location", err: errors.New(`ent: missing required edge "Subdistrict.pmi_location"`)}
+	if len(_c.mutation.DistrictIDs()) == 0 {
+		return &ValidationError{Name: "district", err: errors.New(`ent: missing required edge "Subdistrict.district"`)}
 	}
 	return nil
 }
@@ -177,8 +177,8 @@ func (_c *SubdistrictCreate) createSpec() (*Subdistrict, *sqlgraph.CreateSpec) {
 	}
 	if nodes := _c.mutation.DistrictIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
 			Table:   subdistrict.DistrictTable,
 			Columns: []string{subdistrict.DistrictColumn},
 			Bidi:    false,
@@ -189,12 +189,13 @@ func (_c *SubdistrictCreate) createSpec() (*Subdistrict, *sqlgraph.CreateSpec) {
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
+		_node.district_id = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	if nodes := _c.mutation.PmiLocationIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
 			Table:   subdistrict.PmiLocationTable,
 			Columns: []string{subdistrict.PmiLocationColumn},
 			Bidi:    false,
@@ -205,7 +206,6 @@ func (_c *SubdistrictCreate) createSpec() (*Subdistrict, *sqlgraph.CreateSpec) {
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
-		_node.subdistrict_id = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec

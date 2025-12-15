@@ -33,9 +33,25 @@ func (_c *BloodTypeCreate) SetUpdatedAt(v int64) *BloodTypeCreate {
 	return _c
 }
 
+// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
+func (_c *BloodTypeCreate) SetNillableUpdatedAt(v *int64) *BloodTypeCreate {
+	if v != nil {
+		_c.SetUpdatedAt(*v)
+	}
+	return _c
+}
+
 // SetDeletedAt sets the "deleted_at" field.
 func (_c *BloodTypeCreate) SetDeletedAt(v int64) *BloodTypeCreate {
 	_c.mutation.SetDeletedAt(v)
+	return _c
+}
+
+// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
+func (_c *BloodTypeCreate) SetNillableDeletedAt(v *int64) *BloodTypeCreate {
+	if v != nil {
+		_c.SetDeletedAt(*v)
+	}
 	return _c
 }
 
@@ -48,6 +64,14 @@ func (_c *BloodTypeCreate) SetGroup(v bloodtype.Group) *BloodTypeCreate {
 // SetRhesus sets the "rhesus" field.
 func (_c *BloodTypeCreate) SetRhesus(v bloodtype.Rhesus) *BloodTypeCreate {
 	_c.mutation.SetRhesus(v)
+	return _c
+}
+
+// SetNillableRhesus sets the "rhesus" field if the given value is not nil.
+func (_c *BloodTypeCreate) SetNillableRhesus(v *bloodtype.Rhesus) *BloodTypeCreate {
+	if v != nil {
+		_c.SetRhesus(*v)
+	}
 	return _c
 }
 
@@ -107,16 +131,10 @@ func (_c *BloodTypeCreate) check() error {
 			return &ValidationError{Name: "created_at", err: fmt.Errorf(`ent: validator failed for field "BloodType.created_at": %w`, err)}
 		}
 	}
-	if _, ok := _c.mutation.UpdatedAt(); !ok {
-		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "BloodType.updated_at"`)}
-	}
 	if v, ok := _c.mutation.UpdatedAt(); ok {
 		if err := bloodtype.UpdatedAtValidator(v); err != nil {
 			return &ValidationError{Name: "updated_at", err: fmt.Errorf(`ent: validator failed for field "BloodType.updated_at": %w`, err)}
 		}
-	}
-	if _, ok := _c.mutation.DeletedAt(); !ok {
-		return &ValidationError{Name: "deleted_at", err: errors.New(`ent: missing required field "BloodType.deleted_at"`)}
 	}
 	if v, ok := _c.mutation.DeletedAt(); ok {
 		if err := bloodtype.DeletedAtValidator(v); err != nil {
@@ -130,9 +148,6 @@ func (_c *BloodTypeCreate) check() error {
 		if err := bloodtype.GroupValidator(v); err != nil {
 			return &ValidationError{Name: "group", err: fmt.Errorf(`ent: validator failed for field "BloodType.group": %w`, err)}
 		}
-	}
-	if _, ok := _c.mutation.Rhesus(); !ok {
-		return &ValidationError{Name: "rhesus", err: errors.New(`ent: missing required field "BloodType.rhesus"`)}
 	}
 	if v, ok := _c.mutation.Rhesus(); ok {
 		if err := bloodtype.RhesusValidator(v); err != nil {
@@ -183,11 +198,11 @@ func (_c *BloodTypeCreate) createSpec() (*BloodType, *sqlgraph.CreateSpec) {
 	}
 	if value, ok := _c.mutation.UpdatedAt(); ok {
 		_spec.SetField(bloodtype.FieldUpdatedAt, field.TypeInt64, value)
-		_node.UpdatedAt = &value
+		_node.UpdatedAt = value
 	}
 	if value, ok := _c.mutation.DeletedAt(); ok {
 		_spec.SetField(bloodtype.FieldDeletedAt, field.TypeInt64, value)
-		_node.DeletedAt = &value
+		_node.DeletedAt = value
 	}
 	if value, ok := _c.mutation.Group(); ok {
 		_spec.SetField(bloodtype.FieldGroup, field.TypeEnum, value)
@@ -195,7 +210,7 @@ func (_c *BloodTypeCreate) createSpec() (*BloodType, *sqlgraph.CreateSpec) {
 	}
 	if value, ok := _c.mutation.Rhesus(); ok {
 		_spec.SetField(bloodtype.FieldRhesus, field.TypeEnum, value)
-		_node.Rhesus = &value
+		_node.Rhesus = value
 	}
 	if nodes := _c.mutation.AccountIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -211,7 +226,7 @@ func (_c *BloodTypeCreate) createSpec() (*BloodType, *sqlgraph.CreateSpec) {
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
-		_node.blood_id = &nodes[0]
+		_node.account_id = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec

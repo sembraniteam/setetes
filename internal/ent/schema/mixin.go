@@ -29,12 +29,12 @@ func (BaseMixin) Fields() []ent.Field {
 			Annotations(entsql.DefaultExpr("FLOOR(EXTRACT(EPOCH FROM CURRENT_TIMESTAMP) * 1000)")),
 		field.Int64("updated_at").
 			Positive().
-			Nillable().
+			Optional().
 			StructTag(`json:"updated_at"`).
 			UpdateDefault(time.Now().UnixMilli),
 		field.Int64("deleted_at").
 			Positive().
-			Nillable().
+			Optional().
 			StructTag(`json:"deleted_at"`).
 			Comment("Represents soft delete timestamp in milliseconds.").
 			Annotations(entsql.WithComments(true)),

@@ -199,6 +199,16 @@ func UpdatedAtLTE(v int64) predicate.Account {
 	return predicate.Account(sql.FieldLTE(FieldUpdatedAt, v))
 }
 
+// UpdatedAtIsNil applies the IsNil predicate on the "updated_at" field.
+func UpdatedAtIsNil() predicate.Account {
+	return predicate.Account(sql.FieldIsNull(FieldUpdatedAt))
+}
+
+// UpdatedAtNotNil applies the NotNil predicate on the "updated_at" field.
+func UpdatedAtNotNil() predicate.Account {
+	return predicate.Account(sql.FieldNotNull(FieldUpdatedAt))
+}
+
 // DeletedAtEQ applies the EQ predicate on the "deleted_at" field.
 func DeletedAtEQ(v int64) predicate.Account {
 	return predicate.Account(sql.FieldEQ(FieldDeletedAt, v))
@@ -237,6 +247,16 @@ func DeletedAtLT(v int64) predicate.Account {
 // DeletedAtLTE applies the LTE predicate on the "deleted_at" field.
 func DeletedAtLTE(v int64) predicate.Account {
 	return predicate.Account(sql.FieldLTE(FieldDeletedAt, v))
+}
+
+// DeletedAtIsNil applies the IsNil predicate on the "deleted_at" field.
+func DeletedAtIsNil() predicate.Account {
+	return predicate.Account(sql.FieldIsNull(FieldDeletedAt))
+}
+
+// DeletedAtNotNil applies the NotNil predicate on the "deleted_at" field.
+func DeletedAtNotNil() predicate.Account {
+	return predicate.Account(sql.FieldNotNull(FieldDeletedAt))
 }
 
 // NationalIDHashEQ applies the EQ predicate on the "national_id_hash" field.
@@ -774,6 +794,16 @@ func TempLockedAtLTE(v int64) predicate.Account {
 	return predicate.Account(sql.FieldLTE(FieldTempLockedAt, v))
 }
 
+// TempLockedAtIsNil applies the IsNil predicate on the "temp_locked_at" field.
+func TempLockedAtIsNil() predicate.Account {
+	return predicate.Account(sql.FieldIsNull(FieldTempLockedAt))
+}
+
+// TempLockedAtNotNil applies the NotNil predicate on the "temp_locked_at" field.
+func TempLockedAtNotNil() predicate.Account {
+	return predicate.Account(sql.FieldNotNull(FieldTempLockedAt))
+}
+
 // HasBloodType applies the HasEdge predicate on the "blood_type" edge.
 func HasBloodType() predicate.Account {
 	return predicate.Account(func(s *sql.Selector) {
@@ -812,6 +842,52 @@ func HasPassword() predicate.Account {
 func HasPasswordWith(preds ...predicate.Password) predicate.Account {
 	return predicate.Account(func(s *sql.Selector) {
 		step := newPasswordStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasOtp applies the HasEdge predicate on the "otp" edge.
+func HasOtp() predicate.Account {
+	return predicate.Account(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, false, OtpTable, OtpColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasOtpWith applies the HasEdge predicate on the "otp" edge with a given conditions (other predicates).
+func HasOtpWith(preds ...predicate.OTP) predicate.Account {
+	return predicate.Account(func(s *sql.Selector) {
+		step := newOtpStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasActivation applies the HasEdge predicate on the "activation" edge.
+func HasActivation() predicate.Account {
+	return predicate.Account(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, false, ActivationTable, ActivationColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasActivationWith applies the HasEdge predicate on the "activation" edge with a given conditions (other predicates).
+func HasActivationWith(preds ...predicate.Activation) predicate.Account {
+	return predicate.Account(func(s *sql.Selector) {
+		step := newActivationStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)

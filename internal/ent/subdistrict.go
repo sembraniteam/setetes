@@ -9,7 +9,7 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"github.com/google/uuid"
-	"github.com/megalodev/setetes/internal/ent/pmilocation"
+	"github.com/megalodev/setetes/internal/ent/district"
 	"github.com/megalodev/setetes/internal/ent/subdistrict"
 )
 
@@ -26,38 +26,38 @@ type Subdistrict struct {
 	Name string `json:"name"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the SubdistrictQuery when eager-loading is set.
-	Edges          SubdistrictEdges `json:"edges"`
-	subdistrict_id *uuid.UUID
-	selectValues   sql.SelectValues
+	Edges        SubdistrictEdges `json:"edges"`
+	district_id  *uuid.UUID
+	selectValues sql.SelectValues
 }
 
 // SubdistrictEdges holds the relations/edges for other nodes in the graph.
 type SubdistrictEdges struct {
 	// District holds the value of the district edge.
-	District []*District `json:"district,omitempty"`
+	District *District `json:"district,omitempty"`
 	// PmiLocation holds the value of the pmi_location edge.
-	PmiLocation *PMILocation `json:"pmi_location,omitempty"`
+	PmiLocation []*PMILocation `json:"pmi_location,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [2]bool
 }
 
 // DistrictOrErr returns the District value or an error if the edge
-// was not loaded in eager-loading.
-func (e SubdistrictEdges) DistrictOrErr() ([]*District, error) {
-	if e.loadedTypes[0] {
+// was not loaded in eager-loading, or loaded but was not found.
+func (e SubdistrictEdges) DistrictOrErr() (*District, error) {
+	if e.District != nil {
 		return e.District, nil
+	} else if e.loadedTypes[0] {
+		return nil, &NotFoundError{label: district.Label}
 	}
 	return nil, &NotLoadedError{edge: "district"}
 }
 
 // PmiLocationOrErr returns the PmiLocation value or an error if the edge
-// was not loaded in eager-loading, or loaded but was not found.
-func (e SubdistrictEdges) PmiLocationOrErr() (*PMILocation, error) {
-	if e.PmiLocation != nil {
+// was not loaded in eager-loading.
+func (e SubdistrictEdges) PmiLocationOrErr() ([]*PMILocation, error) {
+	if e.loadedTypes[1] {
 		return e.PmiLocation, nil
-	} else if e.loadedTypes[1] {
-		return nil, &NotFoundError{label: pmilocation.Label}
 	}
 	return nil, &NotLoadedError{edge: "pmi_location"}
 }
@@ -71,7 +71,7 @@ func (*Subdistrict) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullString)
 		case subdistrict.FieldID:
 			values[i] = new(uuid.UUID)
-		case subdistrict.ForeignKeys[0]: // subdistrict_id
+		case subdistrict.ForeignKeys[0]: // district_id
 			values[i] = &sql.NullScanner{S: new(uuid.UUID)}
 		default:
 			values[i] = new(sql.UnknownType)
@@ -114,10 +114,10 @@ func (_m *Subdistrict) assignValues(columns []string, values []any) error {
 			}
 		case subdistrict.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullScanner); !ok {
-				return fmt.Errorf("unexpected type %T for field subdistrict_id", values[i])
+				return fmt.Errorf("unexpected type %T for field district_id", values[i])
 			} else if value.Valid {
-				_m.subdistrict_id = new(uuid.UUID)
-				*_m.subdistrict_id = *value.S.(*uuid.UUID)
+				_m.district_id = new(uuid.UUID)
+				*_m.district_id = *value.S.(*uuid.UUID)
 			}
 		default:
 			_m.selectValues.Set(columns[i], values[i])

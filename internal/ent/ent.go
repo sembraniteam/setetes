@@ -13,10 +13,12 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"github.com/megalodev/setetes/internal/ent/account"
+	"github.com/megalodev/setetes/internal/ent/activation"
 	"github.com/megalodev/setetes/internal/ent/bloodtype"
 	"github.com/megalodev/setetes/internal/ent/casbinrule"
 	"github.com/megalodev/setetes/internal/ent/city"
 	"github.com/megalodev/setetes/internal/ent/district"
+	"github.com/megalodev/setetes/internal/ent/otp"
 	"github.com/megalodev/setetes/internal/ent/password"
 	"github.com/megalodev/setetes/internal/ent/pmilocation"
 	"github.com/megalodev/setetes/internal/ent/province"
@@ -82,10 +84,12 @@ func checkColumn(t, c string) error {
 	initCheck.Do(func() {
 		columnCheck = sql.NewColumnCheck(map[string]func(string) bool{
 			account.Table:     account.ValidColumn,
+			activation.Table:  activation.ValidColumn,
 			bloodtype.Table:   bloodtype.ValidColumn,
 			casbinrule.Table:  casbinrule.ValidColumn,
 			city.Table:        city.ValidColumn,
 			district.Table:    district.ValidColumn,
+			otp.Table:         otp.ValidColumn,
 			pmilocation.Table: pmilocation.ValidColumn,
 			password.Table:    password.ValidColumn,
 			province.Table:    province.ValidColumn,

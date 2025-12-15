@@ -41,7 +41,7 @@ const (
 	// Table holds the table name of the pmilocation in the database.
 	Table = "pmi_locations"
 	// SubdistrictTable is the table that holds the subdistrict relation/edge.
-	SubdistrictTable = "subdistricts"
+	SubdistrictTable = "pmi_locations"
 	// SubdistrictInverseTable is the table name for the Subdistrict entity.
 	// It exists in this package in order to avoid circular dependency with the "subdistrict" package.
 	SubdistrictInverseTable = "subdistricts"
@@ -66,10 +66,21 @@ var Columns = []string{
 	FieldClosesAt,
 }
 
+// ForeignKeys holds the SQL foreign-keys that are owned by the "pmi_locations"
+// table and are not defined as standalone fields in the schema.
+var ForeignKeys = []string{
+	"subdistrict_id",
+}
+
 // ValidColumn reports if the column name is valid (part of the table columns).
 func ValidColumn(column string) bool {
 	for i := range Columns {
 		if column == Columns[i] {
+			return true
+		}
+	}
+	for i := range ForeignKeys {
+		if column == ForeignKeys[i] {
 			return true
 		}
 	}
@@ -167,23 +178,16 @@ func ByClosesAt(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldClosesAt, opts...).ToFunc()
 }
 
-// BySubdistrictCount orders the results by subdistrict count.
-func BySubdistrictCount(opts ...sql.OrderTermOption) OrderOption {
+// BySubdistrictField orders the results by subdistrict field.
+func BySubdistrictField(field string, opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborsCount(s, newSubdistrictStep(), opts...)
-	}
-}
-
-// BySubdistrict orders the results by subdistrict terms.
-func BySubdistrict(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
-	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newSubdistrictStep(), append([]sql.OrderTerm{term}, terms...)...)
+		sqlgraph.OrderByNeighborTerms(s, newSubdistrictStep(), sql.OrderByField(field, opts...))
 	}
 }
 func newSubdistrictStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(SubdistrictInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.O2M, false, SubdistrictTable, SubdistrictColumn),
+		sqlgraph.Edge(sqlgraph.M2O, true, SubdistrictTable, SubdistrictColumn),
 	)
 }

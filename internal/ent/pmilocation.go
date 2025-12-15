@@ -12,6 +12,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/megalodev/setetes/internal/ent/pmilocation"
 	"github.com/megalodev/setetes/internal/ent/schema"
+	"github.com/megalodev/setetes/internal/ent/subdistrict"
 )
 
 // PMILocation is the model entity for the PMILocation schema.
@@ -22,9 +23,9 @@ type PMILocation struct {
 	// CreatedAt holds the value of the "created_at" field.
 	CreatedAt int64 `json:"created_at"`
 	// UpdatedAt holds the value of the "updated_at" field.
-	UpdatedAt *int64 `json:"updated_at"`
+	UpdatedAt int64 `json:"updated_at"`
 	// Represents soft delete timestamp in milliseconds.
-	DeletedAt *int64 `json:"deleted_at"`
+	DeletedAt int64 `json:"deleted_at"`
 	// Name holds the value of the "name" field.
 	Name string `json:"name"`
 	// BedCapacities holds the value of the "bed_capacities" field.
@@ -34,7 +35,7 @@ type PMILocation struct {
 	// Street holds the value of the "street" field.
 	Street string `json:"street"`
 	// Email holds the value of the "email" field.
-	Email *string `json:"email"`
+	Email string `json:"email"`
 	// International dialing code of the user's country (e.g., +62 for Indonesia, +1 for United States). Used for constructing complete phone numbers.
 	DialCode string `json:"dial_code"`
 	// PhoneNumber holds the value of the "phone_number" field.
@@ -45,24 +46,27 @@ type PMILocation struct {
 	ClosesAt time.Time `json:"closes_at"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the PMILocationQuery when eager-loading is set.
-	Edges        PMILocationEdges `json:"edges"`
-	selectValues sql.SelectValues
+	Edges          PMILocationEdges `json:"edges"`
+	subdistrict_id *uuid.UUID
+	selectValues   sql.SelectValues
 }
 
 // PMILocationEdges holds the relations/edges for other nodes in the graph.
 type PMILocationEdges struct {
 	// Subdistrict holds the value of the subdistrict edge.
-	Subdistrict []*Subdistrict `json:"subdistrict,omitempty"`
+	Subdistrict *Subdistrict `json:"subdistrict,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [1]bool
 }
 
 // SubdistrictOrErr returns the Subdistrict value or an error if the edge
-// was not loaded in eager-loading.
-func (e PMILocationEdges) SubdistrictOrErr() ([]*Subdistrict, error) {
-	if e.loadedTypes[0] {
+// was not loaded in eager-loading, or loaded but was not found.
+func (e PMILocationEdges) SubdistrictOrErr() (*Subdistrict, error) {
+	if e.Subdistrict != nil {
 		return e.Subdistrict, nil
+	} else if e.loadedTypes[0] {
+		return nil, &NotFoundError{label: subdistrict.Label}
 	}
 	return nil, &NotLoadedError{edge: "subdistrict"}
 }
@@ -82,6 +86,8 @@ func (*PMILocation) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullTime)
 		case pmilocation.FieldID:
 			values[i] = new(uuid.UUID)
+		case pmilocation.ForeignKeys[0]: // subdistrict_id
+			values[i] = &sql.NullScanner{S: new(uuid.UUID)}
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -113,15 +119,13 @@ func (_m *PMILocation) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
 			} else if value.Valid {
-				_m.UpdatedAt = new(int64)
-				*_m.UpdatedAt = value.Int64
+				_m.UpdatedAt = value.Int64
 			}
 		case pmilocation.FieldDeletedAt:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field deleted_at", values[i])
 			} else if value.Valid {
-				_m.DeletedAt = new(int64)
-				*_m.DeletedAt = value.Int64
+				_m.DeletedAt = value.Int64
 			}
 		case pmilocation.FieldName:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -151,8 +155,7 @@ func (_m *PMILocation) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field email", values[i])
 			} else if value.Valid {
-				_m.Email = new(string)
-				*_m.Email = value.String
+				_m.Email = value.String
 			}
 		case pmilocation.FieldDialCode:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -177,6 +180,13 @@ func (_m *PMILocation) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field closes_at", values[i])
 			} else if value.Valid {
 				_m.ClosesAt = value.Time
+			}
+		case pmilocation.ForeignKeys[0]:
+			if value, ok := values[i].(*sql.NullScanner); !ok {
+				return fmt.Errorf("unexpected type %T for field subdistrict_id", values[i])
+			} else if value.Valid {
+				_m.subdistrict_id = new(uuid.UUID)
+				*_m.subdistrict_id = *value.S.(*uuid.UUID)
 			}
 		default:
 			_m.selectValues.Set(columns[i], values[i])
@@ -222,15 +232,11 @@ func (_m *PMILocation) String() string {
 	builder.WriteString("created_at=")
 	builder.WriteString(fmt.Sprintf("%v", _m.CreatedAt))
 	builder.WriteString(", ")
-	if v := _m.UpdatedAt; v != nil {
-		builder.WriteString("updated_at=")
-		builder.WriteString(fmt.Sprintf("%v", *v))
-	}
+	builder.WriteString("updated_at=")
+	builder.WriteString(fmt.Sprintf("%v", _m.UpdatedAt))
 	builder.WriteString(", ")
-	if v := _m.DeletedAt; v != nil {
-		builder.WriteString("deleted_at=")
-		builder.WriteString(fmt.Sprintf("%v", *v))
-	}
+	builder.WriteString("deleted_at=")
+	builder.WriteString(fmt.Sprintf("%v", _m.DeletedAt))
 	builder.WriteString(", ")
 	builder.WriteString("name=")
 	builder.WriteString(_m.Name)
@@ -244,10 +250,8 @@ func (_m *PMILocation) String() string {
 	builder.WriteString("street=")
 	builder.WriteString(_m.Street)
 	builder.WriteString(", ")
-	if v := _m.Email; v != nil {
-		builder.WriteString("email=")
-		builder.WriteString(*v)
-	}
+	builder.WriteString("email=")
+	builder.WriteString(_m.Email)
 	builder.WriteString(", ")
 	builder.WriteString("dial_code=")
 	builder.WriteString(_m.DialCode)

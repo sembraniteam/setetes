@@ -36,9 +36,25 @@ func (_c *PMILocationCreate) SetUpdatedAt(v int64) *PMILocationCreate {
 	return _c
 }
 
+// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
+func (_c *PMILocationCreate) SetNillableUpdatedAt(v *int64) *PMILocationCreate {
+	if v != nil {
+		_c.SetUpdatedAt(*v)
+	}
+	return _c
+}
+
 // SetDeletedAt sets the "deleted_at" field.
 func (_c *PMILocationCreate) SetDeletedAt(v int64) *PMILocationCreate {
 	_c.mutation.SetDeletedAt(v)
+	return _c
+}
+
+// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
+func (_c *PMILocationCreate) SetNillableDeletedAt(v *int64) *PMILocationCreate {
+	if v != nil {
+		_c.SetDeletedAt(*v)
+	}
 	return _c
 }
 
@@ -80,6 +96,14 @@ func (_c *PMILocationCreate) SetEmail(v string) *PMILocationCreate {
 	return _c
 }
 
+// SetNillableEmail sets the "email" field if the given value is not nil.
+func (_c *PMILocationCreate) SetNillableEmail(v *string) *PMILocationCreate {
+	if v != nil {
+		_c.SetEmail(*v)
+	}
+	return _c
+}
+
 // SetDialCode sets the "dial_code" field.
 func (_c *PMILocationCreate) SetDialCode(v string) *PMILocationCreate {
 	_c.mutation.SetDialCode(v)
@@ -110,19 +134,15 @@ func (_c *PMILocationCreate) SetID(v uuid.UUID) *PMILocationCreate {
 	return _c
 }
 
-// AddSubdistrictIDs adds the "subdistrict" edge to the Subdistrict entity by IDs.
-func (_c *PMILocationCreate) AddSubdistrictIDs(ids ...uuid.UUID) *PMILocationCreate {
-	_c.mutation.AddSubdistrictIDs(ids...)
+// SetSubdistrictID sets the "subdistrict" edge to the Subdistrict entity by ID.
+func (_c *PMILocationCreate) SetSubdistrictID(id uuid.UUID) *PMILocationCreate {
+	_c.mutation.SetSubdistrictID(id)
 	return _c
 }
 
-// AddSubdistrict adds the "subdistrict" edges to the Subdistrict entity.
-func (_c *PMILocationCreate) AddSubdistrict(v ...*Subdistrict) *PMILocationCreate {
-	ids := make([]uuid.UUID, len(v))
-	for i := range v {
-		ids[i] = v[i].ID
-	}
-	return _c.AddSubdistrictIDs(ids...)
+// SetSubdistrict sets the "subdistrict" edge to the Subdistrict entity.
+func (_c *PMILocationCreate) SetSubdistrict(v *Subdistrict) *PMILocationCreate {
+	return _c.SetSubdistrictID(v.ID)
 }
 
 // Mutation returns the PMILocationMutation object of the builder.
@@ -173,16 +193,10 @@ func (_c *PMILocationCreate) check() error {
 			return &ValidationError{Name: "created_at", err: fmt.Errorf(`ent: validator failed for field "PMILocation.created_at": %w`, err)}
 		}
 	}
-	if _, ok := _c.mutation.UpdatedAt(); !ok {
-		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "PMILocation.updated_at"`)}
-	}
 	if v, ok := _c.mutation.UpdatedAt(); ok {
 		if err := pmilocation.UpdatedAtValidator(v); err != nil {
 			return &ValidationError{Name: "updated_at", err: fmt.Errorf(`ent: validator failed for field "PMILocation.updated_at": %w`, err)}
 		}
-	}
-	if _, ok := _c.mutation.DeletedAt(); !ok {
-		return &ValidationError{Name: "deleted_at", err: errors.New(`ent: missing required field "PMILocation.deleted_at"`)}
 	}
 	if v, ok := _c.mutation.DeletedAt(); ok {
 		if err := pmilocation.DeletedAtValidator(v); err != nil {
@@ -219,9 +233,6 @@ func (_c *PMILocationCreate) check() error {
 			return &ValidationError{Name: "street", err: fmt.Errorf(`ent: validator failed for field "PMILocation.street": %w`, err)}
 		}
 	}
-	if _, ok := _c.mutation.Email(); !ok {
-		return &ValidationError{Name: "email", err: errors.New(`ent: missing required field "PMILocation.email"`)}
-	}
 	if v, ok := _c.mutation.Email(); ok {
 		if err := pmilocation.EmailValidator(v); err != nil {
 			return &ValidationError{Name: "email", err: fmt.Errorf(`ent: validator failed for field "PMILocation.email": %w`, err)}
@@ -243,6 +254,9 @@ func (_c *PMILocationCreate) check() error {
 	}
 	if _, ok := _c.mutation.ClosesAt(); !ok {
 		return &ValidationError{Name: "closes_at", err: errors.New(`ent: missing required field "PMILocation.closes_at"`)}
+	}
+	if len(_c.mutation.SubdistrictIDs()) == 0 {
+		return &ValidationError{Name: "subdistrict", err: errors.New(`ent: missing required edge "PMILocation.subdistrict"`)}
 	}
 	return nil
 }
@@ -285,11 +299,11 @@ func (_c *PMILocationCreate) createSpec() (*PMILocation, *sqlgraph.CreateSpec) {
 	}
 	if value, ok := _c.mutation.UpdatedAt(); ok {
 		_spec.SetField(pmilocation.FieldUpdatedAt, field.TypeInt64, value)
-		_node.UpdatedAt = &value
+		_node.UpdatedAt = value
 	}
 	if value, ok := _c.mutation.DeletedAt(); ok {
 		_spec.SetField(pmilocation.FieldDeletedAt, field.TypeInt64, value)
-		_node.DeletedAt = &value
+		_node.DeletedAt = value
 	}
 	if value, ok := _c.mutation.Name(); ok {
 		_spec.SetField(pmilocation.FieldName, field.TypeString, value)
@@ -309,7 +323,7 @@ func (_c *PMILocationCreate) createSpec() (*PMILocation, *sqlgraph.CreateSpec) {
 	}
 	if value, ok := _c.mutation.Email(); ok {
 		_spec.SetField(pmilocation.FieldEmail, field.TypeString, value)
-		_node.Email = &value
+		_node.Email = value
 	}
 	if value, ok := _c.mutation.DialCode(); ok {
 		_spec.SetField(pmilocation.FieldDialCode, field.TypeString, value)
@@ -329,8 +343,8 @@ func (_c *PMILocationCreate) createSpec() (*PMILocation, *sqlgraph.CreateSpec) {
 	}
 	if nodes := _c.mutation.SubdistrictIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
 			Table:   pmilocation.SubdistrictTable,
 			Columns: []string{pmilocation.SubdistrictColumn},
 			Bidi:    false,
@@ -341,6 +355,7 @@ func (_c *PMILocationCreate) createSpec() (*PMILocation, *sqlgraph.CreateSpec) {
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
+		_node.subdistrict_id = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec

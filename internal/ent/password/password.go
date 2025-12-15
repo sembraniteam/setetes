@@ -30,7 +30,7 @@ const (
 	// It exists in this package in order to avoid circular dependency with the "account" package.
 	AccountInverseTable = "accounts"
 	// AccountColumn is the table column denoting the account relation/edge.
-	AccountColumn = "password_id"
+	AccountColumn = "account_id"
 )
 
 // Columns holds all SQL columns for password fields.
@@ -45,7 +45,7 @@ var Columns = []string{
 // ForeignKeys holds the SQL foreign-keys that are owned by the "passwords"
 // table and are not defined as standalone fields in the schema.
 var ForeignKeys = []string{
-	"password_id",
+	"account_id",
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).

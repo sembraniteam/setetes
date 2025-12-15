@@ -42,6 +42,10 @@ func init() {
 		panic(err)
 	}
 
+	if err := validate.RegisterValidation("password", validatePassword); err != nil {
+		panic(err)
+	}
+
 	validate.RegisterTagNameFunc(func(fld reflect.StructField) string {
 		name := strings.SplitN(fld.Tag.Get("form"), ",", n)[0]
 		if name == "" || name == "-" {
@@ -56,45 +60,51 @@ func init() {
 	})
 }
 
-func ValidateJSON[T any](c *gin.Context) (*T, *int16, *Message) {
+func ValidateJSON[T any](c *gin.Context) (*T, *ErrorValidate) {
 	body := new(T)
 	if err := c.ShouldBindJSON(body); err != nil {
-		return nil, &httpx.InvalidJSONCode, MsgInvalidJSON
+		return nil, &ErrorValidate{
+			code:    &httpx.InvalidJSONCode,
+			message: MsgInvalidJSON,
+		}
 	}
 
-	code, err := validateStruct(body)
-	if err != nil || code == nil {
-		return nil, code, err
+	if err := validateStruct(body); err != nil {
+		return nil, err
 	}
 
-	return body, nil, nil
+	return body, nil
 }
 
-func ValidateForm[T any](c *gin.Context) (*T, *int16, *Message) {
+func ValidateForm[T any](c *gin.Context) (*T, *ErrorValidate) {
 	body := new(T)
 	if err := c.ShouldBindWith(body, binding.FormMultipart); err != nil {
-		return nil, &httpx.InvalidFormCode, MsgInvalidForm
+		return nil, &ErrorValidate{
+			code:    &httpx.InvalidFormCode,
+			message: MsgInvalidForm,
+		}
 	}
 
-	code, err := validateStruct(body)
-	if err != nil || code != nil {
-		return nil, code, err
+	if err := validateStruct(body); err != nil {
+		return nil, err
 	}
 
-	return body, nil, nil
+	return body, nil
 }
 
-func ValidateQuery[T any](c *gin.Context) (*T, *int16, *Message) {
-	body, code, err := ValidateForm[T](c)
-
-	if err != nil || code != nil {
-		return nil, &httpx.InvalidQueryCode, MsgInvalidQuery
+func ValidateQuery[T any](c *gin.Context) (*T, *ErrorValidate) {
+	body, err := ValidateForm[T](c)
+	if err != nil {
+		return nil, &ErrorValidate{
+			code:    &httpx.InvalidQueryCode,
+			message: MsgInvalidQuery,
+		}
 	}
 
-	return body, nil, nil
+	return body, nil
 }
 
-func validateStruct(data any) (*int16, *Message) {
+func validateStruct(data any) *ErrorValidate {
 	if err := validate.Struct(data); err != nil {
 		var e validator.ValidationErrors
 		if errors.As(err, &e) {
@@ -107,21 +117,69 @@ func validateStruct(data any) (*int16, *Message) {
 			}
 
 			if field, found := dataType.FieldByName(firstErr.StructField()); found {
-				if customMsg := customReason(field, firstErr.Tag()); customMsg != "" {
+				if customMsg := reason(field, firstErr.Tag()); customMsg != "" {
 					errMsg = customMsg
 				}
 			}
 
-			return &httpx.InvalidValueCode, NewMessage("REQUIRED", errMsg)
+			return &ErrorValidate{
+				code:    &httpx.InvalidValueCode,
+				message: NewMessage(Required, errMsg),
+			}
 		}
 
-		return &httpx.InvalidBodyCode, MsgInvalidBody
+		return &ErrorValidate{
+			code:    &httpx.InvalidBodyCode,
+			message: MsgInvalidBody,
+		}
 	}
 
-	return nil, nil
+	return nil
 }
 
-func customReason(field reflect.StructField, tag string) string {
+func validatePassword(fl validator.FieldLevel) bool {
+	field := fl.Field()
+	if field.Kind() != reflect.String {
+		return false
+	}
+
+	password := field.String()
+	if password == "" {
+		return false
+	}
+
+	hasUpper := false
+	hasLower := false
+	hasNumber := false
+	hasSymbol := false
+	specialChars := "@#!$%^&*()-_=+?><~.,"
+
+	for _, char := range password {
+		if char >= 'A' && char <= 'Z' {
+			hasUpper = true
+		}
+
+		if char >= 'a' && char <= 'z' {
+			hasLower = true
+		}
+
+		if char >= '0' && char <= '9' {
+			hasNumber = true
+		}
+
+		if strings.ContainsRune(specialChars, char) {
+			hasSymbol = true
+		}
+
+		if hasUpper && hasLower && hasNumber && hasSymbol {
+			return true
+		}
+	}
+
+	return hasUpper && hasLower && hasNumber && hasSymbol
+}
+
+func reason(field reflect.StructField, tag string) string {
 	reasonTag := field.Tag.Get("reason")
 	rules := strings.SplitSeq(reasonTag, ";")
 

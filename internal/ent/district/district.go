@@ -23,14 +23,14 @@ const (
 	// Table holds the table name of the district in the database.
 	Table = "districts"
 	// CityTable is the table that holds the city relation/edge.
-	CityTable = "cities"
+	CityTable = "districts"
 	// CityInverseTable is the table name for the City entity.
 	// It exists in this package in order to avoid circular dependency with the "city" package.
 	CityInverseTable = "cities"
 	// CityColumn is the table column denoting the city relation/edge.
 	CityColumn = "city_id"
 	// SubdistrictTable is the table that holds the subdistrict relation/edge.
-	SubdistrictTable = "districts"
+	SubdistrictTable = "subdistricts"
 	// SubdistrictInverseTable is the table name for the Subdistrict entity.
 	// It exists in this package in order to avoid circular dependency with the "subdistrict" package.
 	SubdistrictInverseTable = "subdistricts"
@@ -48,7 +48,7 @@ var Columns = []string{
 // ForeignKeys holds the SQL foreign-keys that are owned by the "districts"
 // table and are not defined as standalone fields in the schema.
 var ForeignKeys = []string{
-	"district_id",
+	"city_id",
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -89,37 +89,37 @@ func ByName(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldName, opts...).ToFunc()
 }
 
-// ByCityCount orders the results by city count.
-func ByCityCount(opts ...sql.OrderTermOption) OrderOption {
+// ByCityField orders the results by city field.
+func ByCityField(field string, opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborsCount(s, newCityStep(), opts...)
+		sqlgraph.OrderByNeighborTerms(s, newCityStep(), sql.OrderByField(field, opts...))
 	}
 }
 
-// ByCity orders the results by city terms.
-func ByCity(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+// BySubdistrictCount orders the results by subdistrict count.
+func BySubdistrictCount(opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newCityStep(), append([]sql.OrderTerm{term}, terms...)...)
+		sqlgraph.OrderByNeighborsCount(s, newSubdistrictStep(), opts...)
 	}
 }
 
-// BySubdistrictField orders the results by subdistrict field.
-func BySubdistrictField(field string, opts ...sql.OrderTermOption) OrderOption {
+// BySubdistrict orders the results by subdistrict terms.
+func BySubdistrict(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newSubdistrictStep(), sql.OrderByField(field, opts...))
+		sqlgraph.OrderByNeighborTerms(s, newSubdistrictStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
 func newCityStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(CityInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.O2M, false, CityTable, CityColumn),
+		sqlgraph.Edge(sqlgraph.M2O, true, CityTable, CityColumn),
 	)
 }
 func newSubdistrictStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(SubdistrictInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.M2O, true, SubdistrictTable, SubdistrictColumn),
+		sqlgraph.Edge(sqlgraph.O2M, false, SubdistrictTable, SubdistrictColumn),
 	)
 }

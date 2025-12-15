@@ -9,8 +9,8 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"github.com/google/uuid"
+	"github.com/megalodev/setetes/internal/ent/city"
 	"github.com/megalodev/setetes/internal/ent/district"
-	"github.com/megalodev/setetes/internal/ent/subdistrict"
 )
 
 // District is the model entity for the District schema.
@@ -25,37 +25,37 @@ type District struct {
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the DistrictQuery when eager-loading is set.
 	Edges        DistrictEdges `json:"edges"`
-	district_id  *uuid.UUID
+	city_id      *uuid.UUID
 	selectValues sql.SelectValues
 }
 
 // DistrictEdges holds the relations/edges for other nodes in the graph.
 type DistrictEdges struct {
 	// City holds the value of the city edge.
-	City []*City `json:"city,omitempty"`
+	City *City `json:"city,omitempty"`
 	// Subdistrict holds the value of the subdistrict edge.
-	Subdistrict *Subdistrict `json:"subdistrict,omitempty"`
+	Subdistrict []*Subdistrict `json:"subdistrict,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [2]bool
 }
 
 // CityOrErr returns the City value or an error if the edge
-// was not loaded in eager-loading.
-func (e DistrictEdges) CityOrErr() ([]*City, error) {
-	if e.loadedTypes[0] {
+// was not loaded in eager-loading, or loaded but was not found.
+func (e DistrictEdges) CityOrErr() (*City, error) {
+	if e.City != nil {
 		return e.City, nil
+	} else if e.loadedTypes[0] {
+		return nil, &NotFoundError{label: city.Label}
 	}
 	return nil, &NotLoadedError{edge: "city"}
 }
 
 // SubdistrictOrErr returns the Subdistrict value or an error if the edge
-// was not loaded in eager-loading, or loaded but was not found.
-func (e DistrictEdges) SubdistrictOrErr() (*Subdistrict, error) {
-	if e.Subdistrict != nil {
+// was not loaded in eager-loading.
+func (e DistrictEdges) SubdistrictOrErr() ([]*Subdistrict, error) {
+	if e.loadedTypes[1] {
 		return e.Subdistrict, nil
-	} else if e.loadedTypes[1] {
-		return nil, &NotFoundError{label: subdistrict.Label}
 	}
 	return nil, &NotLoadedError{edge: "subdistrict"}
 }
@@ -69,7 +69,7 @@ func (*District) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullString)
 		case district.FieldID:
 			values[i] = new(uuid.UUID)
-		case district.ForeignKeys[0]: // district_id
+		case district.ForeignKeys[0]: // city_id
 			values[i] = &sql.NullScanner{S: new(uuid.UUID)}
 		default:
 			values[i] = new(sql.UnknownType)
@@ -106,10 +106,10 @@ func (_m *District) assignValues(columns []string, values []any) error {
 			}
 		case district.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullScanner); !ok {
-				return fmt.Errorf("unexpected type %T for field district_id", values[i])
+				return fmt.Errorf("unexpected type %T for field city_id", values[i])
 			} else if value.Valid {
-				_m.district_id = new(uuid.UUID)
-				*_m.district_id = *value.S.(*uuid.UUID)
+				_m.city_id = new(uuid.UUID)
+				*_m.city_id = *value.S.(*uuid.UUID)
 			}
 		default:
 			_m.selectValues.Set(columns[i], values[i])

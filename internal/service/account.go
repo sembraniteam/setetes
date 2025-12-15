@@ -2,12 +2,16 @@ package service
 
 import (
 	"context"
+	"fmt"
+	"time"
 
 	"github.com/megalodev/setetes/internal/cryptox"
 	"github.com/megalodev/setetes/internal/ent"
 	"github.com/megalodev/setetes/internal/httpx/request"
 	"github.com/samber/do/v2"
 )
+
+const expiredTime = time.Hour * 1
 
 type (
 	AccountQuery struct {
@@ -28,7 +32,12 @@ func NewAccount(i do.Injector) (Account, error) {
 }
 
 func (a *AccountQuery) Register(body request.Account) error {
-	_, err := a.client.Account.Create().
+	tx, err := a.client.Tx(a.ctx)
+	if err != nil {
+		return err
+	}
+
+	account, err := tx.Account.Create().
 		SetNationalIDHash(cryptox.Sha256(body.NationalID)).
 		SetNationalIDMasked(cryptox.MaskNumber(body.NationalID)).
 		SetFullName(body.FullName).
@@ -39,8 +48,25 @@ func (a *AccountQuery) Register(body request.Account) error {
 		SetPhoneNumber(body.PhoneNumber).
 		Save(a.ctx)
 	if err != nil {
-		return err
+		return rollback(tx, err)
 	}
 
-	return nil
+	_, err = tx.Activation.Create().
+		SetToken(cryptox.RandToken()).
+		SetAccount(account).
+		SetExpiredAt(time.Now().Add(expiredTime).UnixMilli()).
+		Save(a.ctx)
+	if err != nil {
+		return rollback(tx, err)
+	}
+
+	return tx.Commit()
+}
+
+func rollback(tx *ent.Tx, err error) error {
+	if rerr := tx.Rollback(); rerr != nil {
+		err = fmt.Errorf("%w: %v", err, rerr)
+	}
+
+	return err
 }

@@ -14,6 +14,8 @@ type Tx struct {
 	config
 	// Account is the client for interacting with the Account builders.
 	Account *AccountClient
+	// Activation is the client for interacting with the Activation builders.
+	Activation *ActivationClient
 	// BloodType is the client for interacting with the BloodType builders.
 	BloodType *BloodTypeClient
 	// CasbinRule is the client for interacting with the CasbinRule builders.
@@ -22,6 +24,8 @@ type Tx struct {
 	City *CityClient
 	// District is the client for interacting with the District builders.
 	District *DistrictClient
+	// OTP is the client for interacting with the OTP builders.
+	OTP *OTPClient
 	// PMILocation is the client for interacting with the PMILocation builders.
 	PMILocation *PMILocationClient
 	// Password is the client for interacting with the Password builders.
@@ -162,10 +166,12 @@ func (tx *Tx) Client() *Client {
 
 func (tx *Tx) init() {
 	tx.Account = NewAccountClient(tx.config)
+	tx.Activation = NewActivationClient(tx.config)
 	tx.BloodType = NewBloodTypeClient(tx.config)
 	tx.CasbinRule = NewCasbinRuleClient(tx.config)
 	tx.City = NewCityClient(tx.config)
 	tx.District = NewDistrictClient(tx.config)
+	tx.OTP = NewOTPClient(tx.config)
 	tx.PMILocation = NewPMILocationClient(tx.config)
 	tx.Password = NewPasswordClient(tx.config)
 	tx.Province = NewProvinceClient(tx.config)

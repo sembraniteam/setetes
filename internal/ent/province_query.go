@@ -4,6 +4,7 @@ package ent
 
 import (
 	"context"
+	"database/sql/driver"
 	"fmt"
 	"math"
 
@@ -25,7 +26,6 @@ type ProvinceQuery struct {
 	inters     []Interceptor
 	predicates []predicate.Province
 	withCity   *CityQuery
-	withFKs    bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -76,7 +76,7 @@ func (_q *ProvinceQuery) QueryCity() *CityQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(province.Table, province.FieldID, selector),
 			sqlgraph.To(city.Table, city.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, province.CityTable, province.CityColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, province.CityTable, province.CityColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
 		return fromU, nil
@@ -371,18 +371,11 @@ func (_q *ProvinceQuery) prepareQuery(ctx context.Context) error {
 func (_q *ProvinceQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Province, error) {
 	var (
 		nodes       = []*Province{}
-		withFKs     = _q.withFKs
 		_spec       = _q.querySpec()
 		loadedTypes = [1]bool{
 			_q.withCity != nil,
 		}
 	)
-	if _q.withCity != nil {
-		withFKs = true
-	}
-	if withFKs {
-		_spec.Node.Columns = append(_spec.Node.Columns, province.ForeignKeys...)
-	}
 	_spec.ScanValues = func(columns []string) ([]any, error) {
 		return (*Province).scanValues(nil, columns)
 	}
@@ -402,8 +395,9 @@ func (_q *ProvinceQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Pro
 		return nodes, nil
 	}
 	if query := _q.withCity; query != nil {
-		if err := _q.loadCity(ctx, query, nodes, nil,
-			func(n *Province, e *City) { n.Edges.City = e }); err != nil {
+		if err := _q.loadCity(ctx, query, nodes,
+			func(n *Province) { n.Edges.City = []*City{} },
+			func(n *Province, e *City) { n.Edges.City = append(n.Edges.City, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -411,34 +405,33 @@ func (_q *ProvinceQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Pro
 }
 
 func (_q *ProvinceQuery) loadCity(ctx context.Context, query *CityQuery, nodes []*Province, init func(*Province), assign func(*Province, *City)) error {
-	ids := make([]uuid.UUID, 0, len(nodes))
-	nodeids := make(map[uuid.UUID][]*Province)
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[uuid.UUID]*Province)
 	for i := range nodes {
-		if nodes[i].province_id == nil {
-			continue
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
 		}
-		fk := *nodes[i].province_id
-		if _, ok := nodeids[fk]; !ok {
-			ids = append(ids, fk)
-		}
-		nodeids[fk] = append(nodeids[fk], nodes[i])
 	}
-	if len(ids) == 0 {
-		return nil
-	}
-	query.Where(city.IDIn(ids...))
+	query.withFKs = true
+	query.Where(predicate.City(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(province.CityColumn), fks...))
+	}))
 	neighbors, err := query.All(ctx)
 	if err != nil {
 		return err
 	}
 	for _, n := range neighbors {
-		nodes, ok := nodeids[n.ID]
+		fk := n.province_id
+		if fk == nil {
+			return fmt.Errorf(`foreign-key "province_id" is nil for node %v`, n.ID)
+		}
+		node, ok := nodeids[*fk]
 		if !ok {
-			return fmt.Errorf(`unexpected foreign-key "province_id" returned %v`, n.ID)
+			return fmt.Errorf(`unexpected referenced foreign-key "province_id" returned %v for node %v`, *fk, n.ID)
 		}
-		for i := range nodes {
-			assign(nodes[i], n)
-		}
+		assign(node, n)
 	}
 	return nil
 }

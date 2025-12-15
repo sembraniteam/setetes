@@ -17,10 +17,12 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"github.com/megalodev/setetes/internal/ent/account"
+	"github.com/megalodev/setetes/internal/ent/activation"
 	"github.com/megalodev/setetes/internal/ent/bloodtype"
 	"github.com/megalodev/setetes/internal/ent/casbinrule"
 	"github.com/megalodev/setetes/internal/ent/city"
 	"github.com/megalodev/setetes/internal/ent/district"
+	"github.com/megalodev/setetes/internal/ent/otp"
 	"github.com/megalodev/setetes/internal/ent/password"
 	"github.com/megalodev/setetes/internal/ent/pmilocation"
 	"github.com/megalodev/setetes/internal/ent/province"
@@ -34,6 +36,8 @@ type Client struct {
 	Schema *migrate.Schema
 	// Account is the client for interacting with the Account builders.
 	Account *AccountClient
+	// Activation is the client for interacting with the Activation builders.
+	Activation *ActivationClient
 	// BloodType is the client for interacting with the BloodType builders.
 	BloodType *BloodTypeClient
 	// CasbinRule is the client for interacting with the CasbinRule builders.
@@ -42,6 +46,8 @@ type Client struct {
 	City *CityClient
 	// District is the client for interacting with the District builders.
 	District *DistrictClient
+	// OTP is the client for interacting with the OTP builders.
+	OTP *OTPClient
 	// PMILocation is the client for interacting with the PMILocation builders.
 	PMILocation *PMILocationClient
 	// Password is the client for interacting with the Password builders.
@@ -62,10 +68,12 @@ func NewClient(opts ...Option) *Client {
 func (c *Client) init() {
 	c.Schema = migrate.NewSchema(c.driver)
 	c.Account = NewAccountClient(c.config)
+	c.Activation = NewActivationClient(c.config)
 	c.BloodType = NewBloodTypeClient(c.config)
 	c.CasbinRule = NewCasbinRuleClient(c.config)
 	c.City = NewCityClient(c.config)
 	c.District = NewDistrictClient(c.config)
+	c.OTP = NewOTPClient(c.config)
 	c.PMILocation = NewPMILocationClient(c.config)
 	c.Password = NewPasswordClient(c.config)
 	c.Province = NewProvinceClient(c.config)
@@ -163,10 +171,12 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		ctx:         ctx,
 		config:      cfg,
 		Account:     NewAccountClient(cfg),
+		Activation:  NewActivationClient(cfg),
 		BloodType:   NewBloodTypeClient(cfg),
 		CasbinRule:  NewCasbinRuleClient(cfg),
 		City:        NewCityClient(cfg),
 		District:    NewDistrictClient(cfg),
+		OTP:         NewOTPClient(cfg),
 		PMILocation: NewPMILocationClient(cfg),
 		Password:    NewPasswordClient(cfg),
 		Province:    NewProvinceClient(cfg),
@@ -191,10 +201,12 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		ctx:         ctx,
 		config:      cfg,
 		Account:     NewAccountClient(cfg),
+		Activation:  NewActivationClient(cfg),
 		BloodType:   NewBloodTypeClient(cfg),
 		CasbinRule:  NewCasbinRuleClient(cfg),
 		City:        NewCityClient(cfg),
 		District:    NewDistrictClient(cfg),
+		OTP:         NewOTPClient(cfg),
 		PMILocation: NewPMILocationClient(cfg),
 		Password:    NewPasswordClient(cfg),
 		Province:    NewProvinceClient(cfg),
@@ -228,8 +240,8 @@ func (c *Client) Close() error {
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
-		c.Account, c.BloodType, c.CasbinRule, c.City, c.District, c.PMILocation,
-		c.Password, c.Province, c.Subdistrict,
+		c.Account, c.Activation, c.BloodType, c.CasbinRule, c.City, c.District, c.OTP,
+		c.PMILocation, c.Password, c.Province, c.Subdistrict,
 	} {
 		n.Use(hooks...)
 	}
@@ -239,8 +251,8 @@ func (c *Client) Use(hooks ...Hook) {
 // In order to add interceptors to a specific client, call: `client.Node.Intercept(...)`.
 func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
-		c.Account, c.BloodType, c.CasbinRule, c.City, c.District, c.PMILocation,
-		c.Password, c.Province, c.Subdistrict,
+		c.Account, c.Activation, c.BloodType, c.CasbinRule, c.City, c.District, c.OTP,
+		c.PMILocation, c.Password, c.Province, c.Subdistrict,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -251,6 +263,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 	switch m := m.(type) {
 	case *AccountMutation:
 		return c.Account.mutate(ctx, m)
+	case *ActivationMutation:
+		return c.Activation.mutate(ctx, m)
 	case *BloodTypeMutation:
 		return c.BloodType.mutate(ctx, m)
 	case *CasbinRuleMutation:
@@ -259,6 +273,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.City.mutate(ctx, m)
 	case *DistrictMutation:
 		return c.District.mutate(ctx, m)
+	case *OTPMutation:
+		return c.OTP.mutate(ctx, m)
 	case *PMILocationMutation:
 		return c.PMILocation.mutate(ctx, m)
 	case *PasswordMutation:
@@ -412,6 +428,38 @@ func (c *AccountClient) QueryPassword(_m *Account) *PasswordQuery {
 	return query
 }
 
+// QueryOtp queries the otp edge of a Account.
+func (c *AccountClient) QueryOtp(_m *Account) *OTPQuery {
+	query := (&OTPClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(account.Table, account.FieldID, id),
+			sqlgraph.To(otp.Table, otp.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, false, account.OtpTable, account.OtpColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryActivation queries the activation edge of a Account.
+func (c *AccountClient) QueryActivation(_m *Account) *ActivationQuery {
+	query := (&ActivationClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(account.Table, account.FieldID, id),
+			sqlgraph.To(activation.Table, activation.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, false, account.ActivationTable, account.ActivationColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *AccountClient) Hooks() []Hook {
 	return c.hooks.Account
@@ -434,6 +482,155 @@ func (c *AccountClient) mutate(ctx context.Context, m *AccountMutation) (Value, 
 		return (&AccountDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("ent: unknown Account mutation op: %q", m.Op())
+	}
+}
+
+// ActivationClient is a client for the Activation schema.
+type ActivationClient struct {
+	config
+}
+
+// NewActivationClient returns a client for the Activation from the given config.
+func NewActivationClient(c config) *ActivationClient {
+	return &ActivationClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `activation.Hooks(f(g(h())))`.
+func (c *ActivationClient) Use(hooks ...Hook) {
+	c.hooks.Activation = append(c.hooks.Activation, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `activation.Intercept(f(g(h())))`.
+func (c *ActivationClient) Intercept(interceptors ...Interceptor) {
+	c.inters.Activation = append(c.inters.Activation, interceptors...)
+}
+
+// Create returns a builder for creating a Activation entity.
+func (c *ActivationClient) Create() *ActivationCreate {
+	mutation := newActivationMutation(c.config, OpCreate)
+	return &ActivationCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Activation entities.
+func (c *ActivationClient) CreateBulk(builders ...*ActivationCreate) *ActivationCreateBulk {
+	return &ActivationCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *ActivationClient) MapCreateBulk(slice any, setFunc func(*ActivationCreate, int)) *ActivationCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &ActivationCreateBulk{err: fmt.Errorf("calling to ActivationClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*ActivationCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &ActivationCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Activation.
+func (c *ActivationClient) Update() *ActivationUpdate {
+	mutation := newActivationMutation(c.config, OpUpdate)
+	return &ActivationUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *ActivationClient) UpdateOne(_m *Activation) *ActivationUpdateOne {
+	mutation := newActivationMutation(c.config, OpUpdateOne, withActivation(_m))
+	return &ActivationUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *ActivationClient) UpdateOneID(id uuid.UUID) *ActivationUpdateOne {
+	mutation := newActivationMutation(c.config, OpUpdateOne, withActivationID(id))
+	return &ActivationUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Activation.
+func (c *ActivationClient) Delete() *ActivationDelete {
+	mutation := newActivationMutation(c.config, OpDelete)
+	return &ActivationDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *ActivationClient) DeleteOne(_m *Activation) *ActivationDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *ActivationClient) DeleteOneID(id uuid.UUID) *ActivationDeleteOne {
+	builder := c.Delete().Where(activation.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &ActivationDeleteOne{builder}
+}
+
+// Query returns a query builder for Activation.
+func (c *ActivationClient) Query() *ActivationQuery {
+	return &ActivationQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeActivation},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a Activation entity by its id.
+func (c *ActivationClient) Get(ctx context.Context, id uuid.UUID) (*Activation, error) {
+	return c.Query().Where(activation.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *ActivationClient) GetX(ctx context.Context, id uuid.UUID) *Activation {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryAccount queries the account edge of a Activation.
+func (c *ActivationClient) QueryAccount(_m *Activation) *AccountQuery {
+	query := (&AccountClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(activation.Table, activation.FieldID, id),
+			sqlgraph.To(account.Table, account.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, true, activation.AccountTable, activation.AccountColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *ActivationClient) Hooks() []Hook {
+	return c.hooks.Activation
+}
+
+// Interceptors returns the client interceptors.
+func (c *ActivationClient) Interceptors() []Interceptor {
+	return c.inters.Activation
+}
+
+func (c *ActivationClient) mutate(ctx context.Context, m *ActivationMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&ActivationCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&ActivationUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&ActivationUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&ActivationDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown Activation mutation op: %q", m.Op())
 	}
 }
 
@@ -835,7 +1032,7 @@ func (c *CityClient) QueryProvince(_m *City) *ProvinceQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(city.Table, city.FieldID, id),
 			sqlgraph.To(province.Table, province.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, city.ProvinceTable, city.ProvinceColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, city.ProvinceTable, city.ProvinceColumn),
 		)
 		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
 		return fromV, nil
@@ -851,7 +1048,7 @@ func (c *CityClient) QueryDistrict(_m *City) *DistrictQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(city.Table, city.FieldID, id),
 			sqlgraph.To(district.Table, district.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, city.DistrictTable, city.DistrictColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, city.DistrictTable, city.DistrictColumn),
 		)
 		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
 		return fromV, nil
@@ -1000,7 +1197,7 @@ func (c *DistrictClient) QueryCity(_m *District) *CityQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(district.Table, district.FieldID, id),
 			sqlgraph.To(city.Table, city.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, district.CityTable, district.CityColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, district.CityTable, district.CityColumn),
 		)
 		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
 		return fromV, nil
@@ -1016,7 +1213,7 @@ func (c *DistrictClient) QuerySubdistrict(_m *District) *SubdistrictQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(district.Table, district.FieldID, id),
 			sqlgraph.To(subdistrict.Table, subdistrict.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, district.SubdistrictTable, district.SubdistrictColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, district.SubdistrictTable, district.SubdistrictColumn),
 		)
 		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
 		return fromV, nil
@@ -1046,6 +1243,155 @@ func (c *DistrictClient) mutate(ctx context.Context, m *DistrictMutation) (Value
 		return (&DistrictDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("ent: unknown District mutation op: %q", m.Op())
+	}
+}
+
+// OTPClient is a client for the OTP schema.
+type OTPClient struct {
+	config
+}
+
+// NewOTPClient returns a client for the OTP from the given config.
+func NewOTPClient(c config) *OTPClient {
+	return &OTPClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `otp.Hooks(f(g(h())))`.
+func (c *OTPClient) Use(hooks ...Hook) {
+	c.hooks.OTP = append(c.hooks.OTP, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `otp.Intercept(f(g(h())))`.
+func (c *OTPClient) Intercept(interceptors ...Interceptor) {
+	c.inters.OTP = append(c.inters.OTP, interceptors...)
+}
+
+// Create returns a builder for creating a OTP entity.
+func (c *OTPClient) Create() *OTPCreate {
+	mutation := newOTPMutation(c.config, OpCreate)
+	return &OTPCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of OTP entities.
+func (c *OTPClient) CreateBulk(builders ...*OTPCreate) *OTPCreateBulk {
+	return &OTPCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *OTPClient) MapCreateBulk(slice any, setFunc func(*OTPCreate, int)) *OTPCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &OTPCreateBulk{err: fmt.Errorf("calling to OTPClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*OTPCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &OTPCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for OTP.
+func (c *OTPClient) Update() *OTPUpdate {
+	mutation := newOTPMutation(c.config, OpUpdate)
+	return &OTPUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *OTPClient) UpdateOne(_m *OTP) *OTPUpdateOne {
+	mutation := newOTPMutation(c.config, OpUpdateOne, withOTP(_m))
+	return &OTPUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *OTPClient) UpdateOneID(id uuid.UUID) *OTPUpdateOne {
+	mutation := newOTPMutation(c.config, OpUpdateOne, withOTPID(id))
+	return &OTPUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for OTP.
+func (c *OTPClient) Delete() *OTPDelete {
+	mutation := newOTPMutation(c.config, OpDelete)
+	return &OTPDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *OTPClient) DeleteOne(_m *OTP) *OTPDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *OTPClient) DeleteOneID(id uuid.UUID) *OTPDeleteOne {
+	builder := c.Delete().Where(otp.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &OTPDeleteOne{builder}
+}
+
+// Query returns a query builder for OTP.
+func (c *OTPClient) Query() *OTPQuery {
+	return &OTPQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeOTP},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a OTP entity by its id.
+func (c *OTPClient) Get(ctx context.Context, id uuid.UUID) (*OTP, error) {
+	return c.Query().Where(otp.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *OTPClient) GetX(ctx context.Context, id uuid.UUID) *OTP {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryAccount queries the account edge of a OTP.
+func (c *OTPClient) QueryAccount(_m *OTP) *AccountQuery {
+	query := (&AccountClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(otp.Table, otp.FieldID, id),
+			sqlgraph.To(account.Table, account.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, true, otp.AccountTable, otp.AccountColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *OTPClient) Hooks() []Hook {
+	return c.hooks.OTP
+}
+
+// Interceptors returns the client interceptors.
+func (c *OTPClient) Interceptors() []Interceptor {
+	return c.inters.OTP
+}
+
+func (c *OTPClient) mutate(ctx context.Context, m *OTPMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&OTPCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&OTPUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&OTPUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&OTPDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown OTP mutation op: %q", m.Op())
 	}
 }
 
@@ -1165,7 +1511,7 @@ func (c *PMILocationClient) QuerySubdistrict(_m *PMILocation) *SubdistrictQuery 
 		step := sqlgraph.NewStep(
 			sqlgraph.From(pmilocation.Table, pmilocation.FieldID, id),
 			sqlgraph.To(subdistrict.Table, subdistrict.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, pmilocation.SubdistrictTable, pmilocation.SubdistrictColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, pmilocation.SubdistrictTable, pmilocation.SubdistrictColumn),
 		)
 		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
 		return fromV, nil
@@ -1463,7 +1809,7 @@ func (c *ProvinceClient) QueryCity(_m *Province) *CityQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(province.Table, province.FieldID, id),
 			sqlgraph.To(city.Table, city.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, province.CityTable, province.CityColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, province.CityTable, province.CityColumn),
 		)
 		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
 		return fromV, nil
@@ -1612,7 +1958,7 @@ func (c *SubdistrictClient) QueryDistrict(_m *Subdistrict) *DistrictQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(subdistrict.Table, subdistrict.FieldID, id),
 			sqlgraph.To(district.Table, district.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, subdistrict.DistrictTable, subdistrict.DistrictColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, subdistrict.DistrictTable, subdistrict.DistrictColumn),
 		)
 		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
 		return fromV, nil
@@ -1628,7 +1974,7 @@ func (c *SubdistrictClient) QueryPmiLocation(_m *Subdistrict) *PMILocationQuery 
 		step := sqlgraph.NewStep(
 			sqlgraph.From(subdistrict.Table, subdistrict.FieldID, id),
 			sqlgraph.To(pmilocation.Table, pmilocation.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, subdistrict.PmiLocationTable, subdistrict.PmiLocationColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, subdistrict.PmiLocationTable, subdistrict.PmiLocationColumn),
 		)
 		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
 		return fromV, nil
@@ -1664,11 +2010,11 @@ func (c *SubdistrictClient) mutate(ctx context.Context, m *SubdistrictMutation) 
 // hooks and interceptors per client, for fast access.
 type (
 	hooks struct {
-		Account, BloodType, CasbinRule, City, District, PMILocation, Password, Province,
-		Subdistrict []ent.Hook
+		Account, Activation, BloodType, CasbinRule, City, District, OTP, PMILocation,
+		Password, Province, Subdistrict []ent.Hook
 	}
 	inters struct {
-		Account, BloodType, CasbinRule, City, District, PMILocation, Password, Province,
-		Subdistrict []ent.Interceptor
+		Account, Activation, BloodType, CasbinRule, City, District, OTP, PMILocation,
+		Password, Province, Subdistrict []ent.Interceptor
 	}
 )

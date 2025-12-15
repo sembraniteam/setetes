@@ -21,15 +21,15 @@ type Password struct {
 	// CreatedAt holds the value of the "created_at" field.
 	CreatedAt int64 `json:"created_at"`
 	// UpdatedAt holds the value of the "updated_at" field.
-	UpdatedAt *int64 `json:"updated_at"`
+	UpdatedAt int64 `json:"updated_at"`
 	// Represents soft delete timestamp in milliseconds.
-	DeletedAt *int64 `json:"deleted_at"`
+	DeletedAt int64 `json:"deleted_at"`
 	// Hashed password using Argon2.
 	Hash string `json:"-"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the PasswordQuery when eager-loading is set.
 	Edges        PasswordEdges `json:"edges"`
-	password_id  *uuid.UUID
+	account_id   *uuid.UUID
 	selectValues sql.SelectValues
 }
 
@@ -64,7 +64,7 @@ func (*Password) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullString)
 		case password.FieldID:
 			values[i] = new(uuid.UUID)
-		case password.ForeignKeys[0]: // password_id
+		case password.ForeignKeys[0]: // account_id
 			values[i] = &sql.NullScanner{S: new(uuid.UUID)}
 		default:
 			values[i] = new(sql.UnknownType)
@@ -97,15 +97,13 @@ func (_m *Password) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
 			} else if value.Valid {
-				_m.UpdatedAt = new(int64)
-				*_m.UpdatedAt = value.Int64
+				_m.UpdatedAt = value.Int64
 			}
 		case password.FieldDeletedAt:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field deleted_at", values[i])
 			} else if value.Valid {
-				_m.DeletedAt = new(int64)
-				*_m.DeletedAt = value.Int64
+				_m.DeletedAt = value.Int64
 			}
 		case password.FieldHash:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -115,10 +113,10 @@ func (_m *Password) assignValues(columns []string, values []any) error {
 			}
 		case password.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullScanner); !ok {
-				return fmt.Errorf("unexpected type %T for field password_id", values[i])
+				return fmt.Errorf("unexpected type %T for field account_id", values[i])
 			} else if value.Valid {
-				_m.password_id = new(uuid.UUID)
-				*_m.password_id = *value.S.(*uuid.UUID)
+				_m.account_id = new(uuid.UUID)
+				*_m.account_id = *value.S.(*uuid.UUID)
 			}
 		default:
 			_m.selectValues.Set(columns[i], values[i])
@@ -164,15 +162,11 @@ func (_m *Password) String() string {
 	builder.WriteString("created_at=")
 	builder.WriteString(fmt.Sprintf("%v", _m.CreatedAt))
 	builder.WriteString(", ")
-	if v := _m.UpdatedAt; v != nil {
-		builder.WriteString("updated_at=")
-		builder.WriteString(fmt.Sprintf("%v", *v))
-	}
+	builder.WriteString("updated_at=")
+	builder.WriteString(fmt.Sprintf("%v", _m.UpdatedAt))
 	builder.WriteString(", ")
-	if v := _m.DeletedAt; v != nil {
-		builder.WriteString("deleted_at=")
-		builder.WriteString(fmt.Sprintf("%v", *v))
-	}
+	builder.WriteString("deleted_at=")
+	builder.WriteString(fmt.Sprintf("%v", _m.DeletedAt))
 	builder.WriteString(", ")
 	builder.WriteString("hash=<sensitive>")
 	builder.WriteByte(')')

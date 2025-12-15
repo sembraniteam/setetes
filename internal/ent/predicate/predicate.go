@@ -9,6 +9,9 @@ import (
 // Account is the predicate function for account builders.
 type Account func(*sql.Selector)
 
+// Activation is the predicate function for activation builders.
+type Activation func(*sql.Selector)
+
 // BloodType is the predicate function for bloodtype builders.
 type BloodType func(*sql.Selector)
 
@@ -20,6 +23,9 @@ type City func(*sql.Selector)
 
 // District is the predicate function for district builders.
 type District func(*sql.Selector)
+
+// OTP is the predicate function for otp builders.
+type OTP func(*sql.Selector)
 
 // PMILocation is the predicate function for pmilocation builders.
 type PMILocation func(*sql.Selector)

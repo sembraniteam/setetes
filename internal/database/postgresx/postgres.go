@@ -1,6 +1,7 @@
 package postgresx
 
 import (
+	"database/sql"
 	"fmt"
 	"net/url"
 	"time"
@@ -29,16 +30,17 @@ func New(config internal.Config) Postgres {
 func (c client) Connect() (*ent.Client, error) {
 	postgres := c.config.Postgres
 
-	drv, err := entsql.Open("pgx", c.dsn())
+	db, err := sql.Open("pgx", c.dsn())
 	if err != nil {
 		return nil, err
 	}
 
-	db := drv.DB()
 	db.SetMaxIdleConns(postgres.MaxIdleConnections)
 	db.SetMaxOpenConns(postgres.MaxOpenConnections)
 	db.SetConnMaxLifetime(postgres.ConnectionMaxLifetime * time.Minute)
 	db.SetConnMaxIdleTime(postgres.ConnectionMaxIdleTime * time.Minute)
+
+	drv := entsql.OpenDB(dialect.Postgres, db)
 
 	return ent.NewClient(ent.Driver(drv)), nil
 }

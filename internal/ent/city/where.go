@@ -199,7 +199,7 @@ func HasProvince() predicate.City {
 	return predicate.City(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, ProvinceTable, ProvinceColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, ProvinceTable, ProvinceColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
@@ -222,7 +222,7 @@ func HasDistrict() predicate.City {
 	return predicate.City(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, DistrictTable, DistrictColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, DistrictTable, DistrictColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})

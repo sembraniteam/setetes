@@ -13,8 +13,8 @@ var (
 	AccountsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUUID, Unique: true, Default: schema.Expr("uuid_generate_v4()")},
 		{Name: "created_at", Type: field.TypeInt64, Default: schema.Expr("FLOOR(EXTRACT(EPOCH FROM CURRENT_TIMESTAMP) * 1000)")},
-		{Name: "updated_at", Type: field.TypeInt64},
-		{Name: "deleted_at", Type: field.TypeInt64, Comment: "Represents soft delete timestamp in milliseconds."},
+		{Name: "updated_at", Type: field.TypeInt64, Nullable: true},
+		{Name: "deleted_at", Type: field.TypeInt64, Nullable: true, Comment: "Represents soft delete timestamp in milliseconds."},
 		{Name: "national_id_hash", Type: field.TypeString, Unique: true, Size: 64, Comment: "SHA256 hash of a user's national identity number (e.g., KTP). Stored securely to avoid saving raw identity numbers."},
 		{Name: "national_id_masked", Type: field.TypeString, Size: 8, Comment: "Masked of national identity number (e.g., KTP).", SchemaType: map[string]string{"postgres": "char(8)"}},
 		{Name: "full_name", Type: field.TypeString, Size: 164},
@@ -25,7 +25,7 @@ var (
 		{Name: "phone_number", Type: field.TypeString, Unique: true, Size: 13},
 		{Name: "activated", Type: field.TypeBool, Default: false},
 		{Name: "locked", Type: field.TypeBool, Comment: "Permanently locked by this account.", Default: false},
-		{Name: "temp_locked_at", Type: field.TypeInt64, Comment: "Temporary locked by this account based on time milliseconds."},
+		{Name: "temp_locked_at", Type: field.TypeInt64, Nullable: true, Comment: "Temporary locked by this account based on time milliseconds."},
 	}
 	// AccountsTable holds the schema information for the "accounts" table.
 	AccountsTable = &schema.Table{
@@ -40,15 +40,47 @@ var (
 			},
 		},
 	}
+	// ActivationsColumns holds the columns for the "activations" table.
+	ActivationsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUUID, Unique: true, Default: schema.Expr("uuid_generate_v4()")},
+		{Name: "created_at", Type: field.TypeInt64, Default: schema.Expr("FLOOR(EXTRACT(EPOCH FROM CURRENT_TIMESTAMP) * 1000)")},
+		{Name: "updated_at", Type: field.TypeInt64, Nullable: true},
+		{Name: "deleted_at", Type: field.TypeInt64, Nullable: true, Comment: "Represents soft delete timestamp in milliseconds."},
+		{Name: "token", Type: field.TypeString, Unique: true, Size: 44, Comment: "The activation token is single-use and will be deleted after it is used.", SchemaType: map[string]string{"postgres": "char(44)"}},
+		{Name: "is_used", Type: field.TypeBool, Default: false},
+		{Name: "expired_at", Type: field.TypeInt64, Comment: "The activation link is only valid for 1 hour."},
+		{Name: "account_id", Type: field.TypeUUID, Unique: true},
+	}
+	// ActivationsTable holds the schema information for the "activations" table.
+	ActivationsTable = &schema.Table{
+		Name:       "activations",
+		Columns:    ActivationsColumns,
+		PrimaryKey: []*schema.Column{ActivationsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "activations_accounts_activation",
+				Columns:    []*schema.Column{ActivationsColumns[7]},
+				RefColumns: []*schema.Column{AccountsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "activation_deleted_at",
+				Unique:  false,
+				Columns: []*schema.Column{ActivationsColumns[3]},
+			},
+		},
+	}
 	// BloodTypesColumns holds the columns for the "blood_types" table.
 	BloodTypesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUUID, Unique: true, Default: schema.Expr("uuid_generate_v4()")},
 		{Name: "created_at", Type: field.TypeInt64, Default: schema.Expr("FLOOR(EXTRACT(EPOCH FROM CURRENT_TIMESTAMP) * 1000)")},
-		{Name: "updated_at", Type: field.TypeInt64},
-		{Name: "deleted_at", Type: field.TypeInt64, Comment: "Represents soft delete timestamp in milliseconds."},
+		{Name: "updated_at", Type: field.TypeInt64, Nullable: true},
+		{Name: "deleted_at", Type: field.TypeInt64, Nullable: true, Comment: "Represents soft delete timestamp in milliseconds."},
 		{Name: "group", Type: field.TypeEnum, Comment: "comment:The ABO blood group classification (A, B, AB, or O).", Enums: []string{"A", "B", "AB", "O"}},
-		{Name: "rhesus", Type: field.TypeEnum, Comment: "The Rhesus (Rh) factor of the blood group, either POSITIVE or NEGATIVE.", Enums: []string{"POSITIVE", "NEGATIVE"}},
-		{Name: "blood_id", Type: field.TypeUUID, Unique: true},
+		{Name: "rhesus", Type: field.TypeEnum, Nullable: true, Comment: "The Rhesus (Rh) factor of the blood group, either POSITIVE or NEGATIVE.", Enums: []string{"POSITIVE", "NEGATIVE"}},
+		{Name: "account_id", Type: field.TypeUUID, Unique: true},
 	}
 	// BloodTypesTable holds the schema information for the "blood_types" table.
 	BloodTypesTable = &schema.Table{
@@ -60,7 +92,7 @@ var (
 				Symbol:     "blood_types_accounts_blood_type",
 				Columns:    []*schema.Column{BloodTypesColumns[6]},
 				RefColumns: []*schema.Column{AccountsColumns[0]},
-				OnDelete:   schema.NoAction,
+				OnDelete:   schema.Cascade,
 			},
 		},
 		Indexes: []*schema.Index{
@@ -93,7 +125,7 @@ var (
 		{Name: "id", Type: field.TypeUUID, Unique: true, Default: schema.Expr("uuid_generate_v4()")},
 		{Name: "bps_code", Type: field.TypeString, Unique: true, Size: 4, SchemaType: map[string]string{"postgres": "char(4)"}},
 		{Name: "name", Type: field.TypeString},
-		{Name: "city_id", Type: field.TypeUUID},
+		{Name: "province_id", Type: field.TypeUUID},
 	}
 	// CitiesTable holds the schema information for the "cities" table.
 	CitiesTable = &schema.Table{
@@ -102,9 +134,9 @@ var (
 		PrimaryKey: []*schema.Column{CitiesColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
-				Symbol:     "cities_districts_city",
+				Symbol:     "cities_provinces_city",
 				Columns:    []*schema.Column{CitiesColumns[3]},
-				RefColumns: []*schema.Column{DistrictsColumns[0]},
+				RefColumns: []*schema.Column{ProvincesColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
 		},
@@ -114,7 +146,7 @@ var (
 		{Name: "id", Type: field.TypeUUID, Unique: true, Default: schema.Expr("uuid_generate_v4()")},
 		{Name: "bps_code", Type: field.TypeString, Unique: true, Size: 7, SchemaType: map[string]string{"postgres": "char(7)"}},
 		{Name: "name", Type: field.TypeString},
-		{Name: "district_id", Type: field.TypeUUID},
+		{Name: "city_id", Type: field.TypeUUID},
 	}
 	// DistrictsTable holds the schema information for the "districts" table.
 	DistrictsTable = &schema.Table{
@@ -123,10 +155,43 @@ var (
 		PrimaryKey: []*schema.Column{DistrictsColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
-				Symbol:     "districts_subdistricts_district",
+				Symbol:     "districts_cities_district",
 				Columns:    []*schema.Column{DistrictsColumns[3]},
-				RefColumns: []*schema.Column{SubdistrictsColumns[0]},
+				RefColumns: []*schema.Column{CitiesColumns[0]},
 				OnDelete:   schema.NoAction,
+			},
+		},
+	}
+	// OtpsColumns holds the columns for the "otps" table.
+	OtpsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUUID, Unique: true, Default: schema.Expr("uuid_generate_v4()")},
+		{Name: "created_at", Type: field.TypeInt64, Default: schema.Expr("FLOOR(EXTRACT(EPOCH FROM CURRENT_TIMESTAMP) * 1000)")},
+		{Name: "updated_at", Type: field.TypeInt64, Nullable: true},
+		{Name: "deleted_at", Type: field.TypeInt64, Nullable: true, Comment: "Represents soft delete timestamp in milliseconds."},
+		{Name: "code", Type: field.TypeString, Unique: true, Size: 6, Comment: "The OTP code must be 6 digits long. Will be deleted after it is used.", SchemaType: map[string]string{"postgres": "char(6)"}},
+		{Name: "type", Type: field.TypeEnum, Enums: []string{"RESET_PASSWORD", "CHANGE_PASSWORD"}},
+		{Name: "is_used", Type: field.TypeBool, Default: false},
+		{Name: "expired_at", Type: field.TypeInt64, Comment: "The OTP code is only valid for 10 minutes."},
+		{Name: "account_id", Type: field.TypeUUID, Unique: true},
+	}
+	// OtpsTable holds the schema information for the "otps" table.
+	OtpsTable = &schema.Table{
+		Name:       "otps",
+		Columns:    OtpsColumns,
+		PrimaryKey: []*schema.Column{OtpsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "otps_accounts_otp",
+				Columns:    []*schema.Column{OtpsColumns[8]},
+				RefColumns: []*schema.Column{AccountsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "otp_deleted_at",
+				Unique:  false,
+				Columns: []*schema.Column{OtpsColumns[3]},
 			},
 		},
 	}
@@ -134,23 +199,32 @@ var (
 	PmiLocationsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUUID, Unique: true, Default: schema.Expr("uuid_generate_v4()")},
 		{Name: "created_at", Type: field.TypeInt64, Default: schema.Expr("FLOOR(EXTRACT(EPOCH FROM CURRENT_TIMESTAMP) * 1000)")},
-		{Name: "updated_at", Type: field.TypeInt64},
-		{Name: "deleted_at", Type: field.TypeInt64, Comment: "Represents soft delete timestamp in milliseconds."},
+		{Name: "updated_at", Type: field.TypeInt64, Nullable: true},
+		{Name: "deleted_at", Type: field.TypeInt64, Nullable: true, Comment: "Represents soft delete timestamp in milliseconds."},
 		{Name: "name", Type: field.TypeString, Size: 164},
 		{Name: "bed_capacities", Type: field.TypeInt16, Default: 0, SchemaType: map[string]string{"postgres": "smallserial"}},
 		{Name: "lat_lng", Type: field.TypeOther, SchemaType: map[string]string{"postgres": "geography(Point,4326)"}},
 		{Name: "street", Type: field.TypeString, Size: 2147483647},
-		{Name: "email", Type: field.TypeString, Unique: true, Size: 164},
+		{Name: "email", Type: field.TypeString, Unique: true, Nullable: true, Size: 164},
 		{Name: "dial_code", Type: field.TypeString, Comment: "International dialing code of the user's country (e.g., +62 for Indonesia, +1 for United States). Used for constructing complete phone numbers."},
 		{Name: "phone_number", Type: field.TypeString, Unique: true, Size: 13},
 		{Name: "opens_at", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "time"}},
 		{Name: "closes_at", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "time"}},
+		{Name: "subdistrict_id", Type: field.TypeUUID},
 	}
 	// PmiLocationsTable holds the schema information for the "pmi_locations" table.
 	PmiLocationsTable = &schema.Table{
 		Name:       "pmi_locations",
 		Columns:    PmiLocationsColumns,
 		PrimaryKey: []*schema.Column{PmiLocationsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "pmi_locations_subdistricts_pmi_location",
+				Columns:    []*schema.Column{PmiLocationsColumns[13]},
+				RefColumns: []*schema.Column{SubdistrictsColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
 		Indexes: []*schema.Index{
 			{
 				Name:    "pmilocation_deleted_at",
@@ -163,10 +237,10 @@ var (
 	PasswordsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUUID, Unique: true, Default: schema.Expr("uuid_generate_v4()")},
 		{Name: "created_at", Type: field.TypeInt64, Default: schema.Expr("FLOOR(EXTRACT(EPOCH FROM CURRENT_TIMESTAMP) * 1000)")},
-		{Name: "updated_at", Type: field.TypeInt64},
-		{Name: "deleted_at", Type: field.TypeInt64, Comment: "Represents soft delete timestamp in milliseconds."},
-		{Name: "hash", Type: field.TypeString, Unique: true, Comment: "Hashed password using Argon2."},
-		{Name: "password_id", Type: field.TypeUUID, Unique: true},
+		{Name: "updated_at", Type: field.TypeInt64, Nullable: true},
+		{Name: "deleted_at", Type: field.TypeInt64, Nullable: true, Comment: "Represents soft delete timestamp in milliseconds."},
+		{Name: "hash", Type: field.TypeString, Unique: true, Size: 2147483647, Comment: "Hashed password using Argon2."},
+		{Name: "account_id", Type: field.TypeUUID, Unique: true},
 	}
 	// PasswordsTable holds the schema information for the "passwords" table.
 	PasswordsTable = &schema.Table{
@@ -194,21 +268,12 @@ var (
 		{Name: "id", Type: field.TypeUUID, Unique: true, Default: schema.Expr("uuid_generate_v4()")},
 		{Name: "bps_code", Type: field.TypeString, Unique: true, Size: 2, SchemaType: map[string]string{"postgres": "char(2)"}},
 		{Name: "name", Type: field.TypeString},
-		{Name: "province_id", Type: field.TypeUUID},
 	}
 	// ProvincesTable holds the schema information for the "provinces" table.
 	ProvincesTable = &schema.Table{
 		Name:       "provinces",
 		Columns:    ProvincesColumns,
 		PrimaryKey: []*schema.Column{ProvincesColumns[0]},
-		ForeignKeys: []*schema.ForeignKey{
-			{
-				Symbol:     "provinces_cities_province",
-				Columns:    []*schema.Column{ProvincesColumns[3]},
-				RefColumns: []*schema.Column{CitiesColumns[0]},
-				OnDelete:   schema.NoAction,
-			},
-		},
 	}
 	// SubdistrictsColumns holds the columns for the "subdistricts" table.
 	SubdistrictsColumns = []*schema.Column{
@@ -216,7 +281,7 @@ var (
 		{Name: "bps_code", Type: field.TypeString, Unique: true, Size: 10, SchemaType: map[string]string{"postgres": "char(10)"}},
 		{Name: "postal_code", Type: field.TypeString, Unique: true, Size: 5, SchemaType: map[string]string{"postgres": "char(5)"}},
 		{Name: "name", Type: field.TypeString},
-		{Name: "subdistrict_id", Type: field.TypeUUID},
+		{Name: "district_id", Type: field.TypeUUID},
 	}
 	// SubdistrictsTable holds the schema information for the "subdistricts" table.
 	SubdistrictsTable = &schema.Table{
@@ -225,9 +290,9 @@ var (
 		PrimaryKey: []*schema.Column{SubdistrictsColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
-				Symbol:     "subdistricts_pmi_locations_subdistrict",
+				Symbol:     "subdistricts_districts_subdistrict",
 				Columns:    []*schema.Column{SubdistrictsColumns[4]},
-				RefColumns: []*schema.Column{PmiLocationsColumns[0]},
+				RefColumns: []*schema.Column{DistrictsColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
 		},
@@ -235,10 +300,12 @@ var (
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
 		AccountsTable,
+		ActivationsTable,
 		BloodTypesTable,
 		CasbinRuleTable,
 		CitiesTable,
 		DistrictsTable,
+		OtpsTable,
 		PmiLocationsTable,
 		PasswordsTable,
 		ProvincesTable,
@@ -255,12 +322,25 @@ func init() {
 		"national_id_masked": "length(national_id_masked) = 8",
 		"phone_number":       "length(phone_number) >= 11 and length(phone_number) <= 13",
 	}
+	ActivationsTable.ForeignKeys[0].RefTable = AccountsTable
+	ActivationsTable.Annotation = &entsql.Annotation{}
+	ActivationsTable.Annotation.Checks = map[string]string{
+		"token": "length(token) = 44",
+	}
 	BloodTypesTable.ForeignKeys[0].RefTable = AccountsTable
 	CasbinRuleTable.Annotation = &entsql.Annotation{
 		Table: "casbin_rule",
 	}
-	CitiesTable.ForeignKeys[0].RefTable = DistrictsTable
-	DistrictsTable.ForeignKeys[0].RefTable = SubdistrictsTable
+	CitiesTable.ForeignKeys[0].RefTable = ProvincesTable
+	DistrictsTable.ForeignKeys[0].RefTable = CitiesTable
+	OtpsTable.ForeignKeys[0].RefTable = AccountsTable
+	OtpsTable.Annotation = &entsql.Annotation{
+		Table: "otps",
+	}
+	OtpsTable.Annotation.Checks = map[string]string{
+		"code": "length(code) = 6",
+	}
+	PmiLocationsTable.ForeignKeys[0].RefTable = SubdistrictsTable
 	PmiLocationsTable.Annotation = &entsql.Annotation{}
 	PmiLocationsTable.Annotation.Checks = map[string]string{
 		"email":        "length(email) >= 3 and length(email) <= 164",
@@ -268,6 +348,5 @@ func init() {
 		"phone_number": "length(phone_number) >= 11 and length(phone_number) <= 13",
 	}
 	PasswordsTable.ForeignKeys[0].RefTable = AccountsTable
-	ProvincesTable.ForeignKeys[0].RefTable = CitiesTable
-	SubdistrictsTable.ForeignKeys[0].RefTable = PmiLocationsTable
+	SubdistrictsTable.ForeignKeys[0].RefTable = DistrictsTable
 }

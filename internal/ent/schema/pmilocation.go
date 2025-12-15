@@ -42,7 +42,7 @@ func (PMILocation) Fields() []ent.Field {
 			MinLen(3).
 			MaxLen(164).
 			Unique().
-			Nillable().
+			Optional().
 			StructTag(`json:"email"`),
 		field.String("dial_code").StructTag(`json:"dial_code"`).
 			Comment("International dialing code of the user's country (e.g., +62 for Indonesia, +1 for United States). Used for constructing complete phone numbers."),
@@ -63,8 +63,10 @@ func (PMILocation) Fields() []ent.Field {
 // Edges of the PMILocation.
 func (PMILocation) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.To("subdistrict", Subdistrict.Type).
-			StorageKey(edge.Column("subdistrict_id")),
+		edge.From("subdistrict", Subdistrict.Type).
+			Ref("pmi_location").
+			Unique().
+			Required(),
 	}
 }
 

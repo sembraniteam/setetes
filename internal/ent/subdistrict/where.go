@@ -269,7 +269,7 @@ func HasDistrict() predicate.Subdistrict {
 	return predicate.Subdistrict(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, DistrictTable, DistrictColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, DistrictTable, DistrictColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
@@ -292,7 +292,7 @@ func HasPmiLocation() predicate.Subdistrict {
 	return predicate.Subdistrict(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, PmiLocationTable, PmiLocationColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, PmiLocationTable, PmiLocationColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})

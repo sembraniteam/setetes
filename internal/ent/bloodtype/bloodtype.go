@@ -34,7 +34,7 @@ const (
 	// It exists in this package in order to avoid circular dependency with the "account" package.
 	AccountInverseTable = "accounts"
 	// AccountColumn is the table column denoting the account relation/edge.
-	AccountColumn = "blood_id"
+	AccountColumn = "account_id"
 )
 
 // Columns holds all SQL columns for bloodtype fields.
@@ -50,7 +50,7 @@ var Columns = []string{
 // ForeignKeys holds the SQL foreign-keys that are owned by the "blood_types"
 // table and are not defined as standalone fields in the schema.
 var ForeignKeys = []string{
-	"blood_id",
+	"account_id",
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).

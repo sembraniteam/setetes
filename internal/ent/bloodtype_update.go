@@ -42,6 +42,12 @@ func (_u *BloodTypeUpdate) AddUpdatedAt(v int64) *BloodTypeUpdate {
 	return _u
 }
 
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (_u *BloodTypeUpdate) ClearUpdatedAt() *BloodTypeUpdate {
+	_u.mutation.ClearUpdatedAt()
+	return _u
+}
+
 // SetDeletedAt sets the "deleted_at" field.
 func (_u *BloodTypeUpdate) SetDeletedAt(v int64) *BloodTypeUpdate {
 	_u.mutation.ResetDeletedAt()
@@ -60,6 +66,12 @@ func (_u *BloodTypeUpdate) SetNillableDeletedAt(v *int64) *BloodTypeUpdate {
 // AddDeletedAt adds value to the "deleted_at" field.
 func (_u *BloodTypeUpdate) AddDeletedAt(v int64) *BloodTypeUpdate {
 	_u.mutation.AddDeletedAt(v)
+	return _u
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (_u *BloodTypeUpdate) ClearDeletedAt() *BloodTypeUpdate {
+	_u.mutation.ClearDeletedAt()
 	return _u
 }
 
@@ -88,6 +100,12 @@ func (_u *BloodTypeUpdate) SetNillableRhesus(v *bloodtype.Rhesus) *BloodTypeUpda
 	if v != nil {
 		_u.SetRhesus(*v)
 	}
+	return _u
+}
+
+// ClearRhesus clears the value of the "rhesus" field.
+func (_u *BloodTypeUpdate) ClearRhesus() *BloodTypeUpdate {
+	_u.mutation.ClearRhesus()
 	return _u
 }
 
@@ -143,7 +161,7 @@ func (_u *BloodTypeUpdate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (_u *BloodTypeUpdate) defaults() {
-	if _, ok := _u.mutation.UpdatedAt(); !ok {
+	if _, ok := _u.mutation.UpdatedAt(); !ok && !_u.mutation.UpdatedAtCleared() {
 		v := bloodtype.UpdateDefaultUpdatedAt()
 		_u.mutation.SetUpdatedAt(v)
 	}
@@ -195,17 +213,26 @@ func (_u *BloodTypeUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	if value, ok := _u.mutation.AddedUpdatedAt(); ok {
 		_spec.AddField(bloodtype.FieldUpdatedAt, field.TypeInt64, value)
 	}
+	if _u.mutation.UpdatedAtCleared() {
+		_spec.ClearField(bloodtype.FieldUpdatedAt, field.TypeInt64)
+	}
 	if value, ok := _u.mutation.DeletedAt(); ok {
 		_spec.SetField(bloodtype.FieldDeletedAt, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedAt(); ok {
 		_spec.AddField(bloodtype.FieldDeletedAt, field.TypeInt64, value)
 	}
+	if _u.mutation.DeletedAtCleared() {
+		_spec.ClearField(bloodtype.FieldDeletedAt, field.TypeInt64)
+	}
 	if value, ok := _u.mutation.Group(); ok {
 		_spec.SetField(bloodtype.FieldGroup, field.TypeEnum, value)
 	}
 	if value, ok := _u.mutation.Rhesus(); ok {
 		_spec.SetField(bloodtype.FieldRhesus, field.TypeEnum, value)
+	}
+	if _u.mutation.RhesusCleared() {
+		_spec.ClearField(bloodtype.FieldRhesus, field.TypeEnum)
 	}
 	if _u.mutation.AccountCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -269,6 +296,12 @@ func (_u *BloodTypeUpdateOne) AddUpdatedAt(v int64) *BloodTypeUpdateOne {
 	return _u
 }
 
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (_u *BloodTypeUpdateOne) ClearUpdatedAt() *BloodTypeUpdateOne {
+	_u.mutation.ClearUpdatedAt()
+	return _u
+}
+
 // SetDeletedAt sets the "deleted_at" field.
 func (_u *BloodTypeUpdateOne) SetDeletedAt(v int64) *BloodTypeUpdateOne {
 	_u.mutation.ResetDeletedAt()
@@ -287,6 +320,12 @@ func (_u *BloodTypeUpdateOne) SetNillableDeletedAt(v *int64) *BloodTypeUpdateOne
 // AddDeletedAt adds value to the "deleted_at" field.
 func (_u *BloodTypeUpdateOne) AddDeletedAt(v int64) *BloodTypeUpdateOne {
 	_u.mutation.AddDeletedAt(v)
+	return _u
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (_u *BloodTypeUpdateOne) ClearDeletedAt() *BloodTypeUpdateOne {
+	_u.mutation.ClearDeletedAt()
 	return _u
 }
 
@@ -315,6 +354,12 @@ func (_u *BloodTypeUpdateOne) SetNillableRhesus(v *bloodtype.Rhesus) *BloodTypeU
 	if v != nil {
 		_u.SetRhesus(*v)
 	}
+	return _u
+}
+
+// ClearRhesus clears the value of the "rhesus" field.
+func (_u *BloodTypeUpdateOne) ClearRhesus() *BloodTypeUpdateOne {
+	_u.mutation.ClearRhesus()
 	return _u
 }
 
@@ -383,7 +428,7 @@ func (_u *BloodTypeUpdateOne) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (_u *BloodTypeUpdateOne) defaults() {
-	if _, ok := _u.mutation.UpdatedAt(); !ok {
+	if _, ok := _u.mutation.UpdatedAt(); !ok && !_u.mutation.UpdatedAtCleared() {
 		v := bloodtype.UpdateDefaultUpdatedAt()
 		_u.mutation.SetUpdatedAt(v)
 	}
@@ -452,17 +497,26 @@ func (_u *BloodTypeUpdateOne) sqlSave(ctx context.Context) (_node *BloodType, er
 	if value, ok := _u.mutation.AddedUpdatedAt(); ok {
 		_spec.AddField(bloodtype.FieldUpdatedAt, field.TypeInt64, value)
 	}
+	if _u.mutation.UpdatedAtCleared() {
+		_spec.ClearField(bloodtype.FieldUpdatedAt, field.TypeInt64)
+	}
 	if value, ok := _u.mutation.DeletedAt(); ok {
 		_spec.SetField(bloodtype.FieldDeletedAt, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedAt(); ok {
 		_spec.AddField(bloodtype.FieldDeletedAt, field.TypeInt64, value)
 	}
+	if _u.mutation.DeletedAtCleared() {
+		_spec.ClearField(bloodtype.FieldDeletedAt, field.TypeInt64)
+	}
 	if value, ok := _u.mutation.Group(); ok {
 		_spec.SetField(bloodtype.FieldGroup, field.TypeEnum, value)
 	}
 	if value, ok := _u.mutation.Rhesus(); ok {
 		_spec.SetField(bloodtype.FieldRhesus, field.TypeEnum, value)
+	}
+	if _u.mutation.RhesusCleared() {
+		_spec.ClearField(bloodtype.FieldRhesus, field.TypeEnum)
 	}
 	if _u.mutation.AccountCleared() {
 		edge := &sqlgraph.EdgeSpec{

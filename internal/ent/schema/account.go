@@ -75,7 +75,7 @@ func (Account) Fields() []ent.Field {
 			Comment("Permanently locked by this account."),
 		field.Int64("temp_locked_at").
 			Positive().
-			Nillable().
+			Optional().
 			StructTag(`json:"temp_locked_at"`).
 			Comment("Temporary locked by this account based on time milliseconds."),
 	}
@@ -85,12 +85,20 @@ func (Account) Fields() []ent.Field {
 func (Account) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.To("blood_type", BloodType.Type).
-			StorageKey(edge.Column("blood_id")).
 			Unique().
-			Annotations(entsql.OnDelete(entsql.NoAction)),
+			StorageKey(edge.Column("account_id")).
+			Annotations(entsql.OnDelete(entsql.Cascade)),
 		edge.To("password", Password.Type).
-			StorageKey(edge.Column("password_id")).
 			Unique().
+			StorageKey(edge.Column("account_id")).
+			Annotations(entsql.OnDelete(entsql.Cascade)),
+		edge.To("otp", OTP.Type).
+			Unique().
+			StorageKey(edge.Column("account_id")).
+			Annotations(entsql.OnDelete(entsql.Cascade)),
+		edge.To("activation", Activation.Type).
+			Unique().
+			StorageKey(edge.Column("account_id")).
 			Annotations(entsql.OnDelete(entsql.Cascade)),
 	}
 }

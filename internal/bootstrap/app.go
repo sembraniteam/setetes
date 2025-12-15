@@ -9,9 +9,12 @@ import (
 	"github.com/gin-contrib/gzip"
 	"github.com/megalodev/setetes/internal"
 	"github.com/megalodev/setetes/internal/database/postgresx"
+	"github.com/megalodev/setetes/internal/ent"
 	"github.com/megalodev/setetes/internal/httpx"
+	"github.com/megalodev/setetes/internal/httpx/handler"
 	"github.com/megalodev/setetes/internal/httpx/middleware"
 	"github.com/megalodev/setetes/internal/httpx/web"
+	"github.com/megalodev/setetes/internal/service"
 	"github.com/samber/do/v2"
 )
 
@@ -30,18 +33,22 @@ func New(configPath string) Bootstrap {
 }
 
 func (a App) Init() error {
+	injector := do.New(service.Packages, handler.Packages)
 	config, err := internal.LoadConfig(a.configPath)
 	if err != nil {
 		return err
 	}
 
 	pdb := postgresx.New(*config)
-	_, err = pdb.Connect()
+	pcl, err := pdb.Connect()
 	if err != nil {
 		return err
 	}
 
-	injector := do.New()
+	do.Provide[*ent.Client](injector, func(_ do.Injector) (*ent.Client, error) {
+		return pcl, nil
+	})
+
 	rateLimiter := middleware.Default()
 	defer rateLimiter.Stop()
 
