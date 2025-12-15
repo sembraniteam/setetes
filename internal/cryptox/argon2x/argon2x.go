@@ -66,6 +66,24 @@ func New(config internal.Config) Config {
 	return c
 }
 
+func Default() Config {
+	p := internal.Get().Password
+	c := Config{
+		pepper:      p.Pepper,
+		memory:      p.Argon2.Memory,
+		iterations:  p.Argon2.Iterations,
+		parallelism: p.Argon2.Parallelism,
+		saltLength:  p.Argon2.SaltLength,
+		keyLength:   p.Argon2.KeyLength,
+	}
+
+	if err := c.validate(); err != nil {
+		panic(err)
+	}
+
+	return c
+}
+
 func (c *Config) validate() error {
 	if len(c.pepper) < minPepperLen {
 		return errors.New("pepper too short, minimum 32 length")
