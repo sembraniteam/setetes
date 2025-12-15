@@ -97,6 +97,7 @@ type Type string
 // Type values.
 const (
 	TypeResetPassword  Type = "RESET_PASSWORD"
+	TypeRegister       Type = "REGISTER"
 	TypeChangePassword Type = "CHANGE_PASSWORD"
 )
 
@@ -107,7 +108,7 @@ func (_type Type) String() string {
 // TypeValidator is a validator for the "type" field enum values. It is called by the builders before save.
 func TypeValidator(_type Type) error {
 	switch _type {
-	case TypeResetPassword, TypeChangePassword:
+	case TypeResetPassword, TypeRegister, TypeChangePassword:
 		return nil
 	default:
 		return fmt.Errorf("otp: invalid enum value for type field: %q", _type)

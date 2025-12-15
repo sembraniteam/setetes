@@ -12,7 +12,6 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
 	"github.com/megalodev/setetes/internal/ent/account"
-	"github.com/megalodev/setetes/internal/ent/activation"
 	"github.com/megalodev/setetes/internal/ent/bloodtype"
 	"github.com/megalodev/setetes/internal/ent/otp"
 	"github.com/megalodev/setetes/internal/ent/password"
@@ -302,25 +301,6 @@ func (_u *AccountUpdate) SetOtp(v *OTP) *AccountUpdate {
 	return _u.SetOtpID(v.ID)
 }
 
-// SetActivationID sets the "activation" edge to the Activation entity by ID.
-func (_u *AccountUpdate) SetActivationID(id uuid.UUID) *AccountUpdate {
-	_u.mutation.SetActivationID(id)
-	return _u
-}
-
-// SetNillableActivationID sets the "activation" edge to the Activation entity by ID if the given value is not nil.
-func (_u *AccountUpdate) SetNillableActivationID(id *uuid.UUID) *AccountUpdate {
-	if id != nil {
-		_u = _u.SetActivationID(*id)
-	}
-	return _u
-}
-
-// SetActivation sets the "activation" edge to the Activation entity.
-func (_u *AccountUpdate) SetActivation(v *Activation) *AccountUpdate {
-	return _u.SetActivationID(v.ID)
-}
-
 // Mutation returns the AccountMutation object of the builder.
 func (_u *AccountUpdate) Mutation() *AccountMutation {
 	return _u.mutation
@@ -341,12 +321,6 @@ func (_u *AccountUpdate) ClearPassword() *AccountUpdate {
 // ClearOtp clears the "otp" edge to the OTP entity.
 func (_u *AccountUpdate) ClearOtp() *AccountUpdate {
 	_u.mutation.ClearOtp()
-	return _u
-}
-
-// ClearActivation clears the "activation" edge to the Activation entity.
-func (_u *AccountUpdate) ClearActivation() *AccountUpdate {
-	_u.mutation.ClearActivation()
 	return _u
 }
 
@@ -595,35 +569,6 @@ func (_u *AccountUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(otp.FieldID, field.TypeUUID),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if _u.mutation.ActivationCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
-			Inverse: false,
-			Table:   account.ActivationTable,
-			Columns: []string{account.ActivationColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(activation.FieldID, field.TypeUUID),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := _u.mutation.ActivationIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
-			Inverse: false,
-			Table:   account.ActivationTable,
-			Columns: []string{account.ActivationColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(activation.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
@@ -921,25 +866,6 @@ func (_u *AccountUpdateOne) SetOtp(v *OTP) *AccountUpdateOne {
 	return _u.SetOtpID(v.ID)
 }
 
-// SetActivationID sets the "activation" edge to the Activation entity by ID.
-func (_u *AccountUpdateOne) SetActivationID(id uuid.UUID) *AccountUpdateOne {
-	_u.mutation.SetActivationID(id)
-	return _u
-}
-
-// SetNillableActivationID sets the "activation" edge to the Activation entity by ID if the given value is not nil.
-func (_u *AccountUpdateOne) SetNillableActivationID(id *uuid.UUID) *AccountUpdateOne {
-	if id != nil {
-		_u = _u.SetActivationID(*id)
-	}
-	return _u
-}
-
-// SetActivation sets the "activation" edge to the Activation entity.
-func (_u *AccountUpdateOne) SetActivation(v *Activation) *AccountUpdateOne {
-	return _u.SetActivationID(v.ID)
-}
-
 // Mutation returns the AccountMutation object of the builder.
 func (_u *AccountUpdateOne) Mutation() *AccountMutation {
 	return _u.mutation
@@ -960,12 +886,6 @@ func (_u *AccountUpdateOne) ClearPassword() *AccountUpdateOne {
 // ClearOtp clears the "otp" edge to the OTP entity.
 func (_u *AccountUpdateOne) ClearOtp() *AccountUpdateOne {
 	_u.mutation.ClearOtp()
-	return _u
-}
-
-// ClearActivation clears the "activation" edge to the Activation entity.
-func (_u *AccountUpdateOne) ClearActivation() *AccountUpdateOne {
-	_u.mutation.ClearActivation()
 	return _u
 }
 
@@ -1244,35 +1164,6 @@ func (_u *AccountUpdateOne) sqlSave(ctx context.Context) (_node *Account, err er
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(otp.FieldID, field.TypeUUID),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if _u.mutation.ActivationCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
-			Inverse: false,
-			Table:   account.ActivationTable,
-			Columns: []string{account.ActivationColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(activation.FieldID, field.TypeUUID),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := _u.mutation.ActivationIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
-			Inverse: false,
-			Table:   account.ActivationTable,
-			Columns: []string{account.ActivationColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(activation.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {

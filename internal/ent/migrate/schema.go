@@ -40,38 +40,6 @@ var (
 			},
 		},
 	}
-	// ActivationsColumns holds the columns for the "activations" table.
-	ActivationsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUUID, Unique: true, Default: schema.Expr("uuid_generate_v4()")},
-		{Name: "created_at", Type: field.TypeInt64, Default: schema.Expr("FLOOR(EXTRACT(EPOCH FROM CURRENT_TIMESTAMP) * 1000)")},
-		{Name: "updated_at", Type: field.TypeInt64, Nullable: true},
-		{Name: "deleted_at", Type: field.TypeInt64, Nullable: true, Comment: "Represents soft delete timestamp in milliseconds."},
-		{Name: "token", Type: field.TypeString, Unique: true, Size: 44, Comment: "The activation token is single-use and will be deleted after it is used.", SchemaType: map[string]string{"postgres": "char(44)"}},
-		{Name: "is_used", Type: field.TypeBool, Default: false},
-		{Name: "expired_at", Type: field.TypeInt64, Comment: "The activation link is only valid for 1 hour."},
-		{Name: "account_id", Type: field.TypeUUID, Unique: true},
-	}
-	// ActivationsTable holds the schema information for the "activations" table.
-	ActivationsTable = &schema.Table{
-		Name:       "activations",
-		Columns:    ActivationsColumns,
-		PrimaryKey: []*schema.Column{ActivationsColumns[0]},
-		ForeignKeys: []*schema.ForeignKey{
-			{
-				Symbol:     "activations_accounts_activation",
-				Columns:    []*schema.Column{ActivationsColumns[7]},
-				RefColumns: []*schema.Column{AccountsColumns[0]},
-				OnDelete:   schema.Cascade,
-			},
-		},
-		Indexes: []*schema.Index{
-			{
-				Name:    "activation_deleted_at",
-				Unique:  false,
-				Columns: []*schema.Column{ActivationsColumns[3]},
-			},
-		},
-	}
 	// BloodTypesColumns holds the columns for the "blood_types" table.
 	BloodTypesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUUID, Unique: true, Default: schema.Expr("uuid_generate_v4()")},
@@ -168,10 +136,10 @@ var (
 		{Name: "created_at", Type: field.TypeInt64, Default: schema.Expr("FLOOR(EXTRACT(EPOCH FROM CURRENT_TIMESTAMP) * 1000)")},
 		{Name: "updated_at", Type: field.TypeInt64, Nullable: true},
 		{Name: "deleted_at", Type: field.TypeInt64, Nullable: true, Comment: "Represents soft delete timestamp in milliseconds."},
-		{Name: "code", Type: field.TypeString, Unique: true, Size: 6, Comment: "The OTP code must be 6 digits long. Will be deleted after it is used.", SchemaType: map[string]string{"postgres": "char(6)"}},
-		{Name: "type", Type: field.TypeEnum, Enums: []string{"RESET_PASSWORD", "CHANGE_PASSWORD"}},
+		{Name: "code", Type: field.TypeString, Unique: true, Size: 6, Comment: "The OTP code must be 6 characters long. Will be deleted after it is used.", SchemaType: map[string]string{"postgres": "char(6)"}},
+		{Name: "type", Type: field.TypeEnum, Enums: []string{"RESET_PASSWORD", "REGISTER", "CHANGE_PASSWORD"}},
 		{Name: "is_used", Type: field.TypeBool, Default: false},
-		{Name: "expired_at", Type: field.TypeInt64, Comment: "The OTP code is only valid for 10 minutes."},
+		{Name: "expired_at", Type: field.TypeInt64, Comment: "The OTP code is only valid for 30 minutes."},
 		{Name: "account_id", Type: field.TypeUUID, Unique: true},
 	}
 	// OtpsTable holds the schema information for the "otps" table.
@@ -300,7 +268,6 @@ var (
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
 		AccountsTable,
-		ActivationsTable,
 		BloodTypesTable,
 		CasbinRuleTable,
 		CitiesTable,
@@ -321,11 +288,6 @@ func init() {
 		"full_name":          "length(full_name) >= 3 and length(full_name) <= 164",
 		"national_id_masked": "length(national_id_masked) = 8",
 		"phone_number":       "length(phone_number) >= 11 and length(phone_number) <= 13",
-	}
-	ActivationsTable.ForeignKeys[0].RefTable = AccountsTable
-	ActivationsTable.Annotation = &entsql.Annotation{}
-	ActivationsTable.Annotation.Checks = map[string]string{
-		"token": "length(token) = 44",
 	}
 	BloodTypesTable.ForeignKeys[0].RefTable = AccountsTable
 	CasbinRuleTable.Annotation = &entsql.Annotation{

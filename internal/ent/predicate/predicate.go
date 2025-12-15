@@ -9,9 +9,6 @@ import (
 // Account is the predicate function for account builders.
 type Account func(*sql.Selector)
 
-// Activation is the predicate function for activation builders.
-type Activation func(*sql.Selector)
-
 // BloodType is the predicate function for bloodtype builders.
 type BloodType func(*sql.Selector)
 

@@ -30,15 +30,16 @@ func (OTP) Fields() []ent.Field {
 			Unique().
 			NotEmpty().
 			SchemaType(map[string]string{dialect.Postgres: "char(6)"}).
-			Comment("The OTP code must be 6 digits long. Will be deleted after it is used."),
+			Comment("The OTP code must be 6 characters long. Will be deleted after it is used."),
 		field.Enum("type").NamedValues(
 			"ResetPassword", "RESET_PASSWORD",
+			"Register", "REGISTER",
 			"ChangePassword", "CHANGE_PASSWORD",
 		).StructTag(`json:"type"`),
 		field.Bool("is_used").Default(false).StructTag(`json:"is_used"`),
 		field.Int64("expired_at").
 			Positive().
-			Comment("The OTP code is only valid for 10 minutes.").
+			Comment("The OTP code is only valid for 30 minutes.").
 			StructTag(`json:"expired_at"`),
 	}
 }

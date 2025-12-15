@@ -7,11 +7,15 @@ import (
 
 	"github.com/megalodev/setetes/internal/cryptox"
 	"github.com/megalodev/setetes/internal/ent"
+	"github.com/megalodev/setetes/internal/ent/otp"
 	"github.com/megalodev/setetes/internal/httpx/request"
 	"github.com/samber/do/v2"
 )
 
-const expiredTime = time.Hour * 1
+const (
+	expiredTime = time.Minute * 30
+	charLen     = 6
+)
 
 type (
 	AccountQuery struct {
@@ -51,11 +55,16 @@ func (a *AccountQuery) Register(body request.Account) error {
 		return rollback(tx, err)
 	}
 
-	_, err = tx.Activation.Create().
-		SetToken(cryptox.RandToken()).
+	code, err := cryptox.RandChars(charLen)
+	if err != nil {
+		return rollback(tx, err)
+	}
+
+	_, err = tx.OTP.Create().
+		SetCode(code).
+		SetType(otp.TypeRegister).
 		SetAccount(account).
-		SetExpiredAt(time.Now().Add(expiredTime).UnixMilli()).
-		Save(a.ctx)
+		SetExpiredAt(time.Now().Add(expiredTime).UnixMilli()).Save(a.ctx)
 	if err != nil {
 		return rollback(tx, err)
 	}

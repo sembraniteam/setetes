@@ -4,7 +4,6 @@ package ent
 
 import (
 	"github.com/megalodev/setetes/internal/ent/account"
-	"github.com/megalodev/setetes/internal/ent/activation"
 	"github.com/megalodev/setetes/internal/ent/bloodtype"
 	"github.com/megalodev/setetes/internal/ent/casbinrule"
 	"github.com/megalodev/setetes/internal/ent/city"
@@ -178,51 +177,6 @@ func init() {
 	accountDescTempLockedAt := accountFields[10].Descriptor()
 	// account.TempLockedAtValidator is a validator for the "temp_locked_at" field. It is called by the builders before save.
 	account.TempLockedAtValidator = accountDescTempLockedAt.Validators[0].(func(int64) error)
-	activationMixin := schema.Activation{}.Mixin()
-	activationMixinFields0 := activationMixin[0].Fields()
-	_ = activationMixinFields0
-	activationFields := schema.Activation{}.Fields()
-	_ = activationFields
-	// activationDescCreatedAt is the schema descriptor for created_at field.
-	activationDescCreatedAt := activationMixinFields0[1].Descriptor()
-	// activation.CreatedAtValidator is a validator for the "created_at" field. It is called by the builders before save.
-	activation.CreatedAtValidator = activationDescCreatedAt.Validators[0].(func(int64) error)
-	// activationDescUpdatedAt is the schema descriptor for updated_at field.
-	activationDescUpdatedAt := activationMixinFields0[2].Descriptor()
-	// activation.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
-	activation.UpdateDefaultUpdatedAt = activationDescUpdatedAt.UpdateDefault.(func() int64)
-	// activation.UpdatedAtValidator is a validator for the "updated_at" field. It is called by the builders before save.
-	activation.UpdatedAtValidator = activationDescUpdatedAt.Validators[0].(func(int64) error)
-	// activationDescDeletedAt is the schema descriptor for deleted_at field.
-	activationDescDeletedAt := activationMixinFields0[3].Descriptor()
-	// activation.DeletedAtValidator is a validator for the "deleted_at" field. It is called by the builders before save.
-	activation.DeletedAtValidator = activationDescDeletedAt.Validators[0].(func(int64) error)
-	// activationDescToken is the schema descriptor for token field.
-	activationDescToken := activationFields[0].Descriptor()
-	// activation.TokenValidator is a validator for the "token" field. It is called by the builders before save.
-	activation.TokenValidator = func() func(string) error {
-		validators := activationDescToken.Validators
-		fns := [...]func(string) error{
-			validators[0].(func(string) error),
-			validators[1].(func(string) error),
-		}
-		return func(token string) error {
-			for _, fn := range fns {
-				if err := fn(token); err != nil {
-					return err
-				}
-			}
-			return nil
-		}
-	}()
-	// activationDescIsUsed is the schema descriptor for is_used field.
-	activationDescIsUsed := activationFields[1].Descriptor()
-	// activation.DefaultIsUsed holds the default value on creation for the is_used field.
-	activation.DefaultIsUsed = activationDescIsUsed.Default.(bool)
-	// activationDescExpiredAt is the schema descriptor for expired_at field.
-	activationDescExpiredAt := activationFields[2].Descriptor()
-	// activation.ExpiredAtValidator is a validator for the "expired_at" field. It is called by the builders before save.
-	activation.ExpiredAtValidator = activationDescExpiredAt.Validators[0].(func(int64) error)
 	bloodtypeMixin := schema.BloodType{}.Mixin()
 	bloodtypeMixinFields0 := bloodtypeMixin[0].Fields()
 	_ = bloodtypeMixinFields0

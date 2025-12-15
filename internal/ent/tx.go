@@ -14,8 +14,6 @@ type Tx struct {
 	config
 	// Account is the client for interacting with the Account builders.
 	Account *AccountClient
-	// Activation is the client for interacting with the Activation builders.
-	Activation *ActivationClient
 	// BloodType is the client for interacting with the BloodType builders.
 	BloodType *BloodTypeClient
 	// CasbinRule is the client for interacting with the CasbinRule builders.
@@ -166,7 +164,6 @@ func (tx *Tx) Client() *Client {
 
 func (tx *Tx) init() {
 	tx.Account = NewAccountClient(tx.config)
-	tx.Activation = NewActivationClient(tx.config)
 	tx.BloodType = NewBloodTypeClient(tx.config)
 	tx.CasbinRule = NewCasbinRuleClient(tx.config)
 	tx.City = NewCityClient(tx.config)

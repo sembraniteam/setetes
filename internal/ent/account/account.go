@@ -48,8 +48,6 @@ const (
 	EdgePassword = "password"
 	// EdgeOtp holds the string denoting the otp edge name in mutations.
 	EdgeOtp = "otp"
-	// EdgeActivation holds the string denoting the activation edge name in mutations.
-	EdgeActivation = "activation"
 	// Table holds the table name of the account in the database.
 	Table = "accounts"
 	// BloodTypeTable is the table that holds the blood_type relation/edge.
@@ -73,13 +71,6 @@ const (
 	OtpInverseTable = "otps"
 	// OtpColumn is the table column denoting the otp relation/edge.
 	OtpColumn = "account_id"
-	// ActivationTable is the table that holds the activation relation/edge.
-	ActivationTable = "activations"
-	// ActivationInverseTable is the table name for the Activation entity.
-	// It exists in this package in order to avoid circular dependency with the "activation" package.
-	ActivationInverseTable = "activations"
-	// ActivationColumn is the table column denoting the activation relation/edge.
-	ActivationColumn = "account_id"
 )
 
 // Columns holds all SQL columns for account fields.
@@ -263,13 +254,6 @@ func ByOtpField(field string, opts ...sql.OrderTermOption) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newOtpStep(), sql.OrderByField(field, opts...))
 	}
 }
-
-// ByActivationField orders the results by activation field.
-func ByActivationField(field string, opts ...sql.OrderTermOption) OrderOption {
-	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newActivationStep(), sql.OrderByField(field, opts...))
-	}
-}
 func newBloodTypeStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -289,12 +273,5 @@ func newOtpStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(OtpInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2O, false, OtpTable, OtpColumn),
-	)
-}
-func newActivationStep() *sqlgraph.Step {
-	return sqlgraph.NewStep(
-		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(ActivationInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.O2O, false, ActivationTable, ActivationColumn),
 	)
 }

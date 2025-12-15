@@ -14,7 +14,6 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
 	"github.com/megalodev/setetes/internal/ent/account"
-	"github.com/megalodev/setetes/internal/ent/activation"
 	"github.com/megalodev/setetes/internal/ent/bloodtype"
 	"github.com/megalodev/setetes/internal/ent/otp"
 	"github.com/megalodev/setetes/internal/ent/password"
@@ -24,14 +23,13 @@ import (
 // AccountQuery is the builder for querying Account entities.
 type AccountQuery struct {
 	config
-	ctx            *QueryContext
-	order          []account.OrderOption
-	inters         []Interceptor
-	predicates     []predicate.Account
-	withBloodType  *BloodTypeQuery
-	withPassword   *PasswordQuery
-	withOtp        *OTPQuery
-	withActivation *ActivationQuery
+	ctx           *QueryContext
+	order         []account.OrderOption
+	inters        []Interceptor
+	predicates    []predicate.Account
+	withBloodType *BloodTypeQuery
+	withPassword  *PasswordQuery
+	withOtp       *OTPQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -127,28 +125,6 @@ func (_q *AccountQuery) QueryOtp() *OTPQuery {
 			sqlgraph.From(account.Table, account.FieldID, selector),
 			sqlgraph.To(otp.Table, otp.FieldID),
 			sqlgraph.Edge(sqlgraph.O2O, false, account.OtpTable, account.OtpColumn),
-		)
-		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
-		return fromU, nil
-	}
-	return query
-}
-
-// QueryActivation chains the current query on the "activation" edge.
-func (_q *AccountQuery) QueryActivation() *ActivationQuery {
-	query := (&ActivationClient{config: _q.config}).Query()
-	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
-		if err := _q.prepareQuery(ctx); err != nil {
-			return nil, err
-		}
-		selector := _q.sqlQuery(ctx)
-		if err := selector.Err(); err != nil {
-			return nil, err
-		}
-		step := sqlgraph.NewStep(
-			sqlgraph.From(account.Table, account.FieldID, selector),
-			sqlgraph.To(activation.Table, activation.FieldID),
-			sqlgraph.Edge(sqlgraph.O2O, false, account.ActivationTable, account.ActivationColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
 		return fromU, nil
@@ -343,15 +319,14 @@ func (_q *AccountQuery) Clone() *AccountQuery {
 		return nil
 	}
 	return &AccountQuery{
-		config:         _q.config,
-		ctx:            _q.ctx.Clone(),
-		order:          append([]account.OrderOption{}, _q.order...),
-		inters:         append([]Interceptor{}, _q.inters...),
-		predicates:     append([]predicate.Account{}, _q.predicates...),
-		withBloodType:  _q.withBloodType.Clone(),
-		withPassword:   _q.withPassword.Clone(),
-		withOtp:        _q.withOtp.Clone(),
-		withActivation: _q.withActivation.Clone(),
+		config:        _q.config,
+		ctx:           _q.ctx.Clone(),
+		order:         append([]account.OrderOption{}, _q.order...),
+		inters:        append([]Interceptor{}, _q.inters...),
+		predicates:    append([]predicate.Account{}, _q.predicates...),
+		withBloodType: _q.withBloodType.Clone(),
+		withPassword:  _q.withPassword.Clone(),
+		withOtp:       _q.withOtp.Clone(),
 		// clone intermediate query.
 		sql:  _q.sql.Clone(),
 		path: _q.path,
@@ -388,17 +363,6 @@ func (_q *AccountQuery) WithOtp(opts ...func(*OTPQuery)) *AccountQuery {
 		opt(query)
 	}
 	_q.withOtp = query
-	return _q
-}
-
-// WithActivation tells the query-builder to eager-load the nodes that are connected to
-// the "activation" edge. The optional arguments are used to configure the query builder of the edge.
-func (_q *AccountQuery) WithActivation(opts ...func(*ActivationQuery)) *AccountQuery {
-	query := (&ActivationClient{config: _q.config}).Query()
-	for _, opt := range opts {
-		opt(query)
-	}
-	_q.withActivation = query
 	return _q
 }
 
@@ -480,11 +444,10 @@ func (_q *AccountQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Acco
 	var (
 		nodes       = []*Account{}
 		_spec       = _q.querySpec()
-		loadedTypes = [4]bool{
+		loadedTypes = [3]bool{
 			_q.withBloodType != nil,
 			_q.withPassword != nil,
 			_q.withOtp != nil,
-			_q.withActivation != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -520,12 +483,6 @@ func (_q *AccountQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Acco
 	if query := _q.withOtp; query != nil {
 		if err := _q.loadOtp(ctx, query, nodes, nil,
 			func(n *Account, e *OTP) { n.Edges.Otp = e }); err != nil {
-			return nil, err
-		}
-	}
-	if query := _q.withActivation; query != nil {
-		if err := _q.loadActivation(ctx, query, nodes, nil,
-			func(n *Account, e *Activation) { n.Edges.Activation = e }); err != nil {
 			return nil, err
 		}
 	}
@@ -598,34 +555,6 @@ func (_q *AccountQuery) loadOtp(ctx context.Context, query *OTPQuery, nodes []*A
 	query.withFKs = true
 	query.Where(predicate.OTP(func(s *sql.Selector) {
 		s.Where(sql.InValues(s.C(account.OtpColumn), fks...))
-	}))
-	neighbors, err := query.All(ctx)
-	if err != nil {
-		return err
-	}
-	for _, n := range neighbors {
-		fk := n.account_id
-		if fk == nil {
-			return fmt.Errorf(`foreign-key "account_id" is nil for node %v`, n.ID)
-		}
-		node, ok := nodeids[*fk]
-		if !ok {
-			return fmt.Errorf(`unexpected referenced foreign-key "account_id" returned %v for node %v`, *fk, n.ID)
-		}
-		assign(node, n)
-	}
-	return nil
-}
-func (_q *AccountQuery) loadActivation(ctx context.Context, query *ActivationQuery, nodes []*Account, init func(*Account), assign func(*Account, *Activation)) error {
-	fks := make([]driver.Value, 0, len(nodes))
-	nodeids := make(map[uuid.UUID]*Account)
-	for i := range nodes {
-		fks = append(fks, nodes[i].ID)
-		nodeids[nodes[i].ID] = nodes[i]
-	}
-	query.withFKs = true
-	query.Where(predicate.Activation(func(s *sql.Selector) {
-		s.Where(sql.InValues(s.C(account.ActivationColumn), fks...))
 	}))
 	neighbors, err := query.All(ctx)
 	if err != nil {

@@ -24,13 +24,13 @@ type OTP struct {
 	UpdatedAt int64 `json:"updated_at"`
 	// Represents soft delete timestamp in milliseconds.
 	DeletedAt int64 `json:"deleted_at"`
-	// The OTP code must be 6 digits long. Will be deleted after it is used.
+	// The OTP code must be 6 characters long. Will be deleted after it is used.
 	Code string `json:"-"`
 	// Type holds the value of the "type" field.
 	Type otp.Type `json:"type"`
 	// IsUsed holds the value of the "is_used" field.
 	IsUsed bool `json:"is_used"`
-	// The OTP code is only valid for 10 minutes.
+	// The OTP code is only valid for 30 minutes.
 	ExpiredAt int64 `json:"expired_at"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the OTPQuery when eager-loading is set.

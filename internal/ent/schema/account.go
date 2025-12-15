@@ -96,10 +96,6 @@ func (Account) Edges() []ent.Edge {
 			Unique().
 			StorageKey(edge.Column("account_id")).
 			Annotations(entsql.OnDelete(entsql.Cascade)),
-		edge.To("activation", Activation.Type).
-			Unique().
-			StorageKey(edge.Column("account_id")).
-			Annotations(entsql.OnDelete(entsql.Cascade)),
 	}
 }
 

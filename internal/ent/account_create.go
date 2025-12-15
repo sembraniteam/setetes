@@ -11,7 +11,6 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
 	"github.com/megalodev/setetes/internal/ent/account"
-	"github.com/megalodev/setetes/internal/ent/activation"
 	"github.com/megalodev/setetes/internal/ent/bloodtype"
 	"github.com/megalodev/setetes/internal/ent/otp"
 	"github.com/megalodev/setetes/internal/ent/password"
@@ -209,25 +208,6 @@ func (_c *AccountCreate) SetNillableOtpID(id *uuid.UUID) *AccountCreate {
 // SetOtp sets the "otp" edge to the OTP entity.
 func (_c *AccountCreate) SetOtp(v *OTP) *AccountCreate {
 	return _c.SetOtpID(v.ID)
-}
-
-// SetActivationID sets the "activation" edge to the Activation entity by ID.
-func (_c *AccountCreate) SetActivationID(id uuid.UUID) *AccountCreate {
-	_c.mutation.SetActivationID(id)
-	return _c
-}
-
-// SetNillableActivationID sets the "activation" edge to the Activation entity by ID if the given value is not nil.
-func (_c *AccountCreate) SetNillableActivationID(id *uuid.UUID) *AccountCreate {
-	if id != nil {
-		_c = _c.SetActivationID(*id)
-	}
-	return _c
-}
-
-// SetActivation sets the "activation" edge to the Activation entity.
-func (_c *AccountCreate) SetActivation(v *Activation) *AccountCreate {
-	return _c.SetActivationID(v.ID)
 }
 
 // Mutation returns the AccountMutation object of the builder.
@@ -499,22 +479,6 @@ func (_c *AccountCreate) createSpec() (*Account, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(otp.FieldID, field.TypeUUID),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges = append(_spec.Edges, edge)
-	}
-	if nodes := _c.mutation.ActivationIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
-			Inverse: false,
-			Table:   account.ActivationTable,
-			Columns: []string{account.ActivationColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(activation.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {

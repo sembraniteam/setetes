@@ -873,29 +873,6 @@ func HasOtpWith(preds ...predicate.OTP) predicate.Account {
 	})
 }
 
-// HasActivation applies the HasEdge predicate on the "activation" edge.
-func HasActivation() predicate.Account {
-	return predicate.Account(func(s *sql.Selector) {
-		step := sqlgraph.NewStep(
-			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.O2O, false, ActivationTable, ActivationColumn),
-		)
-		sqlgraph.HasNeighbors(s, step)
-	})
-}
-
-// HasActivationWith applies the HasEdge predicate on the "activation" edge with a given conditions (other predicates).
-func HasActivationWith(preds ...predicate.Activation) predicate.Account {
-	return predicate.Account(func(s *sql.Selector) {
-		step := newActivationStep()
-		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
-			for _, p := range preds {
-				p(s)
-			}
-		})
-	})
-}
-
 // And groups predicates with the AND operator between them.
 func And(predicates ...predicate.Account) predicate.Account {
 	return predicate.Account(sql.AndPredicates(predicates...))

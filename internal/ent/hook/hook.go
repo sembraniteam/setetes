@@ -21,18 +21,6 @@ func (f AccountFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, err
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.AccountMutation", m)
 }
 
-// The ActivationFunc type is an adapter to allow the use of ordinary
-// function as Activation mutator.
-type ActivationFunc func(context.Context, *ent.ActivationMutation) (ent.Value, error)
-
-// Mutate calls f(ctx, m).
-func (f ActivationFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-	if mv, ok := m.(*ent.ActivationMutation); ok {
-		return f(ctx, mv)
-	}
-	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ActivationMutation", m)
-}
-
 // The BloodTypeFunc type is an adapter to allow the use of ordinary
 // function as BloodType mutator.
 type BloodTypeFunc func(context.Context, *ent.BloodTypeMutation) (ent.Value, error)

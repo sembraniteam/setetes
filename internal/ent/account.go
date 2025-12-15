@@ -10,7 +10,6 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"github.com/google/uuid"
 	"github.com/megalodev/setetes/internal/ent/account"
-	"github.com/megalodev/setetes/internal/ent/activation"
 	"github.com/megalodev/setetes/internal/ent/bloodtype"
 	"github.com/megalodev/setetes/internal/ent/otp"
 	"github.com/megalodev/setetes/internal/ent/password"
@@ -63,11 +62,9 @@ type AccountEdges struct {
 	Password *Password `json:"password,omitempty"`
 	// Otp holds the value of the otp edge.
 	Otp *OTP `json:"otp,omitempty"`
-	// Activation holds the value of the activation edge.
-	Activation *Activation `json:"activation,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [4]bool
+	loadedTypes [3]bool
 }
 
 // BloodTypeOrErr returns the BloodType value or an error if the edge
@@ -101,17 +98,6 @@ func (e AccountEdges) OtpOrErr() (*OTP, error) {
 		return nil, &NotFoundError{label: otp.Label}
 	}
 	return nil, &NotLoadedError{edge: "otp"}
-}
-
-// ActivationOrErr returns the Activation value or an error if the edge
-// was not loaded in eager-loading, or loaded but was not found.
-func (e AccountEdges) ActivationOrErr() (*Activation, error) {
-	if e.Activation != nil {
-		return e.Activation, nil
-	} else if e.loadedTypes[3] {
-		return nil, &NotFoundError{label: activation.Label}
-	}
-	return nil, &NotLoadedError{edge: "activation"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -258,11 +244,6 @@ func (_m *Account) QueryPassword() *PasswordQuery {
 // QueryOtp queries the "otp" edge of the Account entity.
 func (_m *Account) QueryOtp() *OTPQuery {
 	return NewAccountClient(_m.config).QueryOtp(_m)
-}
-
-// QueryActivation queries the "activation" edge of the Account entity.
-func (_m *Account) QueryActivation() *ActivationQuery {
-	return NewAccountClient(_m.config).QueryActivation(_m)
 }
 
 // Update returns a builder for updating this Account.
