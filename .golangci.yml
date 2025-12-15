@@ -21,7 +21,6 @@ linters:
     - nilerr
     - nilnesserr
     - nolintlint
-    - nlreturn
     - reassign
     - sqlclosecheck
     - staticcheck
