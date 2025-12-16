@@ -44,8 +44,11 @@ func (PMILocation) Fields() []ent.Field {
 			Unique().
 			Optional().
 			StructTag(`json:"email"`),
-		field.String("dial_code").StructTag(`json:"dial_code"`).
-			Comment("International dialing code of the user's country (e.g., +62 for Indonesia, +1 for United States). Used for constructing complete phone numbers."),
+		field.String("dial_code").
+			StructTag(`json:"dial_code"`).
+			Comment(
+				"International dialing code of the user's country (e.g., 62 for Indonesia, 1 for United States),  without '+'. Used for constructing complete phone numbers.",
+			),
 		field.String("phone_number").
 			MinLen(11).
 			MaxLen(13).

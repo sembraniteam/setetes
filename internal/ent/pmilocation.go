@@ -36,7 +36,7 @@ type PMILocation struct {
 	Street string `json:"street"`
 	// Email holds the value of the "email" field.
 	Email string `json:"email"`
-	// International dialing code of the user's country (e.g., +62 for Indonesia, +1 for United States). Used for constructing complete phone numbers.
+	// International dialing code of the user's country (e.g., 62 for Indonesia, 1 for United States),  without '+'. Used for constructing complete phone numbers.
 	DialCode string `json:"dial_code"`
 	// PhoneNumber holds the value of the "phone_number" field.
 	PhoneNumber string `json:"phone_number"`

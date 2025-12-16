@@ -4,6 +4,7 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/entsql"
+	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
@@ -25,7 +26,6 @@ func (Subdistrict) Fields() []ent.Field {
 		field.String("bps_code").
 			MaxLen(10).
 			Unique().
-			Annotations(entsql.IndexType("HASH")).
 			StructTag(`json:"bps_code"`).
 			SchemaType(map[string]string{dialect.Postgres: "char(10)"}),
 		field.String("postal_code").
@@ -47,5 +47,17 @@ func (Subdistrict) Edges() []ent.Edge {
 		edge.To("pmi_location", PMILocation.Type).
 			StorageKey(edge.Column("subdistrict_id")).
 			Annotations(entsql.OnDelete(entsql.NoAction)),
+	}
+}
+
+// Annotations of the Subdistrict.
+func (Subdistrict) Annotations() []schema.Annotation {
+	return []schema.Annotation{
+		&entsql.Annotation{
+			Checks: map[string]string{
+				"bps_code":    "length(bps_code) = 10",
+				"postal_code": "length(postal_code) = 5",
+			},
+		},
 	}
 }

@@ -21,7 +21,7 @@ var (
 		{Name: "gender", Type: field.TypeEnum, Enums: []string{"FEMALE", "MALE"}},
 		{Name: "email", Type: field.TypeString, Unique: true, Size: 164},
 		{Name: "country_iso_code", Type: field.TypeString, Size: 2, Comment: "ISO 3166-1 alpha-2 country code representing the user's country (e.g., ID for Indonesia, US for United States)."},
-		{Name: "dial_code", Type: field.TypeString, Size: 6, Comment: "International dialing code of the user's country (e.g., 62 for Indonesia, 1 for United States). Used for constructing complete phone numbers."},
+		{Name: "dial_code", Type: field.TypeString, Size: 6, Comment: "International dialing code of the user's country (e.g., 62 for Indonesia, 1 for United States),  without '+'. Used for constructing complete phone numbers."},
 		{Name: "phone_number", Type: field.TypeString, Unique: true, Size: 13},
 		{Name: "activated", Type: field.TypeBool, Default: false},
 		{Name: "locked", Type: field.TypeBool, Comment: "Permanently locked by this account.", Default: false},
@@ -74,13 +74,13 @@ var (
 	// CasbinRuleColumns holds the columns for the "casbin_rule" table.
 	CasbinRuleColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
-		{Name: "ptype", Type: field.TypeString, Default: ""},
-		{Name: "v0", Type: field.TypeString, Default: ""},
-		{Name: "v1", Type: field.TypeString, Default: ""},
-		{Name: "v2", Type: field.TypeString, Default: ""},
-		{Name: "v3", Type: field.TypeString, Default: ""},
-		{Name: "v4", Type: field.TypeString, Default: ""},
-		{Name: "v5", Type: field.TypeString, Default: ""},
+		{Name: "ptype", Type: field.TypeString, Nullable: true},
+		{Name: "v0", Type: field.TypeString, Nullable: true},
+		{Name: "v1", Type: field.TypeString, Nullable: true},
+		{Name: "v2", Type: field.TypeString, Nullable: true},
+		{Name: "v3", Type: field.TypeString, Nullable: true},
+		{Name: "v4", Type: field.TypeString, Nullable: true},
+		{Name: "v5", Type: field.TypeString, Nullable: true},
 	}
 	// CasbinRuleTable holds the schema information for the "casbin_rule" table.
 	CasbinRuleTable = &schema.Table{
@@ -138,7 +138,6 @@ var (
 		{Name: "deleted_at", Type: field.TypeInt64, Nullable: true, Comment: "Represents soft delete timestamp in milliseconds."},
 		{Name: "code", Type: field.TypeString, Unique: true, Size: 6, Comment: "The OTP code must be 6 characters long. Will be deleted after it is used.", SchemaType: map[string]string{"postgres": "char(6)"}},
 		{Name: "type", Type: field.TypeEnum, Enums: []string{"RESET_PASSWORD", "REGISTER", "CHANGE_PASSWORD"}},
-		{Name: "is_used", Type: field.TypeBool, Default: false},
 		{Name: "expired_at", Type: field.TypeInt64, Comment: "The OTP code is only valid for 30 minutes."},
 		{Name: "account_id", Type: field.TypeUUID, Unique: true},
 	}
@@ -150,7 +149,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "otps_accounts_otp",
-				Columns:    []*schema.Column{OtpsColumns[8]},
+				Columns:    []*schema.Column{OtpsColumns[7]},
 				RefColumns: []*schema.Column{AccountsColumns[0]},
 				OnDelete:   schema.Cascade,
 			},
@@ -174,7 +173,7 @@ var (
 		{Name: "lat_lng", Type: field.TypeOther, SchemaType: map[string]string{"postgres": "geography(Point,4326)"}},
 		{Name: "street", Type: field.TypeString, Size: 2147483647},
 		{Name: "email", Type: field.TypeString, Unique: true, Nullable: true, Size: 164},
-		{Name: "dial_code", Type: field.TypeString, Comment: "International dialing code of the user's country (e.g., +62 for Indonesia, +1 for United States). Used for constructing complete phone numbers."},
+		{Name: "dial_code", Type: field.TypeString, Comment: "International dialing code of the user's country (e.g., 62 for Indonesia, 1 for United States),  without '+'. Used for constructing complete phone numbers."},
 		{Name: "phone_number", Type: field.TypeString, Unique: true, Size: 13},
 		{Name: "opens_at", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "time"}},
 		{Name: "closes_at", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "time"}},
@@ -294,7 +293,15 @@ func init() {
 		Table: "casbin_rule",
 	}
 	CitiesTable.ForeignKeys[0].RefTable = ProvincesTable
+	CitiesTable.Annotation = &entsql.Annotation{}
+	CitiesTable.Annotation.Checks = map[string]string{
+		"bps_code": "length(bps_code) = 4",
+	}
 	DistrictsTable.ForeignKeys[0].RefTable = CitiesTable
+	DistrictsTable.Annotation = &entsql.Annotation{}
+	DistrictsTable.Annotation.Checks = map[string]string{
+		"bps_code": "length(bps_code) = 7",
+	}
 	OtpsTable.ForeignKeys[0].RefTable = AccountsTable
 	OtpsTable.Annotation = &entsql.Annotation{
 		Table: "otps",
@@ -310,5 +317,14 @@ func init() {
 		"phone_number": "length(phone_number) >= 11 and length(phone_number) <= 13",
 	}
 	PasswordsTable.ForeignKeys[0].RefTable = AccountsTable
+	ProvincesTable.Annotation = &entsql.Annotation{}
+	ProvincesTable.Annotation.Checks = map[string]string{
+		"bps_code": "length(bps_code) = 2",
+	}
 	SubdistrictsTable.ForeignKeys[0].RefTable = DistrictsTable
+	SubdistrictsTable.Annotation = &entsql.Annotation{}
+	SubdistrictsTable.Annotation.Checks = map[string]string{
+		"bps_code":    "length(bps_code) = 10",
+		"postal_code": "length(postal_code) = 5",
+	}
 }
