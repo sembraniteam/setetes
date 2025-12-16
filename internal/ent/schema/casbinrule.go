@@ -16,13 +16,13 @@ type CasbinRule struct {
 // Fields of the CasbinRule.
 func (CasbinRule) Fields() []ent.Field {
 	return []ent.Field{
-		field.String("Ptype").Default("").Sensitive(),
-		field.String("V0").Default("").Sensitive(),
-		field.String("V1").Default("").Sensitive(),
-		field.String("V2").Default("").Sensitive(),
-		field.String("V3").Default("").Sensitive(),
-		field.String("V4").Default("").Sensitive(),
-		field.String("V5").Default("").Sensitive(),
+		field.String("Ptype").Optional().Sensitive(),
+		field.String("V0").Optional().Sensitive(),
+		field.String("V1").Optional().Sensitive(),
+		field.String("V2").Optional().Sensitive(),
+		field.String("V3").Optional().Sensitive(),
+		field.String("V4").Optional().Sensitive(),
+		field.String("V5").Optional().Sensitive(),
 	}
 }
 

@@ -4,7 +4,6 @@ package ent
 
 import (
 	"context"
-	"errors"
 	"fmt"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -124,7 +123,6 @@ func (_c *CasbinRuleCreate) Mutation() *CasbinRuleMutation {
 
 // Save creates the CasbinRule in the database.
 func (_c *CasbinRuleCreate) Save(ctx context.Context) (*CasbinRule, error) {
-	_c.defaults()
 	return withHooks(ctx, _c.sqlSave, _c.mutation, _c.hooks)
 }
 
@@ -150,61 +148,8 @@ func (_c *CasbinRuleCreate) ExecX(ctx context.Context) {
 	}
 }
 
-// defaults sets the default values of the builder before save.
-func (_c *CasbinRuleCreate) defaults() {
-	if _, ok := _c.mutation.Ptype(); !ok {
-		v := casbinrule.DefaultPtype
-		_c.mutation.SetPtype(v)
-	}
-	if _, ok := _c.mutation.V0(); !ok {
-		v := casbinrule.DefaultV0
-		_c.mutation.SetV0(v)
-	}
-	if _, ok := _c.mutation.V1(); !ok {
-		v := casbinrule.DefaultV1
-		_c.mutation.SetV1(v)
-	}
-	if _, ok := _c.mutation.V2(); !ok {
-		v := casbinrule.DefaultV2
-		_c.mutation.SetV2(v)
-	}
-	if _, ok := _c.mutation.V3(); !ok {
-		v := casbinrule.DefaultV3
-		_c.mutation.SetV3(v)
-	}
-	if _, ok := _c.mutation.V4(); !ok {
-		v := casbinrule.DefaultV4
-		_c.mutation.SetV4(v)
-	}
-	if _, ok := _c.mutation.V5(); !ok {
-		v := casbinrule.DefaultV5
-		_c.mutation.SetV5(v)
-	}
-}
-
 // check runs all checks and user-defined validators on the builder.
 func (_c *CasbinRuleCreate) check() error {
-	if _, ok := _c.mutation.Ptype(); !ok {
-		return &ValidationError{Name: "Ptype", err: errors.New(`ent: missing required field "CasbinRule.Ptype"`)}
-	}
-	if _, ok := _c.mutation.V0(); !ok {
-		return &ValidationError{Name: "V0", err: errors.New(`ent: missing required field "CasbinRule.V0"`)}
-	}
-	if _, ok := _c.mutation.V1(); !ok {
-		return &ValidationError{Name: "V1", err: errors.New(`ent: missing required field "CasbinRule.V1"`)}
-	}
-	if _, ok := _c.mutation.V2(); !ok {
-		return &ValidationError{Name: "V2", err: errors.New(`ent: missing required field "CasbinRule.V2"`)}
-	}
-	if _, ok := _c.mutation.V3(); !ok {
-		return &ValidationError{Name: "V3", err: errors.New(`ent: missing required field "CasbinRule.V3"`)}
-	}
-	if _, ok := _c.mutation.V4(); !ok {
-		return &ValidationError{Name: "V4", err: errors.New(`ent: missing required field "CasbinRule.V4"`)}
-	}
-	if _, ok := _c.mutation.V5(); !ok {
-		return &ValidationError{Name: "V5", err: errors.New(`ent: missing required field "CasbinRule.V5"`)}
-	}
 	return nil
 }
 
@@ -280,7 +225,6 @@ func (_c *CasbinRuleCreateBulk) Save(ctx context.Context) ([]*CasbinRule, error)
 	for i := range _c.builders {
 		func(i int, root context.Context) {
 			builder := _c.builders[i]
-			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 				mutation, ok := m.(*CasbinRuleMutation)
 				if !ok {

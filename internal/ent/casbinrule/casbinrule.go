@@ -51,23 +51,6 @@ func ValidColumn(column string) bool {
 	return false
 }
 
-var (
-	// DefaultPtype holds the default value on creation for the "Ptype" field.
-	DefaultPtype string
-	// DefaultV0 holds the default value on creation for the "V0" field.
-	DefaultV0 string
-	// DefaultV1 holds the default value on creation for the "V1" field.
-	DefaultV1 string
-	// DefaultV2 holds the default value on creation for the "V2" field.
-	DefaultV2 string
-	// DefaultV3 holds the default value on creation for the "V3" field.
-	DefaultV3 string
-	// DefaultV4 holds the default value on creation for the "V4" field.
-	DefaultV4 string
-	// DefaultV5 holds the default value on creation for the "V5" field.
-	DefaultV5 string
-)
-
 // OrderOption defines the ordering options for the CasbinRule queries.
 type OrderOption func(*sql.Selector)
 

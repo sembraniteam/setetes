@@ -41,6 +41,12 @@ func (_u *CasbinRuleUpdate) SetNillablePtype(v *string) *CasbinRuleUpdate {
 	return _u
 }
 
+// ClearPtype clears the value of the "Ptype" field.
+func (_u *CasbinRuleUpdate) ClearPtype() *CasbinRuleUpdate {
+	_u.mutation.ClearPtype()
+	return _u
+}
+
 // SetV0 sets the "V0" field.
 func (_u *CasbinRuleUpdate) SetV0(v string) *CasbinRuleUpdate {
 	_u.mutation.SetV0(v)
@@ -52,6 +58,12 @@ func (_u *CasbinRuleUpdate) SetNillableV0(v *string) *CasbinRuleUpdate {
 	if v != nil {
 		_u.SetV0(*v)
 	}
+	return _u
+}
+
+// ClearV0 clears the value of the "V0" field.
+func (_u *CasbinRuleUpdate) ClearV0() *CasbinRuleUpdate {
+	_u.mutation.ClearV0()
 	return _u
 }
 
@@ -69,6 +81,12 @@ func (_u *CasbinRuleUpdate) SetNillableV1(v *string) *CasbinRuleUpdate {
 	return _u
 }
 
+// ClearV1 clears the value of the "V1" field.
+func (_u *CasbinRuleUpdate) ClearV1() *CasbinRuleUpdate {
+	_u.mutation.ClearV1()
+	return _u
+}
+
 // SetV2 sets the "V2" field.
 func (_u *CasbinRuleUpdate) SetV2(v string) *CasbinRuleUpdate {
 	_u.mutation.SetV2(v)
@@ -80,6 +98,12 @@ func (_u *CasbinRuleUpdate) SetNillableV2(v *string) *CasbinRuleUpdate {
 	if v != nil {
 		_u.SetV2(*v)
 	}
+	return _u
+}
+
+// ClearV2 clears the value of the "V2" field.
+func (_u *CasbinRuleUpdate) ClearV2() *CasbinRuleUpdate {
+	_u.mutation.ClearV2()
 	return _u
 }
 
@@ -97,6 +121,12 @@ func (_u *CasbinRuleUpdate) SetNillableV3(v *string) *CasbinRuleUpdate {
 	return _u
 }
 
+// ClearV3 clears the value of the "V3" field.
+func (_u *CasbinRuleUpdate) ClearV3() *CasbinRuleUpdate {
+	_u.mutation.ClearV3()
+	return _u
+}
+
 // SetV4 sets the "V4" field.
 func (_u *CasbinRuleUpdate) SetV4(v string) *CasbinRuleUpdate {
 	_u.mutation.SetV4(v)
@@ -111,6 +141,12 @@ func (_u *CasbinRuleUpdate) SetNillableV4(v *string) *CasbinRuleUpdate {
 	return _u
 }
 
+// ClearV4 clears the value of the "V4" field.
+func (_u *CasbinRuleUpdate) ClearV4() *CasbinRuleUpdate {
+	_u.mutation.ClearV4()
+	return _u
+}
+
 // SetV5 sets the "V5" field.
 func (_u *CasbinRuleUpdate) SetV5(v string) *CasbinRuleUpdate {
 	_u.mutation.SetV5(v)
@@ -122,6 +158,12 @@ func (_u *CasbinRuleUpdate) SetNillableV5(v *string) *CasbinRuleUpdate {
 	if v != nil {
 		_u.SetV5(*v)
 	}
+	return _u
+}
+
+// ClearV5 clears the value of the "V5" field.
+func (_u *CasbinRuleUpdate) ClearV5() *CasbinRuleUpdate {
+	_u.mutation.ClearV5()
 	return _u
 }
 
@@ -169,23 +211,44 @@ func (_u *CasbinRuleUpdate) sqlSave(ctx context.Context) (_node int, err error) 
 	if value, ok := _u.mutation.Ptype(); ok {
 		_spec.SetField(casbinrule.FieldPtype, field.TypeString, value)
 	}
+	if _u.mutation.PtypeCleared() {
+		_spec.ClearField(casbinrule.FieldPtype, field.TypeString)
+	}
 	if value, ok := _u.mutation.V0(); ok {
 		_spec.SetField(casbinrule.FieldV0, field.TypeString, value)
+	}
+	if _u.mutation.V0Cleared() {
+		_spec.ClearField(casbinrule.FieldV0, field.TypeString)
 	}
 	if value, ok := _u.mutation.V1(); ok {
 		_spec.SetField(casbinrule.FieldV1, field.TypeString, value)
 	}
+	if _u.mutation.V1Cleared() {
+		_spec.ClearField(casbinrule.FieldV1, field.TypeString)
+	}
 	if value, ok := _u.mutation.V2(); ok {
 		_spec.SetField(casbinrule.FieldV2, field.TypeString, value)
+	}
+	if _u.mutation.V2Cleared() {
+		_spec.ClearField(casbinrule.FieldV2, field.TypeString)
 	}
 	if value, ok := _u.mutation.V3(); ok {
 		_spec.SetField(casbinrule.FieldV3, field.TypeString, value)
 	}
+	if _u.mutation.V3Cleared() {
+		_spec.ClearField(casbinrule.FieldV3, field.TypeString)
+	}
 	if value, ok := _u.mutation.V4(); ok {
 		_spec.SetField(casbinrule.FieldV4, field.TypeString, value)
 	}
+	if _u.mutation.V4Cleared() {
+		_spec.ClearField(casbinrule.FieldV4, field.TypeString)
+	}
 	if value, ok := _u.mutation.V5(); ok {
 		_spec.SetField(casbinrule.FieldV5, field.TypeString, value)
+	}
+	if _u.mutation.V5Cleared() {
+		_spec.ClearField(casbinrule.FieldV5, field.TypeString)
 	}
 	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -221,6 +284,12 @@ func (_u *CasbinRuleUpdateOne) SetNillablePtype(v *string) *CasbinRuleUpdateOne 
 	return _u
 }
 
+// ClearPtype clears the value of the "Ptype" field.
+func (_u *CasbinRuleUpdateOne) ClearPtype() *CasbinRuleUpdateOne {
+	_u.mutation.ClearPtype()
+	return _u
+}
+
 // SetV0 sets the "V0" field.
 func (_u *CasbinRuleUpdateOne) SetV0(v string) *CasbinRuleUpdateOne {
 	_u.mutation.SetV0(v)
@@ -232,6 +301,12 @@ func (_u *CasbinRuleUpdateOne) SetNillableV0(v *string) *CasbinRuleUpdateOne {
 	if v != nil {
 		_u.SetV0(*v)
 	}
+	return _u
+}
+
+// ClearV0 clears the value of the "V0" field.
+func (_u *CasbinRuleUpdateOne) ClearV0() *CasbinRuleUpdateOne {
+	_u.mutation.ClearV0()
 	return _u
 }
 
@@ -249,6 +324,12 @@ func (_u *CasbinRuleUpdateOne) SetNillableV1(v *string) *CasbinRuleUpdateOne {
 	return _u
 }
 
+// ClearV1 clears the value of the "V1" field.
+func (_u *CasbinRuleUpdateOne) ClearV1() *CasbinRuleUpdateOne {
+	_u.mutation.ClearV1()
+	return _u
+}
+
 // SetV2 sets the "V2" field.
 func (_u *CasbinRuleUpdateOne) SetV2(v string) *CasbinRuleUpdateOne {
 	_u.mutation.SetV2(v)
@@ -260,6 +341,12 @@ func (_u *CasbinRuleUpdateOne) SetNillableV2(v *string) *CasbinRuleUpdateOne {
 	if v != nil {
 		_u.SetV2(*v)
 	}
+	return _u
+}
+
+// ClearV2 clears the value of the "V2" field.
+func (_u *CasbinRuleUpdateOne) ClearV2() *CasbinRuleUpdateOne {
+	_u.mutation.ClearV2()
 	return _u
 }
 
@@ -277,6 +364,12 @@ func (_u *CasbinRuleUpdateOne) SetNillableV3(v *string) *CasbinRuleUpdateOne {
 	return _u
 }
 
+// ClearV3 clears the value of the "V3" field.
+func (_u *CasbinRuleUpdateOne) ClearV3() *CasbinRuleUpdateOne {
+	_u.mutation.ClearV3()
+	return _u
+}
+
 // SetV4 sets the "V4" field.
 func (_u *CasbinRuleUpdateOne) SetV4(v string) *CasbinRuleUpdateOne {
 	_u.mutation.SetV4(v)
@@ -291,6 +384,12 @@ func (_u *CasbinRuleUpdateOne) SetNillableV4(v *string) *CasbinRuleUpdateOne {
 	return _u
 }
 
+// ClearV4 clears the value of the "V4" field.
+func (_u *CasbinRuleUpdateOne) ClearV4() *CasbinRuleUpdateOne {
+	_u.mutation.ClearV4()
+	return _u
+}
+
 // SetV5 sets the "V5" field.
 func (_u *CasbinRuleUpdateOne) SetV5(v string) *CasbinRuleUpdateOne {
 	_u.mutation.SetV5(v)
@@ -302,6 +401,12 @@ func (_u *CasbinRuleUpdateOne) SetNillableV5(v *string) *CasbinRuleUpdateOne {
 	if v != nil {
 		_u.SetV5(*v)
 	}
+	return _u
+}
+
+// ClearV5 clears the value of the "V5" field.
+func (_u *CasbinRuleUpdateOne) ClearV5() *CasbinRuleUpdateOne {
+	_u.mutation.ClearV5()
 	return _u
 }
 
@@ -379,23 +484,44 @@ func (_u *CasbinRuleUpdateOne) sqlSave(ctx context.Context) (_node *CasbinRule, 
 	if value, ok := _u.mutation.Ptype(); ok {
 		_spec.SetField(casbinrule.FieldPtype, field.TypeString, value)
 	}
+	if _u.mutation.PtypeCleared() {
+		_spec.ClearField(casbinrule.FieldPtype, field.TypeString)
+	}
 	if value, ok := _u.mutation.V0(); ok {
 		_spec.SetField(casbinrule.FieldV0, field.TypeString, value)
+	}
+	if _u.mutation.V0Cleared() {
+		_spec.ClearField(casbinrule.FieldV0, field.TypeString)
 	}
 	if value, ok := _u.mutation.V1(); ok {
 		_spec.SetField(casbinrule.FieldV1, field.TypeString, value)
 	}
+	if _u.mutation.V1Cleared() {
+		_spec.ClearField(casbinrule.FieldV1, field.TypeString)
+	}
 	if value, ok := _u.mutation.V2(); ok {
 		_spec.SetField(casbinrule.FieldV2, field.TypeString, value)
+	}
+	if _u.mutation.V2Cleared() {
+		_spec.ClearField(casbinrule.FieldV2, field.TypeString)
 	}
 	if value, ok := _u.mutation.V3(); ok {
 		_spec.SetField(casbinrule.FieldV3, field.TypeString, value)
 	}
+	if _u.mutation.V3Cleared() {
+		_spec.ClearField(casbinrule.FieldV3, field.TypeString)
+	}
 	if value, ok := _u.mutation.V4(); ok {
 		_spec.SetField(casbinrule.FieldV4, field.TypeString, value)
 	}
+	if _u.mutation.V4Cleared() {
+		_spec.ClearField(casbinrule.FieldV4, field.TypeString)
+	}
 	if value, ok := _u.mutation.V5(); ok {
 		_spec.SetField(casbinrule.FieldV5, field.TypeString, value)
+	}
+	if _u.mutation.V5Cleared() {
+		_spec.ClearField(casbinrule.FieldV5, field.TypeString)
 	}
 	_node = &CasbinRule{config: _u.config}
 	_spec.Assign = _node.assignValues

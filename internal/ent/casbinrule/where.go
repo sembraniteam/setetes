@@ -142,6 +142,16 @@ func PtypeHasSuffix(v string) predicate.CasbinRule {
 	return predicate.CasbinRule(sql.FieldHasSuffix(FieldPtype, v))
 }
 
+// PtypeIsNil applies the IsNil predicate on the "Ptype" field.
+func PtypeIsNil() predicate.CasbinRule {
+	return predicate.CasbinRule(sql.FieldIsNull(FieldPtype))
+}
+
+// PtypeNotNil applies the NotNil predicate on the "Ptype" field.
+func PtypeNotNil() predicate.CasbinRule {
+	return predicate.CasbinRule(sql.FieldNotNull(FieldPtype))
+}
+
 // PtypeEqualFold applies the EqualFold predicate on the "Ptype" field.
 func PtypeEqualFold(v string) predicate.CasbinRule {
 	return predicate.CasbinRule(sql.FieldEqualFold(FieldPtype, v))
@@ -205,6 +215,16 @@ func V0HasPrefix(v string) predicate.CasbinRule {
 // V0HasSuffix applies the HasSuffix predicate on the "V0" field.
 func V0HasSuffix(v string) predicate.CasbinRule {
 	return predicate.CasbinRule(sql.FieldHasSuffix(FieldV0, v))
+}
+
+// V0IsNil applies the IsNil predicate on the "V0" field.
+func V0IsNil() predicate.CasbinRule {
+	return predicate.CasbinRule(sql.FieldIsNull(FieldV0))
+}
+
+// V0NotNil applies the NotNil predicate on the "V0" field.
+func V0NotNil() predicate.CasbinRule {
+	return predicate.CasbinRule(sql.FieldNotNull(FieldV0))
 }
 
 // V0EqualFold applies the EqualFold predicate on the "V0" field.
@@ -272,6 +292,16 @@ func V1HasSuffix(v string) predicate.CasbinRule {
 	return predicate.CasbinRule(sql.FieldHasSuffix(FieldV1, v))
 }
 
+// V1IsNil applies the IsNil predicate on the "V1" field.
+func V1IsNil() predicate.CasbinRule {
+	return predicate.CasbinRule(sql.FieldIsNull(FieldV1))
+}
+
+// V1NotNil applies the NotNil predicate on the "V1" field.
+func V1NotNil() predicate.CasbinRule {
+	return predicate.CasbinRule(sql.FieldNotNull(FieldV1))
+}
+
 // V1EqualFold applies the EqualFold predicate on the "V1" field.
 func V1EqualFold(v string) predicate.CasbinRule {
 	return predicate.CasbinRule(sql.FieldEqualFold(FieldV1, v))
@@ -335,6 +365,16 @@ func V2HasPrefix(v string) predicate.CasbinRule {
 // V2HasSuffix applies the HasSuffix predicate on the "V2" field.
 func V2HasSuffix(v string) predicate.CasbinRule {
 	return predicate.CasbinRule(sql.FieldHasSuffix(FieldV2, v))
+}
+
+// V2IsNil applies the IsNil predicate on the "V2" field.
+func V2IsNil() predicate.CasbinRule {
+	return predicate.CasbinRule(sql.FieldIsNull(FieldV2))
+}
+
+// V2NotNil applies the NotNil predicate on the "V2" field.
+func V2NotNil() predicate.CasbinRule {
+	return predicate.CasbinRule(sql.FieldNotNull(FieldV2))
 }
 
 // V2EqualFold applies the EqualFold predicate on the "V2" field.
@@ -402,6 +442,16 @@ func V3HasSuffix(v string) predicate.CasbinRule {
 	return predicate.CasbinRule(sql.FieldHasSuffix(FieldV3, v))
 }
 
+// V3IsNil applies the IsNil predicate on the "V3" field.
+func V3IsNil() predicate.CasbinRule {
+	return predicate.CasbinRule(sql.FieldIsNull(FieldV3))
+}
+
+// V3NotNil applies the NotNil predicate on the "V3" field.
+func V3NotNil() predicate.CasbinRule {
+	return predicate.CasbinRule(sql.FieldNotNull(FieldV3))
+}
+
 // V3EqualFold applies the EqualFold predicate on the "V3" field.
 func V3EqualFold(v string) predicate.CasbinRule {
 	return predicate.CasbinRule(sql.FieldEqualFold(FieldV3, v))
@@ -467,6 +517,16 @@ func V4HasSuffix(v string) predicate.CasbinRule {
 	return predicate.CasbinRule(sql.FieldHasSuffix(FieldV4, v))
 }
 
+// V4IsNil applies the IsNil predicate on the "V4" field.
+func V4IsNil() predicate.CasbinRule {
+	return predicate.CasbinRule(sql.FieldIsNull(FieldV4))
+}
+
+// V4NotNil applies the NotNil predicate on the "V4" field.
+func V4NotNil() predicate.CasbinRule {
+	return predicate.CasbinRule(sql.FieldNotNull(FieldV4))
+}
+
 // V4EqualFold applies the EqualFold predicate on the "V4" field.
 func V4EqualFold(v string) predicate.CasbinRule {
 	return predicate.CasbinRule(sql.FieldEqualFold(FieldV4, v))
@@ -530,6 +590,16 @@ func V5HasPrefix(v string) predicate.CasbinRule {
 // V5HasSuffix applies the HasSuffix predicate on the "V5" field.
 func V5HasSuffix(v string) predicate.CasbinRule {
 	return predicate.CasbinRule(sql.FieldHasSuffix(FieldV5, v))
+}
+
+// V5IsNil applies the IsNil predicate on the "V5" field.
+func V5IsNil() predicate.CasbinRule {
+	return predicate.CasbinRule(sql.FieldIsNull(FieldV5))
+}
+
+// V5NotNil applies the NotNil predicate on the "V5" field.
+func V5NotNil() predicate.CasbinRule {
+	return predicate.CasbinRule(sql.FieldNotNull(FieldV5))
 }
 
 // V5EqualFold applies the EqualFold predicate on the "V5" field.

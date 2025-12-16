@@ -2391,9 +2391,22 @@ func (m *CasbinRuleMutation) OldPtype(ctx context.Context) (v string, err error)
 	return oldValue.Ptype, nil
 }
 
+// ClearPtype clears the value of the "Ptype" field.
+func (m *CasbinRuleMutation) ClearPtype() {
+	m._Ptype = nil
+	m.clearedFields[casbinrule.FieldPtype] = struct{}{}
+}
+
+// PtypeCleared returns if the "Ptype" field was cleared in this mutation.
+func (m *CasbinRuleMutation) PtypeCleared() bool {
+	_, ok := m.clearedFields[casbinrule.FieldPtype]
+	return ok
+}
+
 // ResetPtype resets all changes to the "Ptype" field.
 func (m *CasbinRuleMutation) ResetPtype() {
 	m._Ptype = nil
+	delete(m.clearedFields, casbinrule.FieldPtype)
 }
 
 // SetV0 sets the "V0" field.
@@ -2427,9 +2440,22 @@ func (m *CasbinRuleMutation) OldV0(ctx context.Context) (v string, err error) {
 	return oldValue.V0, nil
 }
 
+// ClearV0 clears the value of the "V0" field.
+func (m *CasbinRuleMutation) ClearV0() {
+	m._V0 = nil
+	m.clearedFields[casbinrule.FieldV0] = struct{}{}
+}
+
+// V0Cleared returns if the "V0" field was cleared in this mutation.
+func (m *CasbinRuleMutation) V0Cleared() bool {
+	_, ok := m.clearedFields[casbinrule.FieldV0]
+	return ok
+}
+
 // ResetV0 resets all changes to the "V0" field.
 func (m *CasbinRuleMutation) ResetV0() {
 	m._V0 = nil
+	delete(m.clearedFields, casbinrule.FieldV0)
 }
 
 // SetV1 sets the "V1" field.
@@ -2463,9 +2489,22 @@ func (m *CasbinRuleMutation) OldV1(ctx context.Context) (v string, err error) {
 	return oldValue.V1, nil
 }
 
+// ClearV1 clears the value of the "V1" field.
+func (m *CasbinRuleMutation) ClearV1() {
+	m._V1 = nil
+	m.clearedFields[casbinrule.FieldV1] = struct{}{}
+}
+
+// V1Cleared returns if the "V1" field was cleared in this mutation.
+func (m *CasbinRuleMutation) V1Cleared() bool {
+	_, ok := m.clearedFields[casbinrule.FieldV1]
+	return ok
+}
+
 // ResetV1 resets all changes to the "V1" field.
 func (m *CasbinRuleMutation) ResetV1() {
 	m._V1 = nil
+	delete(m.clearedFields, casbinrule.FieldV1)
 }
 
 // SetV2 sets the "V2" field.
@@ -2499,9 +2538,22 @@ func (m *CasbinRuleMutation) OldV2(ctx context.Context) (v string, err error) {
 	return oldValue.V2, nil
 }
 
+// ClearV2 clears the value of the "V2" field.
+func (m *CasbinRuleMutation) ClearV2() {
+	m._V2 = nil
+	m.clearedFields[casbinrule.FieldV2] = struct{}{}
+}
+
+// V2Cleared returns if the "V2" field was cleared in this mutation.
+func (m *CasbinRuleMutation) V2Cleared() bool {
+	_, ok := m.clearedFields[casbinrule.FieldV2]
+	return ok
+}
+
 // ResetV2 resets all changes to the "V2" field.
 func (m *CasbinRuleMutation) ResetV2() {
 	m._V2 = nil
+	delete(m.clearedFields, casbinrule.FieldV2)
 }
 
 // SetV3 sets the "V3" field.
@@ -2535,9 +2587,22 @@ func (m *CasbinRuleMutation) OldV3(ctx context.Context) (v string, err error) {
 	return oldValue.V3, nil
 }
 
+// ClearV3 clears the value of the "V3" field.
+func (m *CasbinRuleMutation) ClearV3() {
+	m._V3 = nil
+	m.clearedFields[casbinrule.FieldV3] = struct{}{}
+}
+
+// V3Cleared returns if the "V3" field was cleared in this mutation.
+func (m *CasbinRuleMutation) V3Cleared() bool {
+	_, ok := m.clearedFields[casbinrule.FieldV3]
+	return ok
+}
+
 // ResetV3 resets all changes to the "V3" field.
 func (m *CasbinRuleMutation) ResetV3() {
 	m._V3 = nil
+	delete(m.clearedFields, casbinrule.FieldV3)
 }
 
 // SetV4 sets the "V4" field.
@@ -2571,9 +2636,22 @@ func (m *CasbinRuleMutation) OldV4(ctx context.Context) (v string, err error) {
 	return oldValue.V4, nil
 }
 
+// ClearV4 clears the value of the "V4" field.
+func (m *CasbinRuleMutation) ClearV4() {
+	m._V4 = nil
+	m.clearedFields[casbinrule.FieldV4] = struct{}{}
+}
+
+// V4Cleared returns if the "V4" field was cleared in this mutation.
+func (m *CasbinRuleMutation) V4Cleared() bool {
+	_, ok := m.clearedFields[casbinrule.FieldV4]
+	return ok
+}
+
 // ResetV4 resets all changes to the "V4" field.
 func (m *CasbinRuleMutation) ResetV4() {
 	m._V4 = nil
+	delete(m.clearedFields, casbinrule.FieldV4)
 }
 
 // SetV5 sets the "V5" field.
@@ -2607,9 +2685,22 @@ func (m *CasbinRuleMutation) OldV5(ctx context.Context) (v string, err error) {
 	return oldValue.V5, nil
 }
 
+// ClearV5 clears the value of the "V5" field.
+func (m *CasbinRuleMutation) ClearV5() {
+	m._V5 = nil
+	m.clearedFields[casbinrule.FieldV5] = struct{}{}
+}
+
+// V5Cleared returns if the "V5" field was cleared in this mutation.
+func (m *CasbinRuleMutation) V5Cleared() bool {
+	_, ok := m.clearedFields[casbinrule.FieldV5]
+	return ok
+}
+
 // ResetV5 resets all changes to the "V5" field.
 func (m *CasbinRuleMutation) ResetV5() {
 	m._V5 = nil
+	delete(m.clearedFields, casbinrule.FieldV5)
 }
 
 // Where appends a list predicates to the CasbinRuleMutation builder.
@@ -2800,7 +2891,29 @@ func (m *CasbinRuleMutation) AddField(name string, value ent.Value) error {
 // ClearedFields returns all nullable fields that were cleared during this
 // mutation.
 func (m *CasbinRuleMutation) ClearedFields() []string {
-	return nil
+	var fields []string
+	if m.FieldCleared(casbinrule.FieldPtype) {
+		fields = append(fields, casbinrule.FieldPtype)
+	}
+	if m.FieldCleared(casbinrule.FieldV0) {
+		fields = append(fields, casbinrule.FieldV0)
+	}
+	if m.FieldCleared(casbinrule.FieldV1) {
+		fields = append(fields, casbinrule.FieldV1)
+	}
+	if m.FieldCleared(casbinrule.FieldV2) {
+		fields = append(fields, casbinrule.FieldV2)
+	}
+	if m.FieldCleared(casbinrule.FieldV3) {
+		fields = append(fields, casbinrule.FieldV3)
+	}
+	if m.FieldCleared(casbinrule.FieldV4) {
+		fields = append(fields, casbinrule.FieldV4)
+	}
+	if m.FieldCleared(casbinrule.FieldV5) {
+		fields = append(fields, casbinrule.FieldV5)
+	}
+	return fields
 }
 
 // FieldCleared returns a boolean indicating if a field with the given name was
@@ -2813,6 +2926,29 @@ func (m *CasbinRuleMutation) FieldCleared(name string) bool {
 // ClearField clears the value of the field with the given name. It returns an
 // error if the field is not defined in the schema.
 func (m *CasbinRuleMutation) ClearField(name string) error {
+	switch name {
+	case casbinrule.FieldPtype:
+		m.ClearPtype()
+		return nil
+	case casbinrule.FieldV0:
+		m.ClearV0()
+		return nil
+	case casbinrule.FieldV1:
+		m.ClearV1()
+		return nil
+	case casbinrule.FieldV2:
+		m.ClearV2()
+		return nil
+	case casbinrule.FieldV3:
+		m.ClearV3()
+		return nil
+	case casbinrule.FieldV4:
+		m.ClearV4()
+		return nil
+	case casbinrule.FieldV5:
+		m.ClearV5()
+		return nil
+	}
 	return fmt.Errorf("unknown CasbinRule nullable field %s", name)
 }
 
@@ -3983,7 +4119,6 @@ type OTPMutation struct {
 	adddeleted_at  *int64
 	code           *string
 	_type          *otp.Type
-	is_used        *bool
 	expired_at     *int64
 	addexpired_at  *int64
 	clearedFields  map[string]struct{}
@@ -4366,42 +4501,6 @@ func (m *OTPMutation) ResetType() {
 	m._type = nil
 }
 
-// SetIsUsed sets the "is_used" field.
-func (m *OTPMutation) SetIsUsed(b bool) {
-	m.is_used = &b
-}
-
-// IsUsed returns the value of the "is_used" field in the mutation.
-func (m *OTPMutation) IsUsed() (r bool, exists bool) {
-	v := m.is_used
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldIsUsed returns the old "is_used" field's value of the OTP entity.
-// If the OTP object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *OTPMutation) OldIsUsed(ctx context.Context) (v bool, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldIsUsed is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldIsUsed requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldIsUsed: %w", err)
-	}
-	return oldValue.IsUsed, nil
-}
-
-// ResetIsUsed resets all changes to the "is_used" field.
-func (m *OTPMutation) ResetIsUsed() {
-	m.is_used = nil
-}
-
 // SetExpiredAt sets the "expired_at" field.
 func (m *OTPMutation) SetExpiredAt(i int64) {
 	m.expired_at = &i
@@ -4531,7 +4630,7 @@ func (m *OTPMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *OTPMutation) Fields() []string {
-	fields := make([]string, 0, 7)
+	fields := make([]string, 0, 6)
 	if m.created_at != nil {
 		fields = append(fields, otp.FieldCreatedAt)
 	}
@@ -4546,9 +4645,6 @@ func (m *OTPMutation) Fields() []string {
 	}
 	if m._type != nil {
 		fields = append(fields, otp.FieldType)
-	}
-	if m.is_used != nil {
-		fields = append(fields, otp.FieldIsUsed)
 	}
 	if m.expired_at != nil {
 		fields = append(fields, otp.FieldExpiredAt)
@@ -4571,8 +4667,6 @@ func (m *OTPMutation) Field(name string) (ent.Value, bool) {
 		return m.Code()
 	case otp.FieldType:
 		return m.GetType()
-	case otp.FieldIsUsed:
-		return m.IsUsed()
 	case otp.FieldExpiredAt:
 		return m.ExpiredAt()
 	}
@@ -4594,8 +4688,6 @@ func (m *OTPMutation) OldField(ctx context.Context, name string) (ent.Value, err
 		return m.OldCode(ctx)
 	case otp.FieldType:
 		return m.OldType(ctx)
-	case otp.FieldIsUsed:
-		return m.OldIsUsed(ctx)
 	case otp.FieldExpiredAt:
 		return m.OldExpiredAt(ctx)
 	}
@@ -4641,13 +4733,6 @@ func (m *OTPMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetType(v)
-		return nil
-	case otp.FieldIsUsed:
-		v, ok := value.(bool)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetIsUsed(v)
 		return nil
 	case otp.FieldExpiredAt:
 		v, ok := value.(int64)
@@ -4785,9 +4870,6 @@ func (m *OTPMutation) ResetField(name string) error {
 		return nil
 	case otp.FieldType:
 		m.ResetType()
-		return nil
-	case otp.FieldIsUsed:
-		m.ResetIsUsed()
 		return nil
 	case otp.FieldExpiredAt:
 		m.ResetExpiredAt()
