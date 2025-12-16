@@ -1,11 +1,5 @@
-lint:
-	golangci-lint run
-
 fmt:
-	go fmt ./...
-	goimports -w .
-
-check: lint fmt
+	golangci-lint run --fix
 
 ent-gen:
 	ent generate ./internal/ent/schema
