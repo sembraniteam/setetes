@@ -24,8 +24,6 @@ const (
 	FieldCode = "code"
 	// FieldType holds the string denoting the type field in the database.
 	FieldType = "type"
-	// FieldIsUsed holds the string denoting the is_used field in the database.
-	FieldIsUsed = "is_used"
 	// FieldExpiredAt holds the string denoting the expired_at field in the database.
 	FieldExpiredAt = "expired_at"
 	// EdgeAccount holds the string denoting the account edge name in mutations.
@@ -49,7 +47,6 @@ var Columns = []string{
 	FieldDeletedAt,
 	FieldCode,
 	FieldType,
-	FieldIsUsed,
 	FieldExpiredAt,
 }
 
@@ -85,8 +82,6 @@ var (
 	DeletedAtValidator func(int64) error
 	// CodeValidator is a validator for the "code" field. It is called by the builders before save.
 	CodeValidator func(string) error
-	// DefaultIsUsed holds the default value on creation for the "is_used" field.
-	DefaultIsUsed bool
 	// ExpiredAtValidator is a validator for the "expired_at" field. It is called by the builders before save.
 	ExpiredAtValidator func(int64) error
 )
@@ -146,11 +141,6 @@ func ByCode(opts ...sql.OrderTermOption) OrderOption {
 // ByType orders the results by the type field.
 func ByType(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldType, opts...).ToFunc()
-}
-
-// ByIsUsed orders the results by the is_used field.
-func ByIsUsed(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldIsUsed, opts...).ToFunc()
 }
 
 // ByExpiredAt orders the results by the expired_at field.

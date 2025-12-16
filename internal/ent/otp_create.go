@@ -67,20 +67,6 @@ func (_c *OTPCreate) SetType(v otp.Type) *OTPCreate {
 	return _c
 }
 
-// SetIsUsed sets the "is_used" field.
-func (_c *OTPCreate) SetIsUsed(v bool) *OTPCreate {
-	_c.mutation.SetIsUsed(v)
-	return _c
-}
-
-// SetNillableIsUsed sets the "is_used" field if the given value is not nil.
-func (_c *OTPCreate) SetNillableIsUsed(v *bool) *OTPCreate {
-	if v != nil {
-		_c.SetIsUsed(*v)
-	}
-	return _c
-}
-
 // SetExpiredAt sets the "expired_at" field.
 func (_c *OTPCreate) SetExpiredAt(v int64) *OTPCreate {
 	_c.mutation.SetExpiredAt(v)
@@ -111,7 +97,6 @@ func (_c *OTPCreate) Mutation() *OTPMutation {
 
 // Save creates the OTP in the database.
 func (_c *OTPCreate) Save(ctx context.Context) (*OTP, error) {
-	_c.defaults()
 	return withHooks(ctx, _c.sqlSave, _c.mutation, _c.hooks)
 }
 
@@ -134,14 +119,6 @@ func (_c *OTPCreate) Exec(ctx context.Context) error {
 func (_c *OTPCreate) ExecX(ctx context.Context) {
 	if err := _c.Exec(ctx); err != nil {
 		panic(err)
-	}
-}
-
-// defaults sets the default values of the builder before save.
-func (_c *OTPCreate) defaults() {
-	if _, ok := _c.mutation.IsUsed(); !ok {
-		v := otp.DefaultIsUsed
-		_c.mutation.SetIsUsed(v)
 	}
 }
 
@@ -177,9 +154,6 @@ func (_c *OTPCreate) check() error {
 		if err := otp.TypeValidator(v); err != nil {
 			return &ValidationError{Name: "type", err: fmt.Errorf(`ent: validator failed for field "OTP.type": %w`, err)}
 		}
-	}
-	if _, ok := _c.mutation.IsUsed(); !ok {
-		return &ValidationError{Name: "is_used", err: errors.New(`ent: missing required field "OTP.is_used"`)}
 	}
 	if _, ok := _c.mutation.ExpiredAt(); !ok {
 		return &ValidationError{Name: "expired_at", err: errors.New(`ent: missing required field "OTP.expired_at"`)}
@@ -247,10 +221,6 @@ func (_c *OTPCreate) createSpec() (*OTP, *sqlgraph.CreateSpec) {
 		_spec.SetField(otp.FieldType, field.TypeEnum, value)
 		_node.Type = value
 	}
-	if value, ok := _c.mutation.IsUsed(); ok {
-		_spec.SetField(otp.FieldIsUsed, field.TypeBool, value)
-		_node.IsUsed = value
-	}
 	if value, ok := _c.mutation.ExpiredAt(); ok {
 		_spec.SetField(otp.FieldExpiredAt, field.TypeInt64, value)
 		_node.ExpiredAt = value
@@ -293,7 +263,6 @@ func (_c *OTPCreateBulk) Save(ctx context.Context) ([]*OTP, error) {
 	for i := range _c.builders {
 		func(i int, root context.Context) {
 			builder := _c.builders[i]
-			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 				mutation, ok := m.(*OTPMutation)
 				if !ok {

@@ -28,8 +28,6 @@ type OTP struct {
 	Code string `json:"-"`
 	// Type holds the value of the "type" field.
 	Type otp.Type `json:"type"`
-	// IsUsed holds the value of the "is_used" field.
-	IsUsed bool `json:"is_used"`
 	// The OTP code is only valid for 30 minutes.
 	ExpiredAt int64 `json:"expired_at"`
 	// Edges holds the relations/edges for other nodes in the graph.
@@ -64,8 +62,6 @@ func (*OTP) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case otp.FieldIsUsed:
-			values[i] = new(sql.NullBool)
 		case otp.FieldCreatedAt, otp.FieldUpdatedAt, otp.FieldDeletedAt, otp.FieldExpiredAt:
 			values[i] = new(sql.NullInt64)
 		case otp.FieldCode, otp.FieldType:
@@ -124,12 +120,6 @@ func (_m *OTP) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field type", values[i])
 			} else if value.Valid {
 				_m.Type = otp.Type(value.String)
-			}
-		case otp.FieldIsUsed:
-			if value, ok := values[i].(*sql.NullBool); !ok {
-				return fmt.Errorf("unexpected type %T for field is_used", values[i])
-			} else if value.Valid {
-				_m.IsUsed = value.Bool
 			}
 		case otp.FieldExpiredAt:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -198,9 +188,6 @@ func (_m *OTP) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("type=")
 	builder.WriteString(fmt.Sprintf("%v", _m.Type))
-	builder.WriteString(", ")
-	builder.WriteString("is_used=")
-	builder.WriteString(fmt.Sprintf("%v", _m.IsUsed))
 	builder.WriteString(", ")
 	builder.WriteString("expired_at=")
 	builder.WriteString(fmt.Sprintf("%v", _m.ExpiredAt))

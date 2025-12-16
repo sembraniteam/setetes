@@ -36,7 +36,6 @@ func (OTP) Fields() []ent.Field {
 			"Register", "REGISTER",
 			"ChangePassword", "CHANGE_PASSWORD",
 		).StructTag(`json:"type"`),
-		field.Bool("is_used").Default(false).StructTag(`json:"is_used"`),
 		field.Int64("expired_at").
 			Positive().
 			Comment("The OTP code is only valid for 30 minutes.").

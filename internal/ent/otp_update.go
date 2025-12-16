@@ -103,20 +103,6 @@ func (_u *OTPUpdate) SetNillableType(v *otp.Type) *OTPUpdate {
 	return _u
 }
 
-// SetIsUsed sets the "is_used" field.
-func (_u *OTPUpdate) SetIsUsed(v bool) *OTPUpdate {
-	_u.mutation.SetIsUsed(v)
-	return _u
-}
-
-// SetNillableIsUsed sets the "is_used" field if the given value is not nil.
-func (_u *OTPUpdate) SetNillableIsUsed(v *bool) *OTPUpdate {
-	if v != nil {
-		_u.SetIsUsed(*v)
-	}
-	return _u
-}
-
 // SetExpiredAt sets the "expired_at" field.
 func (_u *OTPUpdate) SetExpiredAt(v int64) *OTPUpdate {
 	_u.mutation.ResetExpiredAt()
@@ -265,9 +251,6 @@ func (_u *OTPUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	if value, ok := _u.mutation.GetType(); ok {
 		_spec.SetField(otp.FieldType, field.TypeEnum, value)
 	}
-	if value, ok := _u.mutation.IsUsed(); ok {
-		_spec.SetField(otp.FieldIsUsed, field.TypeBool, value)
-	}
 	if value, ok := _u.mutation.ExpiredAt(); ok {
 		_spec.SetField(otp.FieldExpiredAt, field.TypeInt64, value)
 	}
@@ -393,20 +376,6 @@ func (_u *OTPUpdateOne) SetType(v otp.Type) *OTPUpdateOne {
 func (_u *OTPUpdateOne) SetNillableType(v *otp.Type) *OTPUpdateOne {
 	if v != nil {
 		_u.SetType(*v)
-	}
-	return _u
-}
-
-// SetIsUsed sets the "is_used" field.
-func (_u *OTPUpdateOne) SetIsUsed(v bool) *OTPUpdateOne {
-	_u.mutation.SetIsUsed(v)
-	return _u
-}
-
-// SetNillableIsUsed sets the "is_used" field if the given value is not nil.
-func (_u *OTPUpdateOne) SetNillableIsUsed(v *bool) *OTPUpdateOne {
-	if v != nil {
-		_u.SetIsUsed(*v)
 	}
 	return _u
 }
@@ -588,9 +557,6 @@ func (_u *OTPUpdateOne) sqlSave(ctx context.Context) (_node *OTP, err error) {
 	}
 	if value, ok := _u.mutation.GetType(); ok {
 		_spec.SetField(otp.FieldType, field.TypeEnum, value)
-	}
-	if value, ok := _u.mutation.IsUsed(); ok {
-		_spec.SetField(otp.FieldIsUsed, field.TypeBool, value)
 	}
 	if value, ok := _u.mutation.ExpiredAt(); ok {
 		_spec.SetField(otp.FieldExpiredAt, field.TypeInt64, value)

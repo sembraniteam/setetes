@@ -74,11 +74,6 @@ func Code(v string) predicate.OTP {
 	return predicate.OTP(sql.FieldEQ(FieldCode, v))
 }
 
-// IsUsed applies equality check predicate on the "is_used" field. It's identical to IsUsedEQ.
-func IsUsed(v bool) predicate.OTP {
-	return predicate.OTP(sql.FieldEQ(FieldIsUsed, v))
-}
-
 // ExpiredAt applies equality check predicate on the "expired_at" field. It's identical to ExpiredAtEQ.
 func ExpiredAt(v int64) predicate.OTP {
 	return predicate.OTP(sql.FieldEQ(FieldExpiredAt, v))
@@ -307,16 +302,6 @@ func TypeIn(vs ...Type) predicate.OTP {
 // TypeNotIn applies the NotIn predicate on the "type" field.
 func TypeNotIn(vs ...Type) predicate.OTP {
 	return predicate.OTP(sql.FieldNotIn(FieldType, vs...))
-}
-
-// IsUsedEQ applies the EQ predicate on the "is_used" field.
-func IsUsedEQ(v bool) predicate.OTP {
-	return predicate.OTP(sql.FieldEQ(FieldIsUsed, v))
-}
-
-// IsUsedNEQ applies the NEQ predicate on the "is_used" field.
-func IsUsedNEQ(v bool) predicate.OTP {
-	return predicate.OTP(sql.FieldNEQ(FieldIsUsed, v))
 }
 
 // ExpiredAtEQ applies the EQ predicate on the "expired_at" field.
