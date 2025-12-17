@@ -8,8 +8,8 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/megalodev/setetes/internal/ent/otp"
-	"github.com/megalodev/setetes/internal/ent/predicate"
+	"github.com/sembraniteam/setetes/internal/ent/otp"
+	"github.com/sembraniteam/setetes/internal/ent/predicate"
 )
 
 // OTPDelete is the builder for deleting a OTP entity.

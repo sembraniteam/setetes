@@ -9,8 +9,8 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"github.com/google/uuid"
-	"github.com/megalodev/setetes/internal/ent/city"
-	"github.com/megalodev/setetes/internal/ent/district"
+	"github.com/sembraniteam/setetes/internal/ent/city"
+	"github.com/sembraniteam/setetes/internal/ent/district"
 )
 
 // District is the model entity for the District schema.

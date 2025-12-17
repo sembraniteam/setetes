@@ -8,8 +8,8 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/megalodev/setetes/internal/ent/city"
-	"github.com/megalodev/setetes/internal/ent/predicate"
+	"github.com/sembraniteam/setetes/internal/ent/city"
+	"github.com/sembraniteam/setetes/internal/ent/predicate"
 )
 
 // CityDelete is the builder for deleting a City entity.

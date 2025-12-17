@@ -11,7 +11,7 @@ import (
 	ut "github.com/go-playground/universal-translator"
 	"github.com/go-playground/validator/v10"
 	entrans "github.com/go-playground/validator/v10/translations/en"
-	"github.com/megalodev/setetes/internal/httpx"
+	"github.com/sembraniteam/setetes/internal/httpx"
 )
 
 const n = 2

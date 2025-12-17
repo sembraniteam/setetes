@@ -8,8 +8,8 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/megalodev/setetes/internal/ent/password"
-	"github.com/megalodev/setetes/internal/ent/predicate"
+	"github.com/sembraniteam/setetes/internal/ent/password"
+	"github.com/sembraniteam/setetes/internal/ent/predicate"
 )
 
 // PasswordDelete is the builder for deleting a Password entity.

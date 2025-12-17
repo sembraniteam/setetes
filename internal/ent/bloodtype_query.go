@@ -12,9 +12,9 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
-	"github.com/megalodev/setetes/internal/ent/account"
-	"github.com/megalodev/setetes/internal/ent/bloodtype"
-	"github.com/megalodev/setetes/internal/ent/predicate"
+	"github.com/sembraniteam/setetes/internal/ent/account"
+	"github.com/sembraniteam/setetes/internal/ent/bloodtype"
+	"github.com/sembraniteam/setetes/internal/ent/predicate"
 )
 
 // BloodTypeQuery is the builder for querying BloodType entities.

@@ -2,9 +2,9 @@ package web
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/megalodev/setetes/internal/httpx/handler"
-	"github.com/megalodev/setetes/internal/httpx/response"
 	"github.com/samber/do/v2"
+	"github.com/sembraniteam/setetes/internal/httpx/handler"
+	"github.com/sembraniteam/setetes/internal/httpx/response"
 )
 
 func Routes(e *gin.Engine, i do.Injector) {

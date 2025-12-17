@@ -9,8 +9,8 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"github.com/google/uuid"
-	"github.com/megalodev/setetes/internal/ent/account"
-	"github.com/megalodev/setetes/internal/ent/bloodtype"
+	"github.com/sembraniteam/setetes/internal/ent/account"
+	"github.com/sembraniteam/setetes/internal/ent/bloodtype"
 )
 
 // BloodType is the model entity for the BloodType schema.

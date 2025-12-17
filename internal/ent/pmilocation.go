@@ -10,9 +10,9 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"github.com/google/uuid"
-	"github.com/megalodev/setetes/internal/ent/pmilocation"
-	"github.com/megalodev/setetes/internal/ent/schema"
-	"github.com/megalodev/setetes/internal/ent/subdistrict"
+	"github.com/sembraniteam/setetes/internal/ent/pmilocation"
+	"github.com/sembraniteam/setetes/internal/ent/schema"
+	"github.com/sembraniteam/setetes/internal/ent/subdistrict"
 )
 
 // PMILocation is the model entity for the PMILocation schema.

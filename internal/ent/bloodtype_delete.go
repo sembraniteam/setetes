@@ -8,8 +8,8 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/megalodev/setetes/internal/ent/bloodtype"
-	"github.com/megalodev/setetes/internal/ent/predicate"
+	"github.com/sembraniteam/setetes/internal/ent/bloodtype"
+	"github.com/sembraniteam/setetes/internal/ent/predicate"
 )
 
 // BloodTypeDelete is the builder for deleting a BloodType entity.

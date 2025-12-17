@@ -9,8 +9,8 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"github.com/google/uuid"
-	"github.com/megalodev/setetes/internal/ent/account"
-	"github.com/megalodev/setetes/internal/ent/otp"
+	"github.com/sembraniteam/setetes/internal/ent/account"
+	"github.com/sembraniteam/setetes/internal/ent/otp"
 )
 
 // OTP is the model entity for the OTP schema.

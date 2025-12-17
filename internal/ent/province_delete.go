@@ -8,8 +8,8 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/megalodev/setetes/internal/ent/predicate"
-	"github.com/megalodev/setetes/internal/ent/province"
+	"github.com/sembraniteam/setetes/internal/ent/predicate"
+	"github.com/sembraniteam/setetes/internal/ent/province"
 )
 
 // ProvinceDelete is the builder for deleting a Province entity.

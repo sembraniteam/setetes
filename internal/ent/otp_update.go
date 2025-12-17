@@ -11,9 +11,9 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
-	"github.com/megalodev/setetes/internal/ent/account"
-	"github.com/megalodev/setetes/internal/ent/otp"
-	"github.com/megalodev/setetes/internal/ent/predicate"
+	"github.com/sembraniteam/setetes/internal/ent/account"
+	"github.com/sembraniteam/setetes/internal/ent/otp"
+	"github.com/sembraniteam/setetes/internal/ent/predicate"
 )
 
 // OTPUpdate is the builder for updating OTP entities.

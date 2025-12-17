@@ -13,9 +13,9 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
-	"github.com/megalodev/setetes/internal/ent/city"
-	"github.com/megalodev/setetes/internal/ent/predicate"
-	"github.com/megalodev/setetes/internal/ent/province"
+	"github.com/sembraniteam/setetes/internal/ent/city"
+	"github.com/sembraniteam/setetes/internal/ent/predicate"
+	"github.com/sembraniteam/setetes/internal/ent/province"
 )
 
 // ProvinceQuery is the builder for querying Province entities.

@@ -9,8 +9,8 @@ import (
 	"entgo.io/ent/dialect"
 	entsql "entgo.io/ent/dialect/sql"
 	_ "github.com/jackc/pgx/v5/stdlib"
-	"github.com/megalodev/setetes/internal"
-	"github.com/megalodev/setetes/internal/ent"
+	"github.com/sembraniteam/setetes/internal"
+	"github.com/sembraniteam/setetes/internal/ent"
 )
 
 type (

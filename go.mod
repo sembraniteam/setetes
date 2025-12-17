@@ -1,4 +1,4 @@
-module github.com/megalodev/setetes
+module github.com/sembraniteam/setetes
 
 go 1.25.5
 

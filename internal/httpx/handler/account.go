@@ -4,12 +4,12 @@ import (
 	"log/slog"
 
 	"github.com/gin-gonic/gin"
-	"github.com/megalodev/setetes/internal/ent"
-	"github.com/megalodev/setetes/internal/httpx"
-	"github.com/megalodev/setetes/internal/httpx/request"
-	"github.com/megalodev/setetes/internal/httpx/response"
-	"github.com/megalodev/setetes/internal/service"
 	"github.com/samber/do/v2"
+	"github.com/sembraniteam/setetes/internal/ent"
+	"github.com/sembraniteam/setetes/internal/httpx"
+	"github.com/sembraniteam/setetes/internal/httpx/request"
+	"github.com/sembraniteam/setetes/internal/httpx/response"
+	"github.com/sembraniteam/setetes/internal/service"
 )
 
 type (

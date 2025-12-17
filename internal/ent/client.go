@@ -10,22 +10,22 @@ import (
 	"reflect"
 
 	"github.com/google/uuid"
-	"github.com/megalodev/setetes/internal/ent/migrate"
+	"github.com/sembraniteam/setetes/internal/ent/migrate"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
-	"github.com/megalodev/setetes/internal/ent/account"
-	"github.com/megalodev/setetes/internal/ent/bloodtype"
-	"github.com/megalodev/setetes/internal/ent/casbinrule"
-	"github.com/megalodev/setetes/internal/ent/city"
-	"github.com/megalodev/setetes/internal/ent/district"
-	"github.com/megalodev/setetes/internal/ent/otp"
-	"github.com/megalodev/setetes/internal/ent/password"
-	"github.com/megalodev/setetes/internal/ent/pmilocation"
-	"github.com/megalodev/setetes/internal/ent/province"
-	"github.com/megalodev/setetes/internal/ent/subdistrict"
+	"github.com/sembraniteam/setetes/internal/ent/account"
+	"github.com/sembraniteam/setetes/internal/ent/bloodtype"
+	"github.com/sembraniteam/setetes/internal/ent/casbinrule"
+	"github.com/sembraniteam/setetes/internal/ent/city"
+	"github.com/sembraniteam/setetes/internal/ent/district"
+	"github.com/sembraniteam/setetes/internal/ent/otp"
+	"github.com/sembraniteam/setetes/internal/ent/password"
+	"github.com/sembraniteam/setetes/internal/ent/pmilocation"
+	"github.com/sembraniteam/setetes/internal/ent/province"
+	"github.com/sembraniteam/setetes/internal/ent/subdistrict"
 )
 
 // Client is the client that holds all ent builders.

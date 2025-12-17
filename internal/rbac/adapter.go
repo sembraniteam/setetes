@@ -3,7 +3,7 @@ package rbac
 import (
 	"context"
 
-	"github.com/megalodev/setetes/internal/ent"
+	"github.com/sembraniteam/setetes/internal/ent"
 )
 
 type Adapter struct {

@@ -6,12 +6,12 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/megalodev/setetes/internal/cryptox"
-	"github.com/megalodev/setetes/internal/cryptox/argon2x"
-	"github.com/megalodev/setetes/internal/ent"
-	"github.com/megalodev/setetes/internal/ent/otp"
-	"github.com/megalodev/setetes/internal/httpx/request"
 	"github.com/samber/do/v2"
+	"github.com/sembraniteam/setetes/internal/cryptox"
+	"github.com/sembraniteam/setetes/internal/cryptox/argon2x"
+	"github.com/sembraniteam/setetes/internal/ent"
+	"github.com/sembraniteam/setetes/internal/ent/otp"
+	"github.com/sembraniteam/setetes/internal/httpx/request"
 )
 
 const (

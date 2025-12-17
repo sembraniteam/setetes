@@ -5,7 +5,7 @@ import (
 
 	"github.com/casbin/casbin/v3"
 	"github.com/casbin/casbin/v3/model"
-	"github.com/megalodev/setetes/internal/ent"
+	"github.com/sembraniteam/setetes/internal/ent"
 )
 
 //go:embed model.conf

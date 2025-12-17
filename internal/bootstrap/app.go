@@ -7,15 +7,15 @@ import (
 	"syscall"
 
 	"github.com/gin-contrib/gzip"
-	"github.com/megalodev/setetes/internal"
-	"github.com/megalodev/setetes/internal/database/postgresx"
-	"github.com/megalodev/setetes/internal/ent"
-	"github.com/megalodev/setetes/internal/httpx"
-	"github.com/megalodev/setetes/internal/httpx/handler"
-	"github.com/megalodev/setetes/internal/httpx/middleware"
-	"github.com/megalodev/setetes/internal/httpx/web"
-	"github.com/megalodev/setetes/internal/service"
 	"github.com/samber/do/v2"
+	"github.com/sembraniteam/setetes/internal"
+	"github.com/sembraniteam/setetes/internal/database/postgresx"
+	"github.com/sembraniteam/setetes/internal/ent"
+	"github.com/sembraniteam/setetes/internal/httpx"
+	"github.com/sembraniteam/setetes/internal/httpx/handler"
+	"github.com/sembraniteam/setetes/internal/httpx/middleware"
+	"github.com/sembraniteam/setetes/internal/httpx/web"
+	"github.com/sembraniteam/setetes/internal/service"
 )
 
 type (

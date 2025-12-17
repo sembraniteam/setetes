@@ -6,7 +6,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/megalodev/setetes/internal/ent"
+	"github.com/sembraniteam/setetes/internal/ent"
 )
 
 // The AccountFunc type is an adapter to allow the use of ordinary

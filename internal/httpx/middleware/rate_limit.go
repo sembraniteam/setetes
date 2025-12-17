@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/megalodev/setetes/internal/httpx/response"
+	"github.com/sembraniteam/setetes/internal/httpx/response"
 )
 
 const (

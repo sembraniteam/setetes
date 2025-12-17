@@ -3,7 +3,7 @@ package main
 import (
 	"embed"
 
-	"github.com/megalodev/setetes/cmd/setetes/base"
+	"github.com/sembraniteam/setetes/cmd/setetes/base"
 	"github.com/spf13/cobra"
 )
 

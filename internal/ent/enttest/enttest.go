@@ -5,12 +5,12 @@ package enttest
 import (
 	"context"
 
-	"github.com/megalodev/setetes/internal/ent"
+	"github.com/sembraniteam/setetes/internal/ent"
 	// required by schema hooks.
-	_ "github.com/megalodev/setetes/internal/ent/runtime"
+	_ "github.com/sembraniteam/setetes/internal/ent/runtime"
 
 	"entgo.io/ent/dialect/sql/schema"
-	"github.com/megalodev/setetes/internal/ent/migrate"
+	"github.com/sembraniteam/setetes/internal/ent/migrate"
 )
 
 type (

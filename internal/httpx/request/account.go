@@ -1,6 +1,6 @@
 package request
 
-import "github.com/megalodev/setetes/internal/ent/account"
+import "github.com/sembraniteam/setetes/internal/ent/account"
 
 type (
 	Account struct {

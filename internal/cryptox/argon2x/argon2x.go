@@ -8,8 +8,8 @@ import (
 	"math"
 	"strings"
 
-	"github.com/megalodev/setetes/internal"
-	"github.com/megalodev/setetes/internal/cryptox"
+	"github.com/sembraniteam/setetes/internal"
+	"github.com/sembraniteam/setetes/internal/cryptox"
 	"golang.org/x/crypto/argon2"
 )
 

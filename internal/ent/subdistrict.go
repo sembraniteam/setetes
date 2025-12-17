@@ -9,8 +9,8 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"github.com/google/uuid"
-	"github.com/megalodev/setetes/internal/ent/district"
-	"github.com/megalodev/setetes/internal/ent/subdistrict"
+	"github.com/sembraniteam/setetes/internal/ent/district"
+	"github.com/sembraniteam/setetes/internal/ent/subdistrict"
 )
 
 // Subdistrict is the model entity for the Subdistrict schema.

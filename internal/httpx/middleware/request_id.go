@@ -3,8 +3,8 @@ package middleware
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
-	"github.com/megalodev/setetes/internal/httpx"
-	"github.com/megalodev/setetes/internal/httpx/response"
+	"github.com/sembraniteam/setetes/internal/httpx"
+	"github.com/sembraniteam/setetes/internal/httpx/response"
 )
 
 const headerXRequestID = "X-Request-ID"

@@ -11,10 +11,10 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
-	"github.com/megalodev/setetes/internal/ent/city"
-	"github.com/megalodev/setetes/internal/ent/district"
-	"github.com/megalodev/setetes/internal/ent/predicate"
-	"github.com/megalodev/setetes/internal/ent/province"
+	"github.com/sembraniteam/setetes/internal/ent/city"
+	"github.com/sembraniteam/setetes/internal/ent/district"
+	"github.com/sembraniteam/setetes/internal/ent/predicate"
+	"github.com/sembraniteam/setetes/internal/ent/province"
 )
 
 // CityUpdate is the builder for updating City entities.

@@ -8,8 +8,8 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/megalodev/setetes/internal"
 	"github.com/samber/do/v2"
+	"github.com/sembraniteam/setetes/internal"
 )
 
 const Timeout = time.Second * 30

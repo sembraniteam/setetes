@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/megalodev/setetes/internal/httpx"
+	"github.com/sembraniteam/setetes/internal/httpx"
 )
 
 func BadRequest(c *gin.Context, code int16, message *Message) {

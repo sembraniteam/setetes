@@ -5,7 +5,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/megalodev/setetes/internal/bootstrap"
+	"github.com/sembraniteam/setetes/internal/bootstrap"
 	"github.com/spf13/cobra"
 )
 
