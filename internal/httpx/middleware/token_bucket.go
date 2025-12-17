@@ -24,6 +24,14 @@ type (
 		cleanupTicker *time.Ticker
 		stopCleanup   chan bool
 	}
+
+	Metadata struct {
+		allowed   bool
+		remaining int32
+		expiry    time.Time
+		limit     int32
+		used      int32
+	}
 )
 
 func NewTokenBucket(threshold int32, ttl time.Duration) *TokenBucket {
@@ -122,9 +130,7 @@ func (t *TokenBucket) GetTokenInfo(
 	return info.RemainingTokens, info.Expiry, t.threshold
 }
 
-func (t *TokenBucket) AllowAndGetInfo(
-	key string,
-) (allowed bool, remaining int32, expiry time.Time, limit, used int32) {
+func (t *TokenBucket) AllowAndGetInfo(key string) Metadata {
 	t.mx.Lock()
 	defer t.mx.Unlock()
 
@@ -138,7 +144,13 @@ func (t *TokenBucket) AllowAndGetInfo(
 		}
 		t.tokens[key] = info
 
-		return true, info.RemainingTokens, info.Expiry, t.threshold, 1
+		return Metadata{
+			allowed:   true,
+			remaining: info.RemainingTokens,
+			expiry:    info.Expiry,
+			limit:     t.threshold,
+			used:      1,
+		}
 	}
 
 	if !ok {
@@ -148,7 +160,13 @@ func (t *TokenBucket) AllowAndGetInfo(
 		}
 		t.tokens[key] = info
 
-		return true, info.RemainingTokens, info.Expiry, t.threshold, 1
+		return Metadata{
+			allowed:   true,
+			remaining: info.RemainingTokens,
+			expiry:    info.Expiry,
+			limit:     t.threshold,
+			used:      1,
+		}
 	}
 
 	if info.RemainingTokens > 0 {
@@ -156,10 +174,22 @@ func (t *TokenBucket) AllowAndGetInfo(
 		t.tokens[key] = info
 		usedTokens := t.threshold - info.RemainingTokens
 
-		return true, info.RemainingTokens, info.Expiry, t.threshold, usedTokens
+		return Metadata{
+			allowed:   true,
+			remaining: info.RemainingTokens,
+			expiry:    info.Expiry,
+			limit:     t.threshold,
+			used:      usedTokens,
+		}
 	}
 
 	usedTokens := t.threshold - info.RemainingTokens
 
-	return false, 0, info.Expiry, t.threshold, usedTokens
+	return Metadata{
+		allowed:   false,
+		remaining: 0,
+		expiry:    info.Expiry,
+		limit:     t.threshold,
+		used:      usedTokens,
+	}
 }

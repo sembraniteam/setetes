@@ -18,27 +18,31 @@ const (
 
 func RateLimitByIP(t *TokenBucket) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		exceeded(c, t, c.ClientIP())
+		metadata := t.AllowAndGetInfo(c.ClientIP())
+
+		c.Header(headerRateLimit, fmt.Sprintf("%d", metadata.limit))
+		c.Header(
+			headerRateLimitRemaining,
+			fmt.Sprintf("%d", metadata.remaining),
+		)
+		c.Header(
+			headerRateLimitReset,
+			fmt.Sprintf("%d", metadata.expiry.Unix()),
+		)
+		c.Header(headerRateLimitUsed, fmt.Sprintf("%d", metadata.used))
+
+		if !metadata.allowed {
+			retryAfter := max(
+				int(metadata.expiry.Unix()-time.Now().Unix()),
+				0,
+			)
+
+			c.Header(headerRetryAfter, fmt.Sprintf("%d", retryAfter))
+			response.ToManyRequest(c)
+			c.Abort()
+			return
+		}
+
+		c.Next()
 	}
-}
-
-func exceeded(ctx *gin.Context, t *TokenBucket, key string) {
-	allowed, remaining, expiry, limit, used := t.AllowAndGetInfo(key)
-
-	ctx.Header(headerRateLimit, fmt.Sprintf("%d", limit))
-	ctx.Header(headerRateLimitRemaining, fmt.Sprintf("%d", remaining))
-	ctx.Header(headerRateLimitReset, fmt.Sprintf("%d", expiry.Unix()))
-	ctx.Header(headerRateLimitUsed, fmt.Sprintf("%d", used))
-
-	if !allowed {
-		retryAfter := max(int(expiry.Unix()-time.Now().Unix()), 0)
-
-		ctx.Header(headerRetryAfter, fmt.Sprintf("%d", retryAfter))
-		ctx.Abort()
-		response.ToManyRequest(ctx)
-
-		return
-	}
-
-	ctx.Next()
 }
