@@ -11,7 +11,6 @@ import (
 	"github.com/google/uuid"
 	"github.com/sembraniteam/setetes/internal/ent/account"
 	"github.com/sembraniteam/setetes/internal/ent/bloodtype"
-	"github.com/sembraniteam/setetes/internal/ent/otp"
 	"github.com/sembraniteam/setetes/internal/ent/password"
 )
 
@@ -61,7 +60,7 @@ type AccountEdges struct {
 	// Password holds the value of the password edge.
 	Password *Password `json:"password,omitempty"`
 	// Otp holds the value of the otp edge.
-	Otp *OTP `json:"otp,omitempty"`
+	Otp []*OTP `json:"otp,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [3]bool
@@ -90,12 +89,10 @@ func (e AccountEdges) PasswordOrErr() (*Password, error) {
 }
 
 // OtpOrErr returns the Otp value or an error if the edge
-// was not loaded in eager-loading, or loaded but was not found.
-func (e AccountEdges) OtpOrErr() (*OTP, error) {
-	if e.Otp != nil {
+// was not loaded in eager-loading.
+func (e AccountEdges) OtpOrErr() ([]*OTP, error) {
+	if e.loadedTypes[2] {
 		return e.Otp, nil
-	} else if e.loadedTypes[2] {
-		return nil, &NotFoundError{label: otp.Label}
 	}
 	return nil, &NotLoadedError{edge: "otp"}
 }

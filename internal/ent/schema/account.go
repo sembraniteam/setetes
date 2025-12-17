@@ -93,7 +93,6 @@ func (Account) Edges() []ent.Edge {
 			StorageKey(edge.Column("account_id")).
 			Annotations(entsql.OnDelete(entsql.Cascade)),
 		edge.To("otp", OTP.Type).
-			Unique().
 			StorageKey(edge.Column("account_id")).
 			Annotations(entsql.OnDelete(entsql.Cascade)),
 	}

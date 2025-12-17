@@ -137,9 +137,9 @@ var (
 		{Name: "updated_at", Type: field.TypeInt64, Nullable: true},
 		{Name: "deleted_at", Type: field.TypeInt64, Nullable: true, Comment: "Represents soft delete timestamp in milliseconds."},
 		{Name: "code_hash", Type: field.TypeString, Unique: true, Size: 64, Comment: "Hashed OTP code. Will be deleted after it is used.", SchemaType: map[string]string{"postgres": "char(64)"}},
-		{Name: "type", Type: field.TypeEnum, Enums: []string{"RESET_PASSWORD", "REGISTER", "CHANGE_PASSWORD"}},
+		{Name: "type", Type: field.TypeEnum, Enums: []string{"ACTIVATION", "RESET_PASSWORD", "CHANGE_PASSWORD"}},
 		{Name: "expired_at", Type: field.TypeInt64, Comment: "The OTP code is only valid for 30 minutes."},
-		{Name: "account_id", Type: field.TypeUUID, Unique: true},
+		{Name: "account_id", Type: field.TypeUUID},
 	}
 	// OtpsTable holds the schema information for the "otps" table.
 	OtpsTable = &schema.Table{

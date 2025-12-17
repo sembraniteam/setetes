@@ -48,7 +48,7 @@ func (a *Account) Register(ctx *gin.Context) {
 			return
 		}
 
-		response.Error(ctx, err)
+		response.InvalidParameter(ctx, err.Error())
 		return
 	}
 
@@ -65,6 +65,23 @@ func (a *Account) Activate(ctx *gin.Context) {
 
 	if err := a.service.Activate(*body); err != nil {
 		a.log.Error("activate account failed", slog.Any("error", err))
+		response.InvalidParameter(ctx, err.Error())
+		return
+	}
+
+	response.Ok(ctx, response.MsgSuccess, nil)
+}
+
+func (a *Account) ResendOTP(ctx *gin.Context) {
+	body, berr := response.ValidateJSON[request.ResendOTP](ctx)
+	if berr != nil {
+		a.log.Error("validate request failed", slog.Any("error", berr))
+		response.Error(ctx, berr)
+		return
+	}
+
+	if err := a.service.ResendOTP(*body); err != nil {
+		a.log.Error("resend OTP failed", slog.Any("error", err))
 		response.InvalidParameter(ctx, err.Error())
 		return
 	}

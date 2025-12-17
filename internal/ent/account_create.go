@@ -191,23 +191,19 @@ func (_c *AccountCreate) SetPassword(v *Password) *AccountCreate {
 	return _c.SetPasswordID(v.ID)
 }
 
-// SetOtpID sets the "otp" edge to the OTP entity by ID.
-func (_c *AccountCreate) SetOtpID(id uuid.UUID) *AccountCreate {
-	_c.mutation.SetOtpID(id)
+// AddOtpIDs adds the "otp" edge to the OTP entity by IDs.
+func (_c *AccountCreate) AddOtpIDs(ids ...uuid.UUID) *AccountCreate {
+	_c.mutation.AddOtpIDs(ids...)
 	return _c
 }
 
-// SetNillableOtpID sets the "otp" edge to the OTP entity by ID if the given value is not nil.
-func (_c *AccountCreate) SetNillableOtpID(id *uuid.UUID) *AccountCreate {
-	if id != nil {
-		_c = _c.SetOtpID(*id)
+// AddOtp adds the "otp" edges to the OTP entity.
+func (_c *AccountCreate) AddOtp(v ...*OTP) *AccountCreate {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
-	return _c
-}
-
-// SetOtp sets the "otp" edge to the OTP entity.
-func (_c *AccountCreate) SetOtp(v *OTP) *AccountCreate {
-	return _c.SetOtpID(v.ID)
+	return _c.AddOtpIDs(ids...)
 }
 
 // Mutation returns the AccountMutation object of the builder.
@@ -472,7 +468,7 @@ func (_c *AccountCreate) createSpec() (*Account, *sqlgraph.CreateSpec) {
 	}
 	if nodes := _c.mutation.OtpIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
+			Rel:     sqlgraph.O2M,
 			Inverse: false,
 			Table:   account.OtpTable,
 			Columns: []string{account.OtpColumn},

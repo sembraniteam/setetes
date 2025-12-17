@@ -76,7 +76,8 @@ type AccountMutation struct {
 	clearedblood_type  bool
 	password           *uuid.UUID
 	clearedpassword    bool
-	otp                *uuid.UUID
+	otp                map[uuid.UUID]struct{}
+	removedotp         map[uuid.UUID]struct{}
 	clearedotp         bool
 	done               bool
 	oldValue           func(context.Context) (*Account, error)
@@ -891,9 +892,14 @@ func (m *AccountMutation) ResetPassword() {
 	m.clearedpassword = false
 }
 
-// SetOtpID sets the "otp" edge to the OTP entity by id.
-func (m *AccountMutation) SetOtpID(id uuid.UUID) {
-	m.otp = &id
+// AddOtpIDs adds the "otp" edge to the OTP entity by ids.
+func (m *AccountMutation) AddOtpIDs(ids ...uuid.UUID) {
+	if m.otp == nil {
+		m.otp = make(map[uuid.UUID]struct{})
+	}
+	for i := range ids {
+		m.otp[ids[i]] = struct{}{}
+	}
 }
 
 // ClearOtp clears the "otp" edge to the OTP entity.
@@ -906,20 +912,29 @@ func (m *AccountMutation) OtpCleared() bool {
 	return m.clearedotp
 }
 
-// OtpID returns the "otp" edge ID in the mutation.
-func (m *AccountMutation) OtpID() (id uuid.UUID, exists bool) {
-	if m.otp != nil {
-		return *m.otp, true
+// RemoveOtpIDs removes the "otp" edge to the OTP entity by IDs.
+func (m *AccountMutation) RemoveOtpIDs(ids ...uuid.UUID) {
+	if m.removedotp == nil {
+		m.removedotp = make(map[uuid.UUID]struct{})
+	}
+	for i := range ids {
+		delete(m.otp, ids[i])
+		m.removedotp[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedOtp returns the removed IDs of the "otp" edge to the OTP entity.
+func (m *AccountMutation) RemovedOtpIDs() (ids []uuid.UUID) {
+	for id := range m.removedotp {
+		ids = append(ids, id)
 	}
 	return
 }
 
 // OtpIDs returns the "otp" edge IDs in the mutation.
-// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
-// OtpID instead. It exists only for internal usage by the builders.
 func (m *AccountMutation) OtpIDs() (ids []uuid.UUID) {
-	if id := m.otp; id != nil {
-		ids = append(ids, *id)
+	for id := range m.otp {
+		ids = append(ids, id)
 	}
 	return
 }
@@ -928,6 +943,7 @@ func (m *AccountMutation) OtpIDs() (ids []uuid.UUID) {
 func (m *AccountMutation) ResetOtp() {
 	m.otp = nil
 	m.clearedotp = false
+	m.removedotp = nil
 }
 
 // Where appends a list predicates to the AccountMutation builder.
@@ -1382,9 +1398,11 @@ func (m *AccountMutation) AddedIDs(name string) []ent.Value {
 			return []ent.Value{*id}
 		}
 	case account.EdgeOtp:
-		if id := m.otp; id != nil {
-			return []ent.Value{*id}
+		ids := make([]ent.Value, 0, len(m.otp))
+		for id := range m.otp {
+			ids = append(ids, id)
 		}
+		return ids
 	}
 	return nil
 }
@@ -1392,12 +1410,23 @@ func (m *AccountMutation) AddedIDs(name string) []ent.Value {
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *AccountMutation) RemovedEdges() []string {
 	edges := make([]string, 0, 3)
+	if m.removedotp != nil {
+		edges = append(edges, account.EdgeOtp)
+	}
 	return edges
 }
 
 // RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
 // the given name in this mutation.
 func (m *AccountMutation) RemovedIDs(name string) []ent.Value {
+	switch name {
+	case account.EdgeOtp:
+		ids := make([]ent.Value, 0, len(m.removedotp))
+		for id := range m.removedotp {
+			ids = append(ids, id)
+		}
+		return ids
+	}
 	return nil
 }
 
@@ -1439,9 +1468,6 @@ func (m *AccountMutation) ClearEdge(name string) error {
 		return nil
 	case account.EdgePassword:
 		m.ClearPassword()
-		return nil
-	case account.EdgeOtp:
-		m.ClearOtp()
 		return nil
 	}
 	return fmt.Errorf("unknown Account unique edge %s", name)

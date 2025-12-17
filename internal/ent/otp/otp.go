@@ -91,8 +91,8 @@ type Type string
 
 // Type values.
 const (
+	TypeActivation     Type = "ACTIVATION"
 	TypeResetPassword  Type = "RESET_PASSWORD"
-	TypeRegister       Type = "REGISTER"
 	TypeChangePassword Type = "CHANGE_PASSWORD"
 )
 
@@ -103,7 +103,7 @@ func (_type Type) String() string {
 // TypeValidator is a validator for the "type" field enum values. It is called by the builders before save.
 func TypeValidator(_type Type) error {
 	switch _type {
-	case TypeResetPassword, TypeRegister, TypeChangePassword:
+	case TypeActivation, TypeResetPassword, TypeChangePassword:
 		return nil
 	default:
 		return fmt.Errorf("otp: invalid enum value for type field: %q", _type)
@@ -158,6 +158,6 @@ func newAccountStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(AccountInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.O2O, true, AccountTable, AccountColumn),
+		sqlgraph.Edge(sqlgraph.M2O, true, AccountTable, AccountColumn),
 	)
 }

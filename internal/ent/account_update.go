@@ -282,23 +282,19 @@ func (_u *AccountUpdate) SetPassword(v *Password) *AccountUpdate {
 	return _u.SetPasswordID(v.ID)
 }
 
-// SetOtpID sets the "otp" edge to the OTP entity by ID.
-func (_u *AccountUpdate) SetOtpID(id uuid.UUID) *AccountUpdate {
-	_u.mutation.SetOtpID(id)
+// AddOtpIDs adds the "otp" edge to the OTP entity by IDs.
+func (_u *AccountUpdate) AddOtpIDs(ids ...uuid.UUID) *AccountUpdate {
+	_u.mutation.AddOtpIDs(ids...)
 	return _u
 }
 
-// SetNillableOtpID sets the "otp" edge to the OTP entity by ID if the given value is not nil.
-func (_u *AccountUpdate) SetNillableOtpID(id *uuid.UUID) *AccountUpdate {
-	if id != nil {
-		_u = _u.SetOtpID(*id)
+// AddOtp adds the "otp" edges to the OTP entity.
+func (_u *AccountUpdate) AddOtp(v ...*OTP) *AccountUpdate {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
-	return _u
-}
-
-// SetOtp sets the "otp" edge to the OTP entity.
-func (_u *AccountUpdate) SetOtp(v *OTP) *AccountUpdate {
-	return _u.SetOtpID(v.ID)
+	return _u.AddOtpIDs(ids...)
 }
 
 // Mutation returns the AccountMutation object of the builder.
@@ -318,10 +314,25 @@ func (_u *AccountUpdate) ClearPassword() *AccountUpdate {
 	return _u
 }
 
-// ClearOtp clears the "otp" edge to the OTP entity.
+// ClearOtp clears all "otp" edges to the OTP entity.
 func (_u *AccountUpdate) ClearOtp() *AccountUpdate {
 	_u.mutation.ClearOtp()
 	return _u
+}
+
+// RemoveOtpIDs removes the "otp" edge to OTP entities by IDs.
+func (_u *AccountUpdate) RemoveOtpIDs(ids ...uuid.UUID) *AccountUpdate {
+	_u.mutation.RemoveOtpIDs(ids...)
+	return _u
+}
+
+// RemoveOtp removes "otp" edges to OTP entities.
+func (_u *AccountUpdate) RemoveOtp(v ...*OTP) *AccountUpdate {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveOtpIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -549,7 +560,7 @@ func (_u *AccountUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if _u.mutation.OtpCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
+			Rel:     sqlgraph.O2M,
 			Inverse: false,
 			Table:   account.OtpTable,
 			Columns: []string{account.OtpColumn},
@@ -560,9 +571,25 @@ func (_u *AccountUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
+	if nodes := _u.mutation.RemovedOtpIDs(); len(nodes) > 0 && !_u.mutation.OtpCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   account.OtpTable,
+			Columns: []string{account.OtpColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(otp.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
 	if nodes := _u.mutation.OtpIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
+			Rel:     sqlgraph.O2M,
 			Inverse: false,
 			Table:   account.OtpTable,
 			Columns: []string{account.OtpColumn},
@@ -847,23 +874,19 @@ func (_u *AccountUpdateOne) SetPassword(v *Password) *AccountUpdateOne {
 	return _u.SetPasswordID(v.ID)
 }
 
-// SetOtpID sets the "otp" edge to the OTP entity by ID.
-func (_u *AccountUpdateOne) SetOtpID(id uuid.UUID) *AccountUpdateOne {
-	_u.mutation.SetOtpID(id)
+// AddOtpIDs adds the "otp" edge to the OTP entity by IDs.
+func (_u *AccountUpdateOne) AddOtpIDs(ids ...uuid.UUID) *AccountUpdateOne {
+	_u.mutation.AddOtpIDs(ids...)
 	return _u
 }
 
-// SetNillableOtpID sets the "otp" edge to the OTP entity by ID if the given value is not nil.
-func (_u *AccountUpdateOne) SetNillableOtpID(id *uuid.UUID) *AccountUpdateOne {
-	if id != nil {
-		_u = _u.SetOtpID(*id)
+// AddOtp adds the "otp" edges to the OTP entity.
+func (_u *AccountUpdateOne) AddOtp(v ...*OTP) *AccountUpdateOne {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
-	return _u
-}
-
-// SetOtp sets the "otp" edge to the OTP entity.
-func (_u *AccountUpdateOne) SetOtp(v *OTP) *AccountUpdateOne {
-	return _u.SetOtpID(v.ID)
+	return _u.AddOtpIDs(ids...)
 }
 
 // Mutation returns the AccountMutation object of the builder.
@@ -883,10 +906,25 @@ func (_u *AccountUpdateOne) ClearPassword() *AccountUpdateOne {
 	return _u
 }
 
-// ClearOtp clears the "otp" edge to the OTP entity.
+// ClearOtp clears all "otp" edges to the OTP entity.
 func (_u *AccountUpdateOne) ClearOtp() *AccountUpdateOne {
 	_u.mutation.ClearOtp()
 	return _u
+}
+
+// RemoveOtpIDs removes the "otp" edge to OTP entities by IDs.
+func (_u *AccountUpdateOne) RemoveOtpIDs(ids ...uuid.UUID) *AccountUpdateOne {
+	_u.mutation.RemoveOtpIDs(ids...)
+	return _u
+}
+
+// RemoveOtp removes "otp" edges to OTP entities.
+func (_u *AccountUpdateOne) RemoveOtp(v ...*OTP) *AccountUpdateOne {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveOtpIDs(ids...)
 }
 
 // Where appends a list predicates to the AccountUpdate builder.
@@ -1144,7 +1182,7 @@ func (_u *AccountUpdateOne) sqlSave(ctx context.Context) (_node *Account, err er
 	}
 	if _u.mutation.OtpCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
+			Rel:     sqlgraph.O2M,
 			Inverse: false,
 			Table:   account.OtpTable,
 			Columns: []string{account.OtpColumn},
@@ -1155,9 +1193,25 @@ func (_u *AccountUpdateOne) sqlSave(ctx context.Context) (_node *Account, err er
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
+	if nodes := _u.mutation.RemovedOtpIDs(); len(nodes) > 0 && !_u.mutation.OtpCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   account.OtpTable,
+			Columns: []string{account.OtpColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(otp.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
 	if nodes := _u.mutation.OtpIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
+			Rel:     sqlgraph.O2M,
 			Inverse: false,
 			Table:   account.OtpTable,
 			Columns: []string{account.OtpColumn},

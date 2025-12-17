@@ -124,7 +124,7 @@ func (_q *AccountQuery) QueryOtp() *OTPQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(account.Table, account.FieldID, selector),
 			sqlgraph.To(otp.Table, otp.FieldID),
-			sqlgraph.Edge(sqlgraph.O2O, false, account.OtpTable, account.OtpColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, account.OtpTable, account.OtpColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
 		return fromU, nil
@@ -481,8 +481,9 @@ func (_q *AccountQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Acco
 		}
 	}
 	if query := _q.withOtp; query != nil {
-		if err := _q.loadOtp(ctx, query, nodes, nil,
-			func(n *Account, e *OTP) { n.Edges.Otp = e }); err != nil {
+		if err := _q.loadOtp(ctx, query, nodes,
+			func(n *Account) { n.Edges.Otp = []*OTP{} },
+			func(n *Account, e *OTP) { n.Edges.Otp = append(n.Edges.Otp, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -551,6 +552,9 @@ func (_q *AccountQuery) loadOtp(ctx context.Context, query *OTPQuery, nodes []*A
 	for i := range nodes {
 		fks = append(fks, nodes[i].ID)
 		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
 	}
 	query.withFKs = true
 	query.Where(predicate.OTP(func(s *sql.Selector) {

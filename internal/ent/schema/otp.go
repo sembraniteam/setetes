@@ -32,8 +32,8 @@ func (OTP) Fields() []ent.Field {
 			SchemaType(map[string]string{dialect.Postgres: "char(64)"}).
 			Comment("Hashed OTP code. Will be deleted after it is used."),
 		field.Enum("type").NamedValues(
+			"Activation", "ACTIVATION",
 			"ResetPassword", "RESET_PASSWORD",
-			"Register", "REGISTER",
 			"ChangePassword", "CHANGE_PASSWORD",
 		).StructTag(`json:"type"`),
 		field.Int64("expired_at").

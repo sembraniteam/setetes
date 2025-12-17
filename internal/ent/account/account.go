@@ -248,10 +248,17 @@ func ByPasswordField(field string, opts ...sql.OrderTermOption) OrderOption {
 	}
 }
 
-// ByOtpField orders the results by otp field.
-func ByOtpField(field string, opts ...sql.OrderTermOption) OrderOption {
+// ByOtpCount orders the results by otp count.
+func ByOtpCount(opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newOtpStep(), sql.OrderByField(field, opts...))
+		sqlgraph.OrderByNeighborsCount(s, newOtpStep(), opts...)
+	}
+}
+
+// ByOtp orders the results by otp terms.
+func ByOtp(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newOtpStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
 func newBloodTypeStep() *sqlgraph.Step {
@@ -272,6 +279,6 @@ func newOtpStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(OtpInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.O2O, false, OtpTable, OtpColumn),
+		sqlgraph.Edge(sqlgraph.O2M, false, OtpTable, OtpColumn),
 	)
 }

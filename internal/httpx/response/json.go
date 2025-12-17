@@ -83,7 +83,7 @@ func InvalidParameter(c *gin.Context, description string) {
 	BadRequest(
 		c,
 		httpx.InvalidParameterCode,
-		NewMessage("INVALID_PARAMETER", description),
+		NewMessage(Warning, description),
 	)
 }
 

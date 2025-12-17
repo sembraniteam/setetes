@@ -1,6 +1,9 @@
 package request
 
-import "github.com/sembraniteam/setetes/internal/ent/account"
+import (
+	"github.com/sembraniteam/setetes/internal/ent/account"
+	"github.com/sembraniteam/setetes/internal/ent/otp"
+)
 
 type (
 	Account struct {
@@ -18,6 +21,11 @@ type (
 		Password       string `json:"password"        validate:"required,min=8,max=128,password"                  reason:"password=password must include uppercase, lowercase, number, and special characters"`
 		RetypePassword string `json:"retype_password" validate:"required,min=8,max=128,password,eqfield=Password" reason:"password=retype_password must include uppercase, lowercase, number, and special characters"`
 	}
+
+	ResendOTP struct {
+		Email string `json:"email" validate:"required,email"`
+		Type  string `json:"type"  validate:"required,oneof=ACTIVATION RESET_PASSWORD CHANGE_PASSWORD" reason:"oneof=type must be one of ACTIVATION, RESET_PASSWORD, CHANGE_PASSWORD"`
+	}
 )
 
 func (a *Account) GetGender() account.Gender {
@@ -26,5 +34,16 @@ func (a *Account) GetGender() account.Gender {
 		return account.GenderFemale
 	default:
 		return account.GenderMale
+	}
+}
+
+func (r *ResendOTP) GetType() otp.Type {
+	switch r.Type {
+	case "ACTIVATION":
+		return otp.TypeActivation
+	case "RESET_PASSWORD":
+		return otp.TypeResetPassword
+	default:
+		return otp.TypeChangePassword
 	}
 }

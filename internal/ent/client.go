@@ -428,7 +428,7 @@ func (c *AccountClient) QueryOtp(_m *Account) *OTPQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(account.Table, account.FieldID, id),
 			sqlgraph.To(otp.Table, otp.FieldID),
-			sqlgraph.Edge(sqlgraph.O2O, false, account.OtpTable, account.OtpColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, account.OtpTable, account.OtpColumn),
 		)
 		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
 		return fromV, nil
@@ -1189,7 +1189,7 @@ func (c *OTPClient) QueryAccount(_m *OTP) *AccountQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(otp.Table, otp.FieldID, id),
 			sqlgraph.To(account.Table, account.FieldID),
-			sqlgraph.Edge(sqlgraph.O2O, true, otp.AccountTable, otp.AccountColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, otp.AccountTable, otp.AccountColumn),
 		)
 		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
 		return fromV, nil
