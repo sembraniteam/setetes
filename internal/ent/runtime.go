@@ -226,18 +226,18 @@ func init() {
 	otpDescDeletedAt := otpMixinFields0[3].Descriptor()
 	// otp.DeletedAtValidator is a validator for the "deleted_at" field. It is called by the builders before save.
 	otp.DeletedAtValidator = otpDescDeletedAt.Validators[0].(func(int64) error)
-	// otpDescCode is the schema descriptor for code field.
-	otpDescCode := otpFields[0].Descriptor()
-	// otp.CodeValidator is a validator for the "code" field. It is called by the builders before save.
-	otp.CodeValidator = func() func(string) error {
-		validators := otpDescCode.Validators
+	// otpDescCodeHash is the schema descriptor for code_hash field.
+	otpDescCodeHash := otpFields[0].Descriptor()
+	// otp.CodeHashValidator is a validator for the "code_hash" field. It is called by the builders before save.
+	otp.CodeHashValidator = func() func(string) error {
+		validators := otpDescCodeHash.Validators
 		fns := [...]func(string) error{
 			validators[0].(func(string) error),
 			validators[1].(func(string) error),
 		}
-		return func(code string) error {
+		return func(code_hash string) error {
 			for _, fn := range fns {
-				if err := fn(code); err != nil {
+				if err := fn(code_hash); err != nil {
 					return err
 				}
 			}

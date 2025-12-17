@@ -24,8 +24,8 @@ type OTP struct {
 	UpdatedAt int64 `json:"updated_at"`
 	// Represents soft delete timestamp in milliseconds.
 	DeletedAt int64 `json:"deleted_at"`
-	// The OTP code must be 6 characters long. Will be deleted after it is used.
-	Code string `json:"-"`
+	// Hashed OTP code. Will be deleted after it is used.
+	CodeHash string `json:"-"`
 	// Type holds the value of the "type" field.
 	Type otp.Type `json:"type"`
 	// The OTP code is only valid for 30 minutes.
@@ -64,7 +64,7 @@ func (*OTP) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case otp.FieldCreatedAt, otp.FieldUpdatedAt, otp.FieldDeletedAt, otp.FieldExpiredAt:
 			values[i] = new(sql.NullInt64)
-		case otp.FieldCode, otp.FieldType:
+		case otp.FieldCodeHash, otp.FieldType:
 			values[i] = new(sql.NullString)
 		case otp.FieldID:
 			values[i] = new(uuid.UUID)
@@ -109,11 +109,11 @@ func (_m *OTP) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				_m.DeletedAt = value.Int64
 			}
-		case otp.FieldCode:
+		case otp.FieldCodeHash:
 			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field code", values[i])
+				return fmt.Errorf("unexpected type %T for field code_hash", values[i])
 			} else if value.Valid {
-				_m.Code = value.String
+				_m.CodeHash = value.String
 			}
 		case otp.FieldType:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -184,7 +184,7 @@ func (_m *OTP) String() string {
 	builder.WriteString("deleted_at=")
 	builder.WriteString(fmt.Sprintf("%v", _m.DeletedAt))
 	builder.WriteString(", ")
-	builder.WriteString("code=<sensitive>")
+	builder.WriteString("code_hash=<sensitive>")
 	builder.WriteString(", ")
 	builder.WriteString("type=")
 	builder.WriteString(fmt.Sprintf("%v", _m.Type))

@@ -13,7 +13,6 @@ output:
 linters:
   enable:
     - gosec
-    - godox
     - govet
     - mnd
     - modernize

@@ -55,9 +55,9 @@ func (_c *OTPCreate) SetNillableDeletedAt(v *int64) *OTPCreate {
 	return _c
 }
 
-// SetCode sets the "code" field.
-func (_c *OTPCreate) SetCode(v string) *OTPCreate {
-	_c.mutation.SetCode(v)
+// SetCodeHash sets the "code_hash" field.
+func (_c *OTPCreate) SetCodeHash(v string) *OTPCreate {
+	_c.mutation.SetCodeHash(v)
 	return _c
 }
 
@@ -139,12 +139,12 @@ func (_c *OTPCreate) check() error {
 			return &ValidationError{Name: "deleted_at", err: fmt.Errorf(`ent: validator failed for field "OTP.deleted_at": %w`, err)}
 		}
 	}
-	if _, ok := _c.mutation.Code(); !ok {
-		return &ValidationError{Name: "code", err: errors.New(`ent: missing required field "OTP.code"`)}
+	if _, ok := _c.mutation.CodeHash(); !ok {
+		return &ValidationError{Name: "code_hash", err: errors.New(`ent: missing required field "OTP.code_hash"`)}
 	}
-	if v, ok := _c.mutation.Code(); ok {
-		if err := otp.CodeValidator(v); err != nil {
-			return &ValidationError{Name: "code", err: fmt.Errorf(`ent: validator failed for field "OTP.code": %w`, err)}
+	if v, ok := _c.mutation.CodeHash(); ok {
+		if err := otp.CodeHashValidator(v); err != nil {
+			return &ValidationError{Name: "code_hash", err: fmt.Errorf(`ent: validator failed for field "OTP.code_hash": %w`, err)}
 		}
 	}
 	if _, ok := _c.mutation.GetType(); !ok {
@@ -213,9 +213,9 @@ func (_c *OTPCreate) createSpec() (*OTP, *sqlgraph.CreateSpec) {
 		_spec.SetField(otp.FieldDeletedAt, field.TypeInt64, value)
 		_node.DeletedAt = value
 	}
-	if value, ok := _c.mutation.Code(); ok {
-		_spec.SetField(otp.FieldCode, field.TypeString, value)
-		_node.Code = value
+	if value, ok := _c.mutation.CodeHash(); ok {
+		_spec.SetField(otp.FieldCodeHash, field.TypeString, value)
+		_node.CodeHash = value
 	}
 	if value, ok := _c.mutation.GetType(); ok {
 		_spec.SetField(otp.FieldType, field.TypeEnum, value)

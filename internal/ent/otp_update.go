@@ -75,16 +75,16 @@ func (_u *OTPUpdate) ClearDeletedAt() *OTPUpdate {
 	return _u
 }
 
-// SetCode sets the "code" field.
-func (_u *OTPUpdate) SetCode(v string) *OTPUpdate {
-	_u.mutation.SetCode(v)
+// SetCodeHash sets the "code_hash" field.
+func (_u *OTPUpdate) SetCodeHash(v string) *OTPUpdate {
+	_u.mutation.SetCodeHash(v)
 	return _u
 }
 
-// SetNillableCode sets the "code" field if the given value is not nil.
-func (_u *OTPUpdate) SetNillableCode(v *string) *OTPUpdate {
+// SetNillableCodeHash sets the "code_hash" field if the given value is not nil.
+func (_u *OTPUpdate) SetNillableCodeHash(v *string) *OTPUpdate {
 	if v != nil {
-		_u.SetCode(*v)
+		_u.SetCodeHash(*v)
 	}
 	return _u
 }
@@ -194,9 +194,9 @@ func (_u *OTPUpdate) check() error {
 			return &ValidationError{Name: "deleted_at", err: fmt.Errorf(`ent: validator failed for field "OTP.deleted_at": %w`, err)}
 		}
 	}
-	if v, ok := _u.mutation.Code(); ok {
-		if err := otp.CodeValidator(v); err != nil {
-			return &ValidationError{Name: "code", err: fmt.Errorf(`ent: validator failed for field "OTP.code": %w`, err)}
+	if v, ok := _u.mutation.CodeHash(); ok {
+		if err := otp.CodeHashValidator(v); err != nil {
+			return &ValidationError{Name: "code_hash", err: fmt.Errorf(`ent: validator failed for field "OTP.code_hash": %w`, err)}
 		}
 	}
 	if v, ok := _u.mutation.GetType(); ok {
@@ -245,8 +245,8 @@ func (_u *OTPUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	if _u.mutation.DeletedAtCleared() {
 		_spec.ClearField(otp.FieldDeletedAt, field.TypeInt64)
 	}
-	if value, ok := _u.mutation.Code(); ok {
-		_spec.SetField(otp.FieldCode, field.TypeString, value)
+	if value, ok := _u.mutation.CodeHash(); ok {
+		_spec.SetField(otp.FieldCodeHash, field.TypeString, value)
 	}
 	if value, ok := _u.mutation.GetType(); ok {
 		_spec.SetField(otp.FieldType, field.TypeEnum, value)
@@ -352,16 +352,16 @@ func (_u *OTPUpdateOne) ClearDeletedAt() *OTPUpdateOne {
 	return _u
 }
 
-// SetCode sets the "code" field.
-func (_u *OTPUpdateOne) SetCode(v string) *OTPUpdateOne {
-	_u.mutation.SetCode(v)
+// SetCodeHash sets the "code_hash" field.
+func (_u *OTPUpdateOne) SetCodeHash(v string) *OTPUpdateOne {
+	_u.mutation.SetCodeHash(v)
 	return _u
 }
 
-// SetNillableCode sets the "code" field if the given value is not nil.
-func (_u *OTPUpdateOne) SetNillableCode(v *string) *OTPUpdateOne {
+// SetNillableCodeHash sets the "code_hash" field if the given value is not nil.
+func (_u *OTPUpdateOne) SetNillableCodeHash(v *string) *OTPUpdateOne {
 	if v != nil {
-		_u.SetCode(*v)
+		_u.SetCodeHash(*v)
 	}
 	return _u
 }
@@ -484,9 +484,9 @@ func (_u *OTPUpdateOne) check() error {
 			return &ValidationError{Name: "deleted_at", err: fmt.Errorf(`ent: validator failed for field "OTP.deleted_at": %w`, err)}
 		}
 	}
-	if v, ok := _u.mutation.Code(); ok {
-		if err := otp.CodeValidator(v); err != nil {
-			return &ValidationError{Name: "code", err: fmt.Errorf(`ent: validator failed for field "OTP.code": %w`, err)}
+	if v, ok := _u.mutation.CodeHash(); ok {
+		if err := otp.CodeHashValidator(v); err != nil {
+			return &ValidationError{Name: "code_hash", err: fmt.Errorf(`ent: validator failed for field "OTP.code_hash": %w`, err)}
 		}
 	}
 	if v, ok := _u.mutation.GetType(); ok {
@@ -552,8 +552,8 @@ func (_u *OTPUpdateOne) sqlSave(ctx context.Context) (_node *OTP, err error) {
 	if _u.mutation.DeletedAtCleared() {
 		_spec.ClearField(otp.FieldDeletedAt, field.TypeInt64)
 	}
-	if value, ok := _u.mutation.Code(); ok {
-		_spec.SetField(otp.FieldCode, field.TypeString, value)
+	if value, ok := _u.mutation.CodeHash(); ok {
+		_spec.SetField(otp.FieldCodeHash, field.TypeString, value)
 	}
 	if value, ok := _u.mutation.GetType(); ok {
 		_spec.SetField(otp.FieldType, field.TypeEnum, value)

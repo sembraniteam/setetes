@@ -4117,7 +4117,7 @@ type OTPMutation struct {
 	addupdated_at  *int64
 	deleted_at     *int64
 	adddeleted_at  *int64
-	code           *string
+	code_hash      *string
 	_type          *otp.Type
 	expired_at     *int64
 	addexpired_at  *int64
@@ -4429,40 +4429,40 @@ func (m *OTPMutation) ResetDeletedAt() {
 	delete(m.clearedFields, otp.FieldDeletedAt)
 }
 
-// SetCode sets the "code" field.
-func (m *OTPMutation) SetCode(s string) {
-	m.code = &s
+// SetCodeHash sets the "code_hash" field.
+func (m *OTPMutation) SetCodeHash(s string) {
+	m.code_hash = &s
 }
 
-// Code returns the value of the "code" field in the mutation.
-func (m *OTPMutation) Code() (r string, exists bool) {
-	v := m.code
+// CodeHash returns the value of the "code_hash" field in the mutation.
+func (m *OTPMutation) CodeHash() (r string, exists bool) {
+	v := m.code_hash
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldCode returns the old "code" field's value of the OTP entity.
+// OldCodeHash returns the old "code_hash" field's value of the OTP entity.
 // If the OTP object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *OTPMutation) OldCode(ctx context.Context) (v string, err error) {
+func (m *OTPMutation) OldCodeHash(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldCode is only allowed on UpdateOne operations")
+		return v, errors.New("OldCodeHash is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldCode requires an ID field in the mutation")
+		return v, errors.New("OldCodeHash requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldCode: %w", err)
+		return v, fmt.Errorf("querying old value for OldCodeHash: %w", err)
 	}
-	return oldValue.Code, nil
+	return oldValue.CodeHash, nil
 }
 
-// ResetCode resets all changes to the "code" field.
-func (m *OTPMutation) ResetCode() {
-	m.code = nil
+// ResetCodeHash resets all changes to the "code_hash" field.
+func (m *OTPMutation) ResetCodeHash() {
+	m.code_hash = nil
 }
 
 // SetType sets the "type" field.
@@ -4640,8 +4640,8 @@ func (m *OTPMutation) Fields() []string {
 	if m.deleted_at != nil {
 		fields = append(fields, otp.FieldDeletedAt)
 	}
-	if m.code != nil {
-		fields = append(fields, otp.FieldCode)
+	if m.code_hash != nil {
+		fields = append(fields, otp.FieldCodeHash)
 	}
 	if m._type != nil {
 		fields = append(fields, otp.FieldType)
@@ -4663,8 +4663,8 @@ func (m *OTPMutation) Field(name string) (ent.Value, bool) {
 		return m.UpdatedAt()
 	case otp.FieldDeletedAt:
 		return m.DeletedAt()
-	case otp.FieldCode:
-		return m.Code()
+	case otp.FieldCodeHash:
+		return m.CodeHash()
 	case otp.FieldType:
 		return m.GetType()
 	case otp.FieldExpiredAt:
@@ -4684,8 +4684,8 @@ func (m *OTPMutation) OldField(ctx context.Context, name string) (ent.Value, err
 		return m.OldUpdatedAt(ctx)
 	case otp.FieldDeletedAt:
 		return m.OldDeletedAt(ctx)
-	case otp.FieldCode:
-		return m.OldCode(ctx)
+	case otp.FieldCodeHash:
+		return m.OldCodeHash(ctx)
 	case otp.FieldType:
 		return m.OldType(ctx)
 	case otp.FieldExpiredAt:
@@ -4720,12 +4720,12 @@ func (m *OTPMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetDeletedAt(v)
 		return nil
-	case otp.FieldCode:
+	case otp.FieldCodeHash:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetCode(v)
+		m.SetCodeHash(v)
 		return nil
 	case otp.FieldType:
 		v, ok := value.(otp.Type)
@@ -4865,8 +4865,8 @@ func (m *OTPMutation) ResetField(name string) error {
 	case otp.FieldDeletedAt:
 		m.ResetDeletedAt()
 		return nil
-	case otp.FieldCode:
-		m.ResetCode()
+	case otp.FieldCodeHash:
+		m.ResetCodeHash()
 		return nil
 	case otp.FieldType:
 		m.ResetType()

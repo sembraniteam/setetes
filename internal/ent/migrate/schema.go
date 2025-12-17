@@ -136,7 +136,7 @@ var (
 		{Name: "created_at", Type: field.TypeInt64, Default: schema.Expr("FLOOR(EXTRACT(EPOCH FROM CURRENT_TIMESTAMP) * 1000)")},
 		{Name: "updated_at", Type: field.TypeInt64, Nullable: true},
 		{Name: "deleted_at", Type: field.TypeInt64, Nullable: true, Comment: "Represents soft delete timestamp in milliseconds."},
-		{Name: "code", Type: field.TypeString, Unique: true, Size: 6, Comment: "The OTP code must be 6 characters long. Will be deleted after it is used.", SchemaType: map[string]string{"postgres": "char(6)"}},
+		{Name: "code_hash", Type: field.TypeString, Unique: true, Size: 64, Comment: "Hashed OTP code. Will be deleted after it is used.", SchemaType: map[string]string{"postgres": "char(64)"}},
 		{Name: "type", Type: field.TypeEnum, Enums: []string{"RESET_PASSWORD", "REGISTER", "CHANGE_PASSWORD"}},
 		{Name: "expired_at", Type: field.TypeInt64, Comment: "The OTP code is only valid for 30 minutes."},
 		{Name: "account_id", Type: field.TypeUUID, Unique: true},
@@ -307,7 +307,7 @@ func init() {
 		Table: "otps",
 	}
 	OtpsTable.Annotation.Checks = map[string]string{
-		"code": "length(code) = 6",
+		"code_hash": "length(code_hash) = 64",
 	}
 	PmiLocationsTable.ForeignKeys[0].RefTable = SubdistrictsTable
 	PmiLocationsTable.Annotation = &entsql.Annotation{}

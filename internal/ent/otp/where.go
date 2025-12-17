@@ -69,9 +69,9 @@ func DeletedAt(v int64) predicate.OTP {
 	return predicate.OTP(sql.FieldEQ(FieldDeletedAt, v))
 }
 
-// Code applies equality check predicate on the "code" field. It's identical to CodeEQ.
-func Code(v string) predicate.OTP {
-	return predicate.OTP(sql.FieldEQ(FieldCode, v))
+// CodeHash applies equality check predicate on the "code_hash" field. It's identical to CodeHashEQ.
+func CodeHash(v string) predicate.OTP {
+	return predicate.OTP(sql.FieldEQ(FieldCodeHash, v))
 }
 
 // ExpiredAt applies equality check predicate on the "expired_at" field. It's identical to ExpiredAtEQ.
@@ -219,69 +219,69 @@ func DeletedAtNotNil() predicate.OTP {
 	return predicate.OTP(sql.FieldNotNull(FieldDeletedAt))
 }
 
-// CodeEQ applies the EQ predicate on the "code" field.
-func CodeEQ(v string) predicate.OTP {
-	return predicate.OTP(sql.FieldEQ(FieldCode, v))
+// CodeHashEQ applies the EQ predicate on the "code_hash" field.
+func CodeHashEQ(v string) predicate.OTP {
+	return predicate.OTP(sql.FieldEQ(FieldCodeHash, v))
 }
 
-// CodeNEQ applies the NEQ predicate on the "code" field.
-func CodeNEQ(v string) predicate.OTP {
-	return predicate.OTP(sql.FieldNEQ(FieldCode, v))
+// CodeHashNEQ applies the NEQ predicate on the "code_hash" field.
+func CodeHashNEQ(v string) predicate.OTP {
+	return predicate.OTP(sql.FieldNEQ(FieldCodeHash, v))
 }
 
-// CodeIn applies the In predicate on the "code" field.
-func CodeIn(vs ...string) predicate.OTP {
-	return predicate.OTP(sql.FieldIn(FieldCode, vs...))
+// CodeHashIn applies the In predicate on the "code_hash" field.
+func CodeHashIn(vs ...string) predicate.OTP {
+	return predicate.OTP(sql.FieldIn(FieldCodeHash, vs...))
 }
 
-// CodeNotIn applies the NotIn predicate on the "code" field.
-func CodeNotIn(vs ...string) predicate.OTP {
-	return predicate.OTP(sql.FieldNotIn(FieldCode, vs...))
+// CodeHashNotIn applies the NotIn predicate on the "code_hash" field.
+func CodeHashNotIn(vs ...string) predicate.OTP {
+	return predicate.OTP(sql.FieldNotIn(FieldCodeHash, vs...))
 }
 
-// CodeGT applies the GT predicate on the "code" field.
-func CodeGT(v string) predicate.OTP {
-	return predicate.OTP(sql.FieldGT(FieldCode, v))
+// CodeHashGT applies the GT predicate on the "code_hash" field.
+func CodeHashGT(v string) predicate.OTP {
+	return predicate.OTP(sql.FieldGT(FieldCodeHash, v))
 }
 
-// CodeGTE applies the GTE predicate on the "code" field.
-func CodeGTE(v string) predicate.OTP {
-	return predicate.OTP(sql.FieldGTE(FieldCode, v))
+// CodeHashGTE applies the GTE predicate on the "code_hash" field.
+func CodeHashGTE(v string) predicate.OTP {
+	return predicate.OTP(sql.FieldGTE(FieldCodeHash, v))
 }
 
-// CodeLT applies the LT predicate on the "code" field.
-func CodeLT(v string) predicate.OTP {
-	return predicate.OTP(sql.FieldLT(FieldCode, v))
+// CodeHashLT applies the LT predicate on the "code_hash" field.
+func CodeHashLT(v string) predicate.OTP {
+	return predicate.OTP(sql.FieldLT(FieldCodeHash, v))
 }
 
-// CodeLTE applies the LTE predicate on the "code" field.
-func CodeLTE(v string) predicate.OTP {
-	return predicate.OTP(sql.FieldLTE(FieldCode, v))
+// CodeHashLTE applies the LTE predicate on the "code_hash" field.
+func CodeHashLTE(v string) predicate.OTP {
+	return predicate.OTP(sql.FieldLTE(FieldCodeHash, v))
 }
 
-// CodeContains applies the Contains predicate on the "code" field.
-func CodeContains(v string) predicate.OTP {
-	return predicate.OTP(sql.FieldContains(FieldCode, v))
+// CodeHashContains applies the Contains predicate on the "code_hash" field.
+func CodeHashContains(v string) predicate.OTP {
+	return predicate.OTP(sql.FieldContains(FieldCodeHash, v))
 }
 
-// CodeHasPrefix applies the HasPrefix predicate on the "code" field.
-func CodeHasPrefix(v string) predicate.OTP {
-	return predicate.OTP(sql.FieldHasPrefix(FieldCode, v))
+// CodeHashHasPrefix applies the HasPrefix predicate on the "code_hash" field.
+func CodeHashHasPrefix(v string) predicate.OTP {
+	return predicate.OTP(sql.FieldHasPrefix(FieldCodeHash, v))
 }
 
-// CodeHasSuffix applies the HasSuffix predicate on the "code" field.
-func CodeHasSuffix(v string) predicate.OTP {
-	return predicate.OTP(sql.FieldHasSuffix(FieldCode, v))
+// CodeHashHasSuffix applies the HasSuffix predicate on the "code_hash" field.
+func CodeHashHasSuffix(v string) predicate.OTP {
+	return predicate.OTP(sql.FieldHasSuffix(FieldCodeHash, v))
 }
 
-// CodeEqualFold applies the EqualFold predicate on the "code" field.
-func CodeEqualFold(v string) predicate.OTP {
-	return predicate.OTP(sql.FieldEqualFold(FieldCode, v))
+// CodeHashEqualFold applies the EqualFold predicate on the "code_hash" field.
+func CodeHashEqualFold(v string) predicate.OTP {
+	return predicate.OTP(sql.FieldEqualFold(FieldCodeHash, v))
 }
 
-// CodeContainsFold applies the ContainsFold predicate on the "code" field.
-func CodeContainsFold(v string) predicate.OTP {
-	return predicate.OTP(sql.FieldContainsFold(FieldCode, v))
+// CodeHashContainsFold applies the ContainsFold predicate on the "code_hash" field.
+func CodeHashContainsFold(v string) predicate.OTP {
+	return predicate.OTP(sql.FieldContainsFold(FieldCodeHash, v))
 }
 
 // TypeEQ applies the EQ predicate on the "type" field.

@@ -20,8 +20,8 @@ const (
 	FieldUpdatedAt = "updated_at"
 	// FieldDeletedAt holds the string denoting the deleted_at field in the database.
 	FieldDeletedAt = "deleted_at"
-	// FieldCode holds the string denoting the code field in the database.
-	FieldCode = "code"
+	// FieldCodeHash holds the string denoting the code_hash field in the database.
+	FieldCodeHash = "code_hash"
 	// FieldType holds the string denoting the type field in the database.
 	FieldType = "type"
 	// FieldExpiredAt holds the string denoting the expired_at field in the database.
@@ -45,7 +45,7 @@ var Columns = []string{
 	FieldCreatedAt,
 	FieldUpdatedAt,
 	FieldDeletedAt,
-	FieldCode,
+	FieldCodeHash,
 	FieldType,
 	FieldExpiredAt,
 }
@@ -80,8 +80,8 @@ var (
 	UpdatedAtValidator func(int64) error
 	// DeletedAtValidator is a validator for the "deleted_at" field. It is called by the builders before save.
 	DeletedAtValidator func(int64) error
-	// CodeValidator is a validator for the "code" field. It is called by the builders before save.
-	CodeValidator func(string) error
+	// CodeHashValidator is a validator for the "code_hash" field. It is called by the builders before save.
+	CodeHashValidator func(string) error
 	// ExpiredAtValidator is a validator for the "expired_at" field. It is called by the builders before save.
 	ExpiredAtValidator func(int64) error
 )
@@ -133,9 +133,9 @@ func ByDeletedAt(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldDeletedAt, opts...).ToFunc()
 }
 
-// ByCode orders the results by the code field.
-func ByCode(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldCode, opts...).ToFunc()
+// ByCodeHash orders the results by the code_hash field.
+func ByCodeHash(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldCodeHash, opts...).ToFunc()
 }
 
 // ByType orders the results by the type field.

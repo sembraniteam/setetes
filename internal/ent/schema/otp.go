@@ -24,13 +24,13 @@ func (OTP) Mixin() []ent.Mixin {
 // Fields of the OTP.
 func (OTP) Fields() []ent.Field {
 	return []ent.Field{
-		field.String("code").
-			MaxLen(6).
+		field.String("code_hash").
+			MaxLen(64).
 			Sensitive().
 			Unique().
 			NotEmpty().
-			SchemaType(map[string]string{dialect.Postgres: "char(6)"}).
-			Comment("The OTP code must be 6 characters long. Will be deleted after it is used."),
+			SchemaType(map[string]string{dialect.Postgres: "char(64)"}).
+			Comment("Hashed OTP code. Will be deleted after it is used."),
 		field.Enum("type").NamedValues(
 			"ResetPassword", "RESET_PASSWORD",
 			"Register", "REGISTER",
@@ -62,7 +62,7 @@ func (OTP) Annotations() []schema.Annotation {
 			Table:        "otps",
 			WithComments: &withComment,
 			Checks: map[string]string{
-				"code": "length(code) = 6",
+				"code_hash": "length(code_hash) = 64",
 			},
 		},
 	}
