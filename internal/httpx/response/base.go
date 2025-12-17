@@ -6,6 +6,7 @@ const (
 )
 
 var (
+	MsgSuccess             = NewMessage("SUCCESS", "Success")
 	MsgPong                = NewMessage("PONG", "PONG")
 	MsgUnknownError        = NewMessage("UNKNOWN_ERROR", "Unknown error")
 	MsgToManyRequest       = NewMessage("TO_MANY_REQUEST", "To many request")
@@ -20,11 +21,8 @@ var (
 		"Invalid X-Request-ID value",
 	)
 	MsgInvalidJSON  = NewMessage("INVALID_JSON", "Invalid JSON format")
-	MsgInvalidForm  = NewMessage("INVALID_FORM", "Invalid FORM format")
-	MsgInvalidQuery = NewMessage(
-		"INVALID_QUERY_PARAM",
-		"Invalid query param format",
-	)
+	MsgInvalidForm  = NewMessage("INVALID_FORM", "Invalid form format")
+	MsgInvalidQuery = NewMessage("INVALID_QUERY", "Invalid query format")
 )
 
 type (

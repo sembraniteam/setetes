@@ -15,9 +15,8 @@ type (
 
 	Activation struct {
 		Code           string `json:"otp_code"        validate:"required,len=6"`
-		Type           string `json:"type"            validate:"required,oneof=RESET_PASSWORD REGISTER CHANGE_PASSWORD" reason:"oneof=type must be one of RESET_PASSWORD, REGISTER, CHANGE_PASSWORD"`
-		Password       string `json:"password"        validate:"required,min=8,max=128,password"                        reason:"password=password must include uppercase, lowercase, number, and special characters"`
-		RetypePassword string `json:"retype_password" validate:"required,min=8,max=128,password,eqfield=Password"       reason:"password=retype_password must include uppercase, lowercase, number, and special characters"`
+		Password       string `json:"password"        validate:"required,min=8,max=128,password"                  reason:"password=password must include uppercase, lowercase, number, and special characters"`
+		RetypePassword string `json:"retype_password" validate:"required,min=8,max=128,password,eqfield=Password" reason:"password=retype_password must include uppercase, lowercase, number, and special characters"`
 	}
 )
 

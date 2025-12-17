@@ -79,6 +79,14 @@ func Error(c *gin.Context, errParam any) {
 	}
 }
 
+func InvalidParameter(c *gin.Context, description string) {
+	BadRequest(
+		c,
+		httpx.InvalidParameterCode,
+		NewMessage("INVALID_PARAMETER", description),
+	)
+}
+
 func json(
 	c *gin.Context,
 	status int,

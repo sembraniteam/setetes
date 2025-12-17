@@ -38,7 +38,7 @@ type Account struct {
 	Email string `json:"email"`
 	// ISO 3166-1 alpha-2 country code representing the user's country (e.g., ID for Indonesia, US for United States).
 	CountryIsoCode string `json:"country_iso_code"`
-	// International dialing code of the user's country (e.g., 62 for Indonesia, 1 for United States). Used for constructing complete phone numbers.
+	// International dialing code of the user's country (e.g., 62 for Indonesia, 1 for United States),  without '+'. Used for constructing complete phone numbers.
 	DialCode string `json:"dial_code"`
 	// PhoneNumber holds the value of the "phone_number" field.
 	PhoneNumber string `json:"phone_number"`

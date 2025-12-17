@@ -17,5 +17,6 @@ func Routes(e *gin.Engine, i do.Injector) {
 	accountG := e.Group("/account/v1")
 	{
 		accountG.POST("/register", accountH.Register)
+		accountG.POST("/activate", accountH.Activate)
 	}
 }

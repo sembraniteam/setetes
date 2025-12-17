@@ -66,6 +66,25 @@ func Sha256(input string) string {
 	return hex.EncodeToString(b[:])
 }
 
+// VerifySha256 verifies if the input matches the expected SHA-256 hash.
+// Returns true if the hash matches, false otherwise.
+func VerifySha256(input, expectedHash string) bool {
+	actualHash := Sha256(input)
+	actualBytes := []byte(actualHash)
+	expectedBytes := []byte(expectedHash)
+
+	if len(actualBytes) != len(expectedBytes) {
+		return false
+	}
+
+	var result byte
+	for i := range actualBytes {
+		result |= actualBytes[i] ^ expectedBytes[i]
+	}
+
+	return result == 0
+}
+
 // MaskNumber masks sensitive numbers showing only first 2 and last 2 digits.
 // Returns format XX****XX where * represents masked digits.
 func MaskNumber(n string) string {

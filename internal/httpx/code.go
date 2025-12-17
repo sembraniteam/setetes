@@ -11,6 +11,7 @@ var (
 	RequiredKeyCode       int16 = 1101
 	InvalidJSONCode       int16 = 1102
 	InvalidFormCode       int16 = 1103
+	InvalidParameterCode  int16 = 1130
 	InvalidFileCode       int16 = 1200
 	InvalidValueCode      int16 = 1201
 	InvalidQueryCode      int16 = 1300
