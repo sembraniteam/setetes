@@ -4,7 +4,7 @@ go 1.25.5
 
 require (
 	entgo.io/ent v0.14.5
-	github.com/casbin/casbin/v3 v3.1.0
+	github.com/casbin/casbin/v3 v3.4.1
 	github.com/fsnotify/fsnotify v1.9.0
 	github.com/gin-contrib/gzip v1.2.5
 	github.com/gin-contrib/timeout v1.1.0
