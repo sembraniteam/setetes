@@ -13,7 +13,7 @@ require (
 	github.com/go-playground/universal-translator v0.18.1
 	github.com/go-playground/validator/v10 v10.29.0
 	github.com/google/uuid v1.6.0
-	github.com/jackc/pgx/v5 v5.7.6
+	github.com/jackc/pgx/v5 v5.8.0
 	github.com/samber/do/v2 v2.0.0
 	github.com/spf13/cobra v1.10.2
 	github.com/spf13/viper v1.21.0
