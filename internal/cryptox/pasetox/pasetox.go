@@ -10,7 +10,7 @@ import (
 const (
 	audience = "com.sembraniteam.setetes"
 	issuer   = "https://setetes.sembraniteam.com"
-	kid      = "ed25519-v1"
+	keyType  = "ed25519-v1"
 )
 
 type (
@@ -68,7 +68,7 @@ func (c *Config) Signed() (string, error) {
 		return "", err
 	}
 
-	return token.V4Sign(secretKey, []byte(kid)), nil
+	return token.V4Sign(secretKey, []byte(keyType)), nil
 }
 
 func (v *Verifier) Verify(token string) (*paseto.Token, error) {
@@ -87,5 +87,5 @@ func (v *Verifier) Verify(token string) (*paseto.Token, error) {
 		paseto.IssuedBy(issuer),
 	)
 
-	return parser.ParseV4Public(publicKey, token, []byte(kid))
+	return parser.ParseV4Public(publicKey, token, []byte(keyType))
 }
