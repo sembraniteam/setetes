@@ -47,5 +47,5 @@ jobs:
           version: v2.7.2
           args: >
             ${{ github.event_name == 'pull_request'
-              && '--timeout=5m --out-format=colored-line-number'
+              && '--timeout=5m'
               || '--timeout=3m' }}
