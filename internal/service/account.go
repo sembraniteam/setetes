@@ -258,8 +258,6 @@ func generateToken(
 		Platform:        platform,
 		Subject:         subject.String(),
 		TokenIdentifier: uuid.NewString(),
-		Audience:        "com.sembraniteam.setetes",
-		Issuer:          "https://setetes.sembraniteam.com",
 		Expiration:      now.Add(exp),
 		IssuedAt:        now.Add(skew),
 		NotBefore:       now.Add(skew),
