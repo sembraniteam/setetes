@@ -7,12 +7,16 @@ import (
 	"github.com/sembraniteam/setetes/internal/cryptox"
 )
 
+const (
+	audience = "com.sembraniteam.setetes"
+	issuer   = "https://setetes.sembraniteam.com"
+	keyType  = "ed25519-v1"
+)
+
 type (
 	Claims struct {
 		Platform        string
-		Issuer          string
 		Subject         string
-		Audience        string
 		Expiration      time.Time
 		NotBefore       time.Time
 		IssuedAt        time.Time
@@ -48,15 +52,14 @@ func NewVerifier(keypair *cryptox.Keypair) *Verifier {
 
 func (c *Config) Signed() (string, error) {
 	token := paseto.NewToken()
-	token.SetIssuer(c.claims.Issuer)
+	token.SetIssuer(issuer)
 	token.SetSubject(c.claims.Subject)
-	token.SetAudience(c.claims.Audience)
+	token.SetAudience(audience)
 	token.SetExpiration(c.claims.Expiration)
 	token.SetNotBefore(c.claims.NotBefore)
 	token.SetIssuedAt(c.claims.IssuedAt)
 	token.SetJti(c.claims.TokenIdentifier)
 	token.SetString("platform", c.claims.Platform)
-	token.SetFooter([]byte("ed25519-v1"))
 
 	secretKey, err := paseto.NewV4AsymmetricSecretKeyFromEd25519(
 		c.keypair.PrivateKey(),
@@ -65,7 +68,7 @@ func (c *Config) Signed() (string, error) {
 		return "", err
 	}
 
-	return token.V4Sign(secretKey, nil), nil
+	return token.V4Sign(secretKey, []byte(keyType)), nil
 }
 
 func (v *Verifier) Verify(token string) (*paseto.Token, error) {
@@ -80,9 +83,9 @@ func (v *Verifier) Verify(token string) (*paseto.Token, error) {
 	parser.AddRule(
 		paseto.NotExpired(),
 		paseto.NotBeforeNbf(),
-		paseto.ForAudience("com.sembraniteam.setetes"),
-		paseto.IssuedBy("https://setetes.sembraniteam.com"),
+		paseto.ForAudience(audience),
+		paseto.IssuedBy(issuer),
 	)
 
-	return parser.ParseV4Public(publicKey, token, nil)
+	return parser.ParseV4Public(publicKey, token, []byte(keyType))
 }
