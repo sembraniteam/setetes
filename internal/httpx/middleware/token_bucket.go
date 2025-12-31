@@ -48,7 +48,7 @@ func NewTokenBucket(threshold int32, ttl time.Duration) *TokenBucket {
 	return tb
 }
 
-func Default() *TokenBucket {
+func DefaultTokenBucket() *TokenBucket {
 	return NewTokenBucket(threshold, ttl)
 }
 
