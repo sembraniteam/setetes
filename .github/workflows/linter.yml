@@ -1,17 +1,19 @@
 name: Go linter with Golangci-lint
+
 on:
   push:
     branches:
       - main
       - develop
+    paths:
+      - "**/*.go"
 
   pull_request:
-    types:
-      - opened
-      - reopened
     branches:
       - main
       - develop
+    paths:
+      - "**/*.go"
 
 permissions:
   contents: read
@@ -20,12 +22,30 @@ permissions:
 jobs:
   lint:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v6.0.1
-      - uses: actions/setup-go@v6.1.0
+      - name: Checkout code
+        uses: actions/checkout@v6.0.1
+
+      - name: Setup Go
+        uses: actions/setup-go@v6.1.0
         with:
           go-version: stable
-      - uses: golangci/golangci-lint-action@v9.2.0
+
+      - name: Cache golangci-lint
+        uses: actions/cache@v5.0.1
         with:
-          verify: true
+          path: |
+            ~/.cache/golangci-lint
+          key: golangci-lint-${{ runner.os }}-${{ hashFiles('**/.golangci.yml') }}
+          restore-keys: |
+            golangci-lint-${{ runner.os }}-
+
+      - name: Run golangci-lint
+        uses: golangci/golangci-lint-action@v9.2.0
+        with:
           version: v2.7.2
+          args: >
+            ${{ github.event_name == 'pull_request'
+              && '--timeout=5m --out-format=colored-line-number'
+              || '--timeout=3m' }}
