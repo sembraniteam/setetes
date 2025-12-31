@@ -84,8 +84,8 @@ func (v *Verifier) Verify(token string) (*paseto.Token, error) {
 	parser.AddRule(
 		paseto.NotExpired(),
 		paseto.NotBeforeNbf(),
-		paseto.ForAudience(issuer),
-		paseto.IssuedBy(audience),
+		paseto.ForAudience(audience),
+		paseto.IssuedBy(issuer),
 	)
 
 	return parser.ParseV4Public(publicKey, token, nil)
