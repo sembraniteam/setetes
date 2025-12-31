@@ -29,5 +29,11 @@ func Routes(e *gin.Engine, i do.Injector) {
 }
 
 func PublicRoutes() []string {
-	return []string{}
+	return []string{
+		"/ping",
+		"/account/v1/authorization",
+		"/account/v1/register",
+		"/account/v1/activate",
+		"/account/v1/resend-otp",
+	}
 }
