@@ -60,7 +60,6 @@ func (c *Config) Signed() (string, error) {
 	token.SetIssuedAt(c.claims.IssuedAt)
 	token.SetJti(c.claims.TokenIdentifier)
 	token.SetString("platform", c.claims.Platform)
-	token.SetFooter([]byte(kid))
 
 	secretKey, err := paseto.NewV4AsymmetricSecretKeyFromEd25519(
 		c.keypair.PrivateKey(),
@@ -69,7 +68,7 @@ func (c *Config) Signed() (string, error) {
 		return "", err
 	}
 
-	return token.V4Sign(secretKey, nil), nil
+	return token.V4Sign(secretKey, []byte(kid)), nil
 }
 
 func (v *Verifier) Verify(token string) (*paseto.Token, error) {
@@ -88,5 +87,5 @@ func (v *Verifier) Verify(token string) (*paseto.Token, error) {
 		paseto.IssuedBy(issuer),
 	)
 
-	return parser.ParseV4Public(publicKey, token, nil)
+	return parser.ParseV4Public(publicKey, token, []byte(kid))
 }
