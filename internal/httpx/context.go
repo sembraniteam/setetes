@@ -53,7 +53,7 @@ func (c Context) GetUserSession() *UserSession {
 	}
 
 	if u, ok := us.(UserSession); ok {
-		return &([]UserSession{u})[0]
+		return &u
 	}
 
 	return nil
@@ -70,7 +70,7 @@ func (c Context) GetUserSessionClaims() *UserSessionClaims {
 	}
 
 	if u, ok := us.(UserSessionClaims); ok {
-		return &([]UserSessionClaims{u})[0]
+		return &u
 	}
 
 	return nil
