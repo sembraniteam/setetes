@@ -13,4 +13,4 @@ schema-clean:
 run:
 	go run ./cmd/setetes/main.go start --config config.yml
 
-.PHONY: lint fmt check ent-gen schema-apply schema-clean run
+.PHONY: fmt ent-gen schema-apply schema-clean run
