@@ -1,2 +1,2 @@
-user default off nopass -@all ~* &*
 # Add your ACL configuration here
+user default off nopass -@all ~* &*
