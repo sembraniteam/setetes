@@ -9,12 +9,15 @@ import (
 	"github.com/gin-contrib/gzip"
 	"github.com/samber/do/v2"
 	"github.com/sembraniteam/setetes/internal"
+	"github.com/sembraniteam/setetes/internal/cryptox"
+	"github.com/sembraniteam/setetes/internal/cryptox/pasetox"
 	"github.com/sembraniteam/setetes/internal/database/postgresx"
 	"github.com/sembraniteam/setetes/internal/ent"
 	"github.com/sembraniteam/setetes/internal/httpx"
 	"github.com/sembraniteam/setetes/internal/httpx/handler"
 	"github.com/sembraniteam/setetes/internal/httpx/middleware"
 	"github.com/sembraniteam/setetes/internal/httpx/web"
+	"github.com/sembraniteam/setetes/internal/rbac"
 	"github.com/sembraniteam/setetes/internal/service"
 )
 
@@ -49,8 +52,26 @@ func (a App) Init() error {
 		return pcl, nil
 	})
 
-	rateLimiter := middleware.Default()
+	rateLimiter := middleware.DefaultTokenBucket()
 	defer rateLimiter.Stop()
+
+	rbacMan, err := rbac.New(pcl)
+	if err != nil {
+		return err
+	}
+
+	keypair, err := cryptox.DefaultKeypair()
+	if err != nil {
+		return err
+	}
+
+	verifier := pasetox.NewVerifier(keypair)
+
+	auth := middleware.NewAuthorizationConfig(
+		rbacMan,
+		verifier,
+		web.PublicRoutes(),
+	)
 
 	server := httpx.NewServer(
 		httpx.Injector(injector),
@@ -59,9 +80,11 @@ func (a App) Init() error {
 			middleware.Timeout(),
 			middleware.RateLimitByIP(rateLimiter),
 			middleware.RequestID(),
+			auth.Authorization(),
 		),
 		httpx.UseRouter(web.Routes),
 	)
+
 	serverErrors := make(chan error, 1)
 	go func() {
 		serverErrors <- server.Run()
