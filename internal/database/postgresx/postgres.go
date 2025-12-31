@@ -23,8 +23,8 @@ type (
 	}
 )
 
-func New(config internal.Config) Postgres {
-	return client{config: config}
+func New() Postgres {
+	return client{config: *internal.Get()}
 }
 
 func (c client) Connect() (*ent.Client, error) {

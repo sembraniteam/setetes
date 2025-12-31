@@ -34,7 +34,9 @@ type (
 	}
 )
 
-func NewServer(c *internal.Config, opts ...Option) Server {
+func NewServer(opts ...Option) Server {
+	c := internal.Get()
+
 	config := &Config{
 		mode: c.App.Mode,
 		Server: &http.Server{

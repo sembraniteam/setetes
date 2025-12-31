@@ -34,12 +34,12 @@ func New(configPath string) Bootstrap {
 
 func (a App) Init() error {
 	injector := do.New(service.Packages, handler.Packages)
-	config, err := internal.LoadConfig(a.configPath)
+	_, err := internal.LoadConfig(a.configPath)
 	if err != nil {
 		return err
 	}
 
-	pdb := postgresx.New(*config)
+	pdb := postgresx.New()
 	pcl, err := pdb.Connect()
 	if err != nil {
 		return err
@@ -53,7 +53,6 @@ func (a App) Init() error {
 	defer rateLimiter.Stop()
 
 	server := httpx.NewServer(
-		config,
 		httpx.Injector(injector),
 		httpx.Middlewares(
 			gzip.Gzip(gzip.DefaultCompression),
