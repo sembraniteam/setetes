@@ -6,9 +6,12 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/samber/do/v2"
+	"github.com/sembraniteam/setetes/internal"
 	"github.com/sembraniteam/setetes/internal/cryptox"
 	"github.com/sembraniteam/setetes/internal/cryptox/argon2x"
+	"github.com/sembraniteam/setetes/internal/cryptox/pasetox"
 	"github.com/sembraniteam/setetes/internal/ent"
 	"github.com/sembraniteam/setetes/internal/ent/account"
 	"github.com/sembraniteam/setetes/internal/ent/otp"
@@ -17,6 +20,7 @@ import (
 
 const (
 	exp     = time.Minute * 30
+	skew    = time.Second * -30
 	charLen = 6
 )
 
@@ -27,6 +31,7 @@ type (
 	}
 
 	Account interface {
+		Authorize(body request.Authorize) (*pasetox.TokenPair, error)
 		Register(body request.Account) error
 		Activate(body request.Activation) error
 		ResendOTP(body request.ResendOTP) error
@@ -38,6 +43,38 @@ func NewAccount(i do.Injector) (Account, error) {
 		client: do.MustInvoke[*ent.Client](i),
 		ctx:    context.Background(),
 	}, nil
+}
+
+func (a *AccountQuery) Authorize(
+	body request.Authorize,
+) (*pasetox.TokenPair, error) {
+	acc, err := a.client.Account.Query().
+		Where(
+			account.EmailEQ(body.Email),
+			account.LockedEQ(false),
+			account.ActivatedEQ(true),
+		).
+		WithPassword().
+		Only(a.ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	ac := argon2x.Default()
+	_, err = ac.VerifyString(
+		[]byte(body.Password),
+		acc.Edges.Password.Hash,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	tokenPair, err := generateToken(acc.ID, body.Platform)
+	if err != nil {
+		return nil, err
+	}
+
+	return tokenPair, nil
 }
 
 func (a *AccountQuery) Register(body request.Account) error {
@@ -195,4 +232,47 @@ func rollback(tx *ent.Tx, err error) error {
 	}
 
 	return err
+}
+
+func generateToken(
+	subject uuid.UUID,
+	platform string,
+) (*pasetox.TokenPair, error) {
+	ed := internal.Get().ED25519
+	privateKey, err := cryptox.LoadPrivateKey(ed.PrivateKeyPath)
+	if err != nil {
+		return nil, err
+	}
+
+	publicKey, err := cryptox.LoadPublicKey(ed.PublicKeyPath)
+	if err != nil {
+		return nil, err
+	}
+	kp, err := cryptox.NewKeypair(privateKey, publicKey)
+	if err != nil {
+		return nil, err
+	}
+
+	now := time.Now()
+	token := pasetox.New(kp, pasetox.Claims{
+		Platform:        platform,
+		Subject:         subject.String(),
+		TokenIdentifier: uuid.NewString(),
+		Audience:        "com.sembraniteam.setetes",
+		Issuer:          "https://setetes.sembraniteam.com",
+		Expiration:      now.Add(exp),
+		IssuedAt:        now.Add(skew),
+		NotBefore:       now.Add(skew),
+	})
+
+	accessToken, err := token.Signed()
+	if err != nil {
+		return nil, err
+	}
+
+	return &pasetox.TokenPair{
+		AccessToken:  accessToken,
+		RefreshToken: cryptox.RandToken(),
+		ExpiresIn:    now.Add(exp).UnixMilli(),
+	}, nil
 }

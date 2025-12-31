@@ -26,6 +26,24 @@ func NewAccount(i do.Injector) (Account, error) {
 	}, nil
 }
 
+func (a *Account) Authorize(ctx *gin.Context) {
+	body, berr := response.ValidateJSON[request.Authorize](ctx)
+	if berr != nil {
+		a.log.Error("validate request failed", slog.Any("error", berr))
+		response.Error(ctx, berr)
+		return
+	}
+
+	tokenPair, err := a.service.Authorize(*body)
+	if err != nil {
+		a.log.Error("authorize failed", slog.Any("error", err))
+		response.InvalidParameter(ctx, err.Error())
+		return
+	}
+
+	response.Ok(ctx, response.MsgSuccess, tokenPair)
+}
+
 func (a *Account) Register(ctx *gin.Context) {
 	body, berr := response.ValidateJSON[request.Account](ctx)
 	if berr != nil {
@@ -52,7 +70,7 @@ func (a *Account) Register(ctx *gin.Context) {
 		return
 	}
 
-	response.Created(ctx, nil, nil)
+	response.Created(ctx, response.MsgSuccess, nil)
 }
 
 func (a *Account) Activate(ctx *gin.Context) {

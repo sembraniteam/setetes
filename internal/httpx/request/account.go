@@ -6,6 +6,12 @@ import (
 )
 
 type (
+	Authorize struct {
+		Email    string `json:"email"    validate:"required,email"`
+		Password string `json:"password" validate:"required,min=8,max=128,password" reason:"password=password must include uppercase, lowercase, number, and special characters"`
+		Platform string `json:"platform" validate:"required,oneof=ANDROID IOS"      reason:"oneof=platform must be one of ANDROID, IOS"`
+	}
+
 	Account struct {
 		NationalID     string `json:"national_id"      validate:"required,len=16"`
 		FullName       string `json:"full_name"        validate:"required,min=3,max=164"`
