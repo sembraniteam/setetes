@@ -45,6 +45,11 @@ type (
 				KeyLength   uint32 `mapstructure:"key_length"`
 			} `mapstructure:"argon2"`
 		} `mapstructure:"password"`
+
+		ED25519 struct {
+			PrivateKeyPath string `mapstructure:"private_key_path"`
+			PublicKeyPath  string `mapstructure:"public_key_path"`
+		} `mapstructure:"ed25519"`
 	}
 )
 

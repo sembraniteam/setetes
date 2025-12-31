@@ -10,7 +10,7 @@ postgres:
   password: YOUR_PASSWORD_HERE
   database: setetes
   sslmode: verify-full
-  sslcert: /path/to/cert/server.crt
+  sslcert: ./path/to/cert/server.crt
   max_open_connections: 25
   max_idle_connections: 5
   connection_max_lifetime: 10 # in minutes
@@ -24,3 +24,7 @@ password:
     parallelism: 1
     salt_length: 16 # min. 16 length
     key_length: 16 # min. 16 length
+
+ed25519:
+  private_key_path: ./path/to/pem/private.pem
+  public_key_path: ./path/to/pem/public.pem
