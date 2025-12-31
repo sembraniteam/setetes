@@ -1,6 +1,3 @@
-# This CITATION.cff file was generated with cffinit.
-# Visit https://bit.ly/cffinit to generate yours today!
-
 cff-version: 1.2.0
 title: Setetes
 message: >-
@@ -11,8 +8,8 @@ authors:
   - given-names: Ahmad
     family-names: Rifa'i
     email: develop.rifai@gmail.com
-    affiliation: Megalodev
-repository-code: 'https://github.com/megalodev/setetes'
+    affiliation: Sembrani Team
+repository-code: 'https://github.com/sembraniteam/setetes'
 keywords:
   - blood-donation
   - palang-merah-indonesia
