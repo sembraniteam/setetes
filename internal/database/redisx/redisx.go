@@ -2,12 +2,14 @@ package redisx
 
 import (
 	"context"
-	"crypto/tls"
 	"fmt"
+	"log/slog"
 
 	"github.com/redis/go-redis/v9"
 	"github.com/sembraniteam/setetes/internal"
 )
+
+var log = slog.Default()
 
 type (
 	client struct {
@@ -26,6 +28,9 @@ func New() Redis {
 
 func (c client) Connect() (*redis.Client, error) {
 	redisConf := c.config.Redis
+
+	// `tls.Config` implementation is planned but has not been included in the
+	// current scope.
 	cl := redis.NewClient(&redis.Options{
 		Addr:            fmt.Sprintf("%s:%d", redisConf.Host, redisConf.Port),
 		Username:        redisConf.Username,
@@ -39,15 +44,8 @@ func (c client) Connect() (*redis.Client, error) {
 		PoolTimeout:     redisConf.PoolTimeout,
 		MinIdleConns:    redisConf.MinIdleConns,
 		MaxIdleConns:    redisConf.MaxIdleConns,
-		MaxActiveConns:  redisConf.MaxActiveConns,
 		ConnMaxLifetime: redisConf.ConnMaxLifetime,
 		ConnMaxIdleTime: redisConf.ConnMaxIdleTime,
-		TLSConfig: &tls.Config{
-			ServerName:         redisConf.Host,
-			MinVersion:         tls.VersionTLS12,
-			InsecureSkipVerify: false,
-			ClientAuth:         tls.RequireAndVerifyClientCert,
-		},
 	})
 
 	_, err := cl.Ping(context.Background()).Result()
@@ -59,9 +57,10 @@ func (c client) Connect() (*redis.Client, error) {
 }
 
 func (c client) Disconnect(rdb *redis.Client) {
-	defer func(rdb *redis.Client) {
-		if err := rdb.Close(); err != nil {
-			fmt.Printf("error closing Redis client: %v\n", err)
-		}
-	}(rdb)
+	if err := rdb.Close(); err != nil {
+		log.Error(
+			"Error disconnecting Redis client",
+			slog.String("error", err.Error()),
+		)
+	}
 }
