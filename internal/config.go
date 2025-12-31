@@ -51,7 +51,7 @@ type (
 			MinIdleConns    int           `mapstructure:"min_idle_conns"`
 			MaxIdleConns    int           `mapstructure:"max_idle_conns"`
 			MaxActiveConns  int           `mapstructure:"max_active_conns"`
-			ConnMinIdleTime time.Duration `mapstructure:"conn_min_idle_time"`
+			ConnMaxIdleTime time.Duration `mapstructure:"conn_max_idle_time"`
 			ConnMaxLifetime time.Duration `mapstructure:"conn_max_lifetime"`
 		} `mapstructure:"redis"`
 
