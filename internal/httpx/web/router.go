@@ -27,3 +27,13 @@ func Routes(e *gin.Engine, i do.Injector) {
 			POST("/resend-otp", accountH.ResendOTP)
 	}
 }
+
+func PublicRoutes() []string {
+	return []string{
+		"/ping",
+		"/account/v1/authorization",
+		"/account/v1/register",
+		"/account/v1/activate",
+		"/account/v1/resend-otp",
+	}
+}

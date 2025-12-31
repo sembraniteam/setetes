@@ -4,6 +4,9 @@
 # Docker default password
 docker/postgres/password
 
+# Docker Redis ACL
+docker/redis/users.acl
+
 # Application migrations
 migrations/*
 

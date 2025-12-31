@@ -5,7 +5,11 @@ import (
 	"github.com/google/uuid"
 )
 
-const requestIDContextKey = "__RequestID__"
+const (
+	requestIDContextKey         = "__RequestID__"
+	userSessionContextKey       = "__UserSession__"
+	userSessionClaimsContextKey = "__UserSessionClaims__"
+)
 
 type Context struct {
 	ctx *gin.Context
@@ -36,4 +40,38 @@ func (c Context) GetRequestID() uuid.UUID {
 	}
 
 	return parsed
+}
+
+func (c Context) SetUserSession(us UserSession) {
+	c.ctx.Set(userSessionContextKey, us)
+}
+
+func (c Context) GetUserSession() *UserSession {
+	us, ok := c.ctx.Get(userSessionContextKey)
+	if !ok || us == nil {
+		return nil
+	}
+
+	if u, ok := us.(UserSession); ok {
+		return &u
+	}
+
+	return nil
+}
+
+func (c Context) SetUserSessionClaims(us UserSessionClaims) {
+	c.ctx.Set(userSessionClaimsContextKey, us)
+}
+
+func (c Context) GetUserSessionClaims() *UserSessionClaims {
+	us, ok := c.ctx.Get(userSessionClaimsContextKey)
+	if !ok || us == nil {
+		return nil
+	}
+
+	if u, ok := us.(UserSessionClaims); ok {
+		return &u
+	}
+
+	return nil
 }

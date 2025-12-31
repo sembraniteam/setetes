@@ -2,7 +2,7 @@ name: setetes-dev
 
 services:
   postgis:
-    image: postgis/postgis:18-3.6-alpine
+    image: postgis/postgis:18-3.6
     platform: linux/amd64
     restart: always
     command: postgres -c config_file=/etc/postgresql/postgres.conf
@@ -14,9 +14,10 @@ services:
       - net-postgres
     healthcheck:
       test: pg_isready -d setetes -U healthcheck -p 13579
-      interval: 60s
-      timeout: 55s
+      interval: 30s
+      timeout: 25s
       retries: 5
+      start_period: 60s
     environment:
       POSTGRES_DB: setetes
       POSTGRES_USER: setetes_app
@@ -30,10 +31,37 @@ services:
       - ./docker/postgres/users.sql:/docker-entrypoint-initdb.d/00-users.sql:ro
       - ./docker/postgres/extension.sql:/docker-entrypoint-initdb.d/01-extension.sql:ro
 
+  redis:
+    image: redis:alpine
+    restart: always
+    command: redis-server /usr/local/etc/redis/redis.conf
+    ports:
+      - "7692:7692"
+    networks:
+      - net-redis
+    environment:
+      TZ: Asia/Jakarta
+    healthcheck:
+      test: redis-cli -h localhost -p 7692 -a healthcheck_pass --user healthcheck PING
+      interval: 30s
+      timeout: 25s
+      retries: 5
+      start_period: 60s
+    volumes:
+      - vol-redis:/data
+      - ./docker/redis/redis.conf:/usr/local/etc/redis/redis.conf:ro
+      - ./docker/redis/users.acl:/etc/redis/users.acl:ro
+
 secrets:
   sec-postgres:
     file: ./docker/postgres/password
 
+volumes:
+  vol-redis:
+    driver: local
+
 networks:
   net-postgres:
+    driver: bridge
+  net-redis:
     driver: bridge

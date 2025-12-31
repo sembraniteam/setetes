@@ -16,6 +16,16 @@ func Created(c *gin.Context, message *Message, result any) {
 	json(c, http.StatusCreated, httpx.OKCode, message, result)
 }
 
+func Forbidden(c *gin.Context) {
+	json(
+		c,
+		http.StatusForbidden,
+		httpx.NoPermissionCode,
+		MsgNoPermission,
+		nil,
+	)
+}
+
 func Ok(c *gin.Context, message *Message, result any) {
 	json(c, http.StatusOK, httpx.OKCode, message, result)
 }

@@ -71,7 +71,7 @@ func (c *Config) Signed() (string, error) {
 	return token.V4Sign(secretKey, []byte(keyType)), nil
 }
 
-func (v *Verifier) Verify(token string) (*paseto.Token, error) {
+func (v *Verifier) Verify(token string) (*Claims, error) {
 	publicKey, err := paseto.NewV4AsymmetricPublicKeyFromEd25519(
 		v.keypair.PublicKey(),
 	)
@@ -87,5 +87,47 @@ func (v *Verifier) Verify(token string) (*paseto.Token, error) {
 		paseto.IssuedBy(issuer),
 	)
 
-	return parser.ParseV4Public(publicKey, token, []byte(keyType))
+	parsed, err := parser.ParseV4Public(publicKey, token, []byte(keyType))
+	if err != nil {
+		return nil, err
+	}
+
+	sub, err := parsed.GetSubject()
+	if err != nil {
+		return nil, err
+	}
+
+	exp, err := parsed.GetExpiration()
+	if err != nil {
+		return nil, err
+	}
+
+	nbf, err := parsed.GetNotBefore()
+	if err != nil {
+		return nil, err
+	}
+
+	iat, err := parsed.GetIssuedAt()
+	if err != nil {
+		return nil, err
+	}
+
+	jti, err := parsed.GetJti()
+	if err != nil {
+		return nil, err
+	}
+
+	plat, err := parsed.GetString("platform")
+	if err != nil {
+		return nil, err
+	}
+
+	return &Claims{
+		Platform:        plat,
+		Subject:         sub,
+		Expiration:      exp,
+		NotBefore:       nbf,
+		IssuedAt:        iat,
+		TokenIdentifier: jti,
+	}, nil
 }

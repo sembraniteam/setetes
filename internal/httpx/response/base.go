@@ -23,6 +23,10 @@ var (
 	MsgInvalidJSON  = NewMessage("INVALID_JSON", "Invalid JSON format")
 	MsgInvalidForm  = NewMessage("INVALID_FORM", "Invalid form format")
 	MsgInvalidQuery = NewMessage("INVALID_QUERY", "Invalid query format")
+	MsgNoPermission = NewMessage(
+		"NO_PERMISSION",
+		"You don't have access to this resource",
+	)
 )
 
 type (

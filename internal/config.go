@@ -27,13 +27,32 @@ type (
 			Username              string        `mapstructure:"username"`
 			Password              string        `mapstructure:"password"`
 			Database              string        `mapstructure:"database"`
-			SSLMode               string        `mapstructure:"sslmode"`
-			SSLCert               string        `mapstructure:"sslcert"`
+			SSLMode               string        `mapstructure:"ssl_mode"`
+			SSLCert               string        `mapstructure:"ssl_cert"`
 			MaxOpenConnections    int           `mapstructure:"max_open_connections"`
 			MaxIdleConnections    int           `mapstructure:"max_idle_connections"`
 			ConnectionMaxLifetime time.Duration `mapstructure:"connection_max_lifetime"`
 			ConnectionMaxIdleTime time.Duration `mapstructure:"connection_max_idle_time"`
 		} `mapstructure:"postgres"`
+
+		Redis struct {
+			Host            string        `mapstructure:"host"`
+			Port            int           `mapstructure:"port"`
+			Username        string        `mapstructure:"username"`
+			Password        string        `mapstructure:"password"`
+			Database        int           `mapstructure:"database"`
+			MaxRetries      int           `mapstructure:"max_retries"`
+			DialTimeout     time.Duration `mapstructure:"dial_timeout"`
+			ReadTimeout     time.Duration `mapstructure:"read_timeout"`
+			WriteTimeout    time.Duration `mapstructure:"write_timeout"`
+			SSLCert         string        `mapstructure:"ssl_cert"`
+			PoolSize        int           `mapstructure:"pool_size"`
+			PoolTimeout     time.Duration `mapstructure:"pool_timeout"`
+			MinIdleConns    int           `mapstructure:"min_idle_conns"`
+			MaxIdleConns    int           `mapstructure:"max_idle_conns"`
+			ConnMaxIdleTime time.Duration `mapstructure:"conn_max_idle_time"`
+			ConnMaxLifetime time.Duration `mapstructure:"conn_max_lifetime"`
+		} `mapstructure:"redis"`
 
 		Password struct {
 			Pepper string `mapstructure:"pepper"`

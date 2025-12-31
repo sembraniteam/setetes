@@ -8,6 +8,8 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/sembraniteam/setetes/internal"
 )
 
 type Keypair struct {
@@ -31,6 +33,21 @@ func NewKeypair(
 		privateKey: privateKey,
 		publicKey:  publicKey,
 	}, nil
+}
+
+func DefaultKeypair() (*Keypair, error) {
+	cfg := internal.Get().ED25519
+	privKey, err := LoadPrivateKey(cfg.PrivateKeyPath)
+	if err != nil {
+		return nil, err
+	}
+
+	pubKey, err := LoadPublicKey(cfg.PublicKeyPath)
+	if err != nil {
+		return nil, err
+	}
+
+	return NewKeypair(privKey, pubKey)
 }
 
 func LoadPrivateKey(path string) (ed25519.PrivateKey, error) {
