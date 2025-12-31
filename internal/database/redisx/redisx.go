@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log/slog"
+	"time"
 
 	"github.com/redis/go-redis/v9"
 	"github.com/sembraniteam/setetes/internal"
@@ -37,15 +38,15 @@ func (c client) Connect() (*redis.Client, error) {
 		Password:        redisConf.Password,
 		DB:              redisConf.Database,
 		MaxRetries:      redisConf.MaxRetries,
-		DialTimeout:     redisConf.DialTimeout,
-		ReadTimeout:     redisConf.ReadTimeout,
-		WriteTimeout:    redisConf.WriteTimeout,
+		DialTimeout:     redisConf.DialTimeout * time.Second,
+		ReadTimeout:     redisConf.ReadTimeout * time.Second,
+		WriteTimeout:    redisConf.WriteTimeout * time.Second,
 		PoolSize:        redisConf.PoolSize,
-		PoolTimeout:     redisConf.PoolTimeout,
+		PoolTimeout:     redisConf.PoolTimeout * time.Second,
 		MinIdleConns:    redisConf.MinIdleConns,
 		MaxIdleConns:    redisConf.MaxIdleConns,
-		ConnMaxLifetime: redisConf.ConnMaxLifetime,
-		ConnMaxIdleTime: redisConf.ConnMaxIdleTime,
+		ConnMaxLifetime: redisConf.ConnMaxLifetime * time.Minute,
+		ConnMaxIdleTime: redisConf.ConnMaxIdleTime * time.Minute,
 	})
 
 	_, err := cl.Ping(context.Background()).Result()
