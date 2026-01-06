@@ -21,8 +21,9 @@ func Routes(e *gin.Engine, i do.Injector) {
 	accountG := e.Group("/account/v1")
 	{
 		accountG.POST("/authorization", accountH.Authorize)
-		accountG.POST("/register", accountH.Register)
 		accountG.POST("/activate", accountH.Activate)
+		accountG.POST("/register", accountH.Register)
+		accountG.GET("/self", accountH.Self)
 		accountG.Use(middleware.RateLimitByIP(rateLimiter)).
 			POST("/resend-otp", accountH.ResendOTP)
 	}

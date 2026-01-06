@@ -8,7 +8,6 @@ import (
 	"fmt"
 	"time"
 
-	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
@@ -211,11 +210,8 @@ func (_c *PMILocationCreate) check() error {
 			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "PMILocation.name": %w`, err)}
 		}
 	}
-	switch _c.driver.Dialect() {
-	case dialect.MySQL, dialect.SQLite:
-		if _, ok := _c.mutation.BedCapacities(); !ok {
-			return &ValidationError{Name: "bed_capacities", err: errors.New(`ent: missing required field "PMILocation.bed_capacities"`)}
-		}
+	if _, ok := _c.mutation.BedCapacities(); !ok {
+		return &ValidationError{Name: "bed_capacities", err: errors.New(`ent: missing required field "PMILocation.bed_capacities"`)}
 	}
 	if v, ok := _c.mutation.BedCapacities(); ok {
 		if err := pmilocation.BedCapacitiesValidator(v); err != nil {

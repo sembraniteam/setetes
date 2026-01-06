@@ -106,3 +106,19 @@ func (a *Account) ResendOTP(ctx *gin.Context) {
 
 	response.Ok(ctx, response.MsgSuccess, nil)
 }
+
+func (a *Account) Self(ctx *gin.Context) {
+	httpContext := httpx.NewContext(ctx)
+	session := httpContext.GetUserSession()
+	if session != nil {
+		account, err := a.service.Self(session.ID)
+		if err != nil {
+			a.log.Error("get account failed", slog.Any("error", err))
+			response.Error(ctx, err)
+			return
+		}
+
+		response.Ok(ctx, response.MsgSuccess, account)
+		return
+	}
+}

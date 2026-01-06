@@ -2,10 +2,17 @@ package rbac
 
 import (
 	_ "embed"
+	"errors"
 
 	"github.com/casbin/casbin/v3"
 	"github.com/casbin/casbin/v3/model"
+	"github.com/casbin/casbin/v3/util"
 	"github.com/sembraniteam/setetes/internal/ent"
+)
+
+const (
+	args2Len = 2
+	args4Len = 4
 )
 
 //go:embed model.conf
@@ -30,6 +37,9 @@ func New(client *ent.Client) (*Manager, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	e.AddFunction("abacMatch", abacMatch)
+	e.AddFunction("domMatch", domainMatch)
 
 	if err = e.LoadPolicy(); err != nil {
 		return nil, err
@@ -73,8 +83,8 @@ func (m *Manager) RemoveRoleForUser(user, role string) error {
 	return m.enforcer.SavePolicy()
 }
 
-func (m *Manager) AddPolicy(role, resource, action string) error {
-	_, err := m.enforcer.AddPolicy(role, resource, action)
+func (m *Manager) AddPolicy(role, domain, resource, action string) error {
+	_, err := m.enforcer.AddPolicy(role, domain, resource, action)
 	if err != nil {
 		return err
 	}
@@ -82,11 +92,41 @@ func (m *Manager) AddPolicy(role, resource, action string) error {
 	return m.enforcer.SavePolicy()
 }
 
-func (m *Manager) RemovePolicy(role, resource, action string) error {
-	_, err := m.enforcer.RemovePolicy(role, resource, action)
+func (m *Manager) RemovePolicy(role, domain, resource, action string) error {
+	_, err := m.enforcer.RemovePolicy(role, domain, resource, action)
 	if err != nil {
 		return err
 	}
 
 	return m.enforcer.SavePolicy()
+}
+
+func abacMatch(args ...any) (any, error) {
+	if len(args) != args4Len {
+		return false, errors.New("abacMatch expects 4 arguments")
+	}
+
+	return true, nil
+}
+
+func domainMatch(args ...any) (any, error) {
+	if len(args) != args2Len {
+		return false, errors.New("domainMatch expects 2 arguments")
+	}
+
+	domain, ok := args[0].(string)
+	if !ok {
+		return false, errors.New("domainMatch expects string request")
+	}
+
+	policy, ok := args[1].(string)
+	if !ok {
+		return false, errors.New("domainMatch expects string policy")
+	}
+
+	if policy == "" || policy == "*" {
+		return true, nil
+	}
+
+	return util.KeyMatch2(domain, policy), nil
 }

@@ -35,6 +35,7 @@ type (
 		Register(body request.Account) error
 		Activate(body request.Activation) error
 		ResendOTP(body request.ResendOTP) error
+		Self(id uuid.UUID) (*ent.Account, error)
 	}
 )
 
@@ -220,6 +221,10 @@ func (a *AccountQuery) ResendOTP(body request.ResendOTP) error {
 	}
 
 	return tx.Commit()
+}
+
+func (a *AccountQuery) Self(id uuid.UUID) (*ent.Account, error) {
+	return a.client.Account.Get(a.ctx, id)
 }
 
 func genOTP() (string, error) {
