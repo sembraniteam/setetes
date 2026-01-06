@@ -111,8 +111,9 @@ func auth(
 
 	allowed, err := enforcer.Enforce(
 		claims.Subject,
-		action,
+		claims.Platform,
 		resource,
+		action,
 	)
 	if err != nil {
 		log.Error(
