@@ -121,6 +121,4 @@ func (a *Account) Self(ctx *gin.Context) {
 		response.Ok(ctx, response.MsgSuccess, account)
 		return
 	}
-
-	return
 }
