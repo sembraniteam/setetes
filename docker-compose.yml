@@ -52,6 +52,50 @@ services:
       - ./docker/redis/redis.conf:/usr/local/etc/redis/redis.conf:ro
       - ./docker/redis/users.acl:/etc/redis/users.acl:ro
 
+  atlas:
+    image: arigaio/atlas:latest-alpine
+    restart: no
+    depends_on:
+      postgis:
+        condition: service_healthy
+    command: migrate apply --env docker
+    working_dir: /app
+    networks:
+      - net-postgres
+    secrets:
+      - sec-postgres
+    volumes:
+      - vol-atlas:/app
+      - ./atlas.hcl:/app/atlas.hcl:ro
+      - ./migrations:/app/migrations
+
+#  app:
+#    build:
+#      dockerfile: ./docker/Dockerfile
+#    restart: unless-stopped
+#    command: start --config config.yml
+#    depends_on:
+#      atlas:
+#        condition: service_completed_successfully
+#      redis:
+#        condition: service_healthy
+#    ports:
+#      - "8080:8080"
+#    networks:
+#      - net-app
+#      - net-postgres
+#      - net-redis
+#    healthcheck:
+#      test: wget --spider -q http://127.0.0.1:8080/ping
+#      interval: 30s
+#      timeout: 25s
+#      retries: 5
+#      start_period: 60s
+#    volumes:
+#      - ./config.yml:/app/config.yml:ro
+#      - ./ed25519-private.pem:/app/ed25519-private.pem:ro
+#      - ./ed25519-public.pem:/app/ed25519-public.pem:ro
+
 secrets:
   sec-postgres:
     file: ./docker/postgres/password
@@ -59,8 +103,12 @@ secrets:
 volumes:
   vol-redis:
     driver: local
+  vol-atlas:
+    driver: local
 
 networks:
+  net-app:
+    driver: bridge
   net-postgres:
     driver: bridge
   net-redis:
