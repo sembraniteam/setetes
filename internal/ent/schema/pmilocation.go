@@ -33,7 +33,7 @@ func (PMILocation) Fields() []ent.Field {
 			Default(0).
 			Positive().
 			StructTag(`json:"bed_capacities"`).
-			SchemaType(map[string]string{dialect.Postgres: "smallserial"}),
+			SchemaType(map[string]string{dialect.Postgres: "smallint"}),
 		field.Other("lat_lng", &GeoPoint{}).
 			SchemaType(map[string]string{dialect.Postgres: "geography(Point,4326)"}).
 			StructTag(`json:"lat_lng"`),

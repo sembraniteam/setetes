@@ -169,7 +169,7 @@ var (
 		{Name: "updated_at", Type: field.TypeInt64, Nullable: true},
 		{Name: "deleted_at", Type: field.TypeInt64, Nullable: true, Comment: "Represents soft delete timestamp in milliseconds."},
 		{Name: "name", Type: field.TypeString, Size: 164},
-		{Name: "bed_capacities", Type: field.TypeInt16, Default: 0, SchemaType: map[string]string{"postgres": "smallserial"}},
+		{Name: "bed_capacities", Type: field.TypeInt16, Default: 0, SchemaType: map[string]string{"postgres": "smallint"}},
 		{Name: "lat_lng", Type: field.TypeOther, SchemaType: map[string]string{"postgres": "geography(Point,4326)"}},
 		{Name: "street", Type: field.TypeString, Size: 2147483647},
 		{Name: "email", Type: field.TypeString, Unique: true, Nullable: true, Size: 164},
