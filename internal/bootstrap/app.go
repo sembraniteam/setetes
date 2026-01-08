@@ -8,7 +8,7 @@ import (
 
 	"github.com/gin-contrib/gzip"
 	"github.com/samber/do/v2"
-	"github.com/sembraniteam/setetes/internal"
+	"github.com/sembraniteam/setetes/internal/config"
 	"github.com/sembraniteam/setetes/internal/cryptox"
 	"github.com/sembraniteam/setetes/internal/cryptox/pasetox"
 	"github.com/sembraniteam/setetes/internal/database/postgresx"
@@ -37,7 +37,7 @@ func New(configPath string) Bootstrap {
 
 func (a App) Init() error {
 	injector := do.New(service.Packages, handler.Packages)
-	_, err := internal.LoadConfig(a.configPath)
+	_, err := config.LoadConfig(a.configPath)
 	if err != nil {
 		return err
 	}

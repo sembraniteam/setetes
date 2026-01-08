@@ -7,14 +7,14 @@ import (
 	"time"
 
 	"github.com/redis/go-redis/v9"
-	"github.com/sembraniteam/setetes/internal"
+	"github.com/sembraniteam/setetes/internal/config"
 )
 
 var log = slog.Default()
 
 type (
 	client struct {
-		config internal.Config
+		config config.Config
 	}
 
 	Redis interface {
@@ -24,7 +24,7 @@ type (
 )
 
 func New() Redis {
-	return client{config: *internal.Get()}
+	return client{config: *config.Get()}
 }
 
 func (c client) Connect() (*redis.Client, error) {

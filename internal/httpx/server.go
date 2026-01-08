@@ -9,7 +9,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/samber/do/v2"
-	"github.com/sembraniteam/setetes/internal"
+	"github.com/sembraniteam/setetes/internal/config"
 )
 
 const Timeout = time.Second * 30
@@ -35,9 +35,8 @@ type (
 )
 
 func NewServer(opts ...Option) Server {
-	c := internal.Get()
-
-	config := &Config{
+	c := config.Get()
+	cfg := &Config{
 		mode: c.App.Mode,
 		Server: &http.Server{
 			Addr:              fmt.Sprintf("%s:%d", c.App.Host, c.App.Port),
@@ -49,13 +48,13 @@ func NewServer(opts ...Option) Server {
 	}
 
 	for _, opt := range opts {
-		opt(config)
+		opt(cfg)
 	}
 
-	config.engine = config.buildEngine()
-	config.Handler = config.engine
+	cfg.engine = cfg.buildEngine()
+	cfg.Handler = cfg.engine
 
-	return config
+	return cfg
 }
 
 func (c *Config) Run() error {

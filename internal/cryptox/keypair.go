@@ -9,7 +9,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/sembraniteam/setetes/internal"
+	"github.com/sembraniteam/setetes/internal/config"
 )
 
 type Keypair struct {
@@ -36,7 +36,7 @@ func NewKeypair(
 }
 
 func DefaultKeypair() (*Keypair, error) {
-	cfg := internal.Get().ED25519
+	cfg := config.Get().ED25519
 	privKey, err := LoadPrivateKey(cfg.PrivateKeyPath)
 	if err != nil {
 		return nil, err

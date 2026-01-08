@@ -9,13 +9,13 @@ import (
 	"entgo.io/ent/dialect"
 	entsql "entgo.io/ent/dialect/sql"
 	_ "github.com/jackc/pgx/v5/stdlib"
-	"github.com/sembraniteam/setetes/internal"
+	"github.com/sembraniteam/setetes/internal/config"
 	"github.com/sembraniteam/setetes/internal/ent"
 )
 
 type (
 	client struct {
-		config internal.Config
+		config config.Config
 	}
 
 	Postgres interface {
@@ -24,7 +24,7 @@ type (
 )
 
 func New() Postgres {
-	return client{config: *internal.Get()}
+	return client{config: *config.Get()}
 }
 
 func (c client) Connect() (*ent.Client, error) {
