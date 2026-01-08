@@ -232,7 +232,13 @@ func parseHashString(hashString string) (*hashParams, error) {
 
 	var memory, iterations uint32
 	var parallelism uint8
-	if _, err := fmt.Sscanf(parts[2], "m=%d,t=%d,p=%d", &memory, &iterations, &parallelism); err != nil {
+	if _, err := fmt.Sscanf(
+		parts[2],
+		"m=%d,t=%d,p=%d",
+		&memory,
+		&iterations,
+		&parallelism,
+	); err != nil {
 		return nil, fmt.Errorf("invalid parameters format: %w", err)
 	}
 
