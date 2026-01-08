@@ -809,7 +809,7 @@ func HasBloodType() predicate.Account {
 	return predicate.Account(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.O2O, false, BloodTypeTable, BloodTypeColumn),
+			sqlgraph.Edge(sqlgraph.M2O, false, BloodTypeTable, BloodTypeColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
@@ -855,7 +855,7 @@ func HasOtp() predicate.Account {
 	return predicate.Account(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, OtpTable, OtpColumn),
+			sqlgraph.Edge(sqlgraph.O2M, true, OtpTable, OtpColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
@@ -865,6 +865,29 @@ func HasOtp() predicate.Account {
 func HasOtpWith(preds ...predicate.OTP) predicate.Account {
 	return predicate.Account(func(s *sql.Selector) {
 		step := newOtpStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasRole applies the HasEdge predicate on the "role" edge.
+func HasRole() predicate.Account {
+	return predicate.Account(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, RoleTable, RoleColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasRoleWith applies the HasEdge predicate on the "role" edge with a given conditions (other predicates).
+func HasRoleWith(preds ...predicate.Role) predicate.Account {
+	return predicate.Account(func(s *sql.Selector) {
+		step := newRoleStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)

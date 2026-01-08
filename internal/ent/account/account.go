@@ -48,15 +48,17 @@ const (
 	EdgePassword = "password"
 	// EdgeOtp holds the string denoting the otp edge name in mutations.
 	EdgeOtp = "otp"
+	// EdgeRole holds the string denoting the role edge name in mutations.
+	EdgeRole = "role"
 	// Table holds the table name of the account in the database.
 	Table = "accounts"
 	// BloodTypeTable is the table that holds the blood_type relation/edge.
-	BloodTypeTable = "blood_types"
+	BloodTypeTable = "accounts"
 	// BloodTypeInverseTable is the table name for the BloodType entity.
 	// It exists in this package in order to avoid circular dependency with the "bloodtype" package.
 	BloodTypeInverseTable = "blood_types"
 	// BloodTypeColumn is the table column denoting the blood_type relation/edge.
-	BloodTypeColumn = "account_id"
+	BloodTypeColumn = "blood_type_id"
 	// PasswordTable is the table that holds the password relation/edge.
 	PasswordTable = "passwords"
 	// PasswordInverseTable is the table name for the Password entity.
@@ -71,6 +73,13 @@ const (
 	OtpInverseTable = "otps"
 	// OtpColumn is the table column denoting the otp relation/edge.
 	OtpColumn = "account_id"
+	// RoleTable is the table that holds the role relation/edge.
+	RoleTable = "accounts"
+	// RoleInverseTable is the table name for the Role entity.
+	// It exists in this package in order to avoid circular dependency with the "role" package.
+	RoleInverseTable = "roles"
+	// RoleColumn is the table column denoting the role relation/edge.
+	RoleColumn = "role_id"
 )
 
 // Columns holds all SQL columns for account fields.
@@ -92,10 +101,22 @@ var Columns = []string{
 	FieldTempLockedAt,
 }
 
+// ForeignKeys holds the SQL foreign-keys that are owned by the "accounts"
+// table and are not defined as standalone fields in the schema.
+var ForeignKeys = []string{
+	"blood_type_id",
+	"role_id",
+}
+
 // ValidColumn reports if the column name is valid (part of the table columns).
 func ValidColumn(column string) bool {
 	for i := range Columns {
 		if column == Columns[i] {
+			return true
+		}
+	}
+	for i := range ForeignKeys {
+		if column == ForeignKeys[i] {
 			return true
 		}
 	}
@@ -261,11 +282,18 @@ func ByOtp(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newOtpStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
+
+// ByRoleField orders the results by role field.
+func ByRoleField(field string, opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newRoleStep(), sql.OrderByField(field, opts...))
+	}
+}
 func newBloodTypeStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(BloodTypeInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.O2O, false, BloodTypeTable, BloodTypeColumn),
+		sqlgraph.Edge(sqlgraph.M2O, false, BloodTypeTable, BloodTypeColumn),
 	)
 }
 func newPasswordStep() *sqlgraph.Step {
@@ -279,6 +307,13 @@ func newOtpStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(OtpInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.O2M, false, OtpTable, OtpColumn),
+		sqlgraph.Edge(sqlgraph.O2M, true, OtpTable, OtpColumn),
+	)
+}
+func newRoleStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(RoleInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2O, false, RoleTable, RoleColumn),
 	)
 }

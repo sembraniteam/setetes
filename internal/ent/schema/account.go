@@ -86,15 +86,17 @@ func (Account) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.To("blood_type", BloodType.Type).
 			Unique().
-			StorageKey(edge.Column("account_id")).
-			Annotations(entsql.OnDelete(entsql.Cascade)),
+			Required().
+			StorageKey(edge.Column("blood_type_id")),
 		edge.To("password", Password.Type).
 			Unique().
-			StorageKey(edge.Column("account_id")).
-			Annotations(entsql.OnDelete(entsql.Cascade)),
-		edge.To("otp", OTP.Type).
-			StorageKey(edge.Column("account_id")).
-			Annotations(entsql.OnDelete(entsql.Cascade)),
+			StorageKey(edge.Column("account_id")),
+		edge.From("otp", OTP.Type).
+			Ref("account"),
+		edge.To("role", Role.Type).
+			Unique().
+			Required().
+			StorageKey(edge.Column("role_id")),
 	}
 }
 

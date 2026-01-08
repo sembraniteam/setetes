@@ -260,7 +260,7 @@ func (_u *OTPUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	if _u.mutation.AccountCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
-			Inverse: true,
+			Inverse: false,
 			Table:   otp.AccountTable,
 			Columns: []string{otp.AccountColumn},
 			Bidi:    false,
@@ -273,7 +273,7 @@ func (_u *OTPUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	if nodes := _u.mutation.AccountIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
-			Inverse: true,
+			Inverse: false,
 			Table:   otp.AccountTable,
 			Columns: []string{otp.AccountColumn},
 			Bidi:    false,
@@ -567,7 +567,7 @@ func (_u *OTPUpdateOne) sqlSave(ctx context.Context) (_node *OTP, err error) {
 	if _u.mutation.AccountCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
-			Inverse: true,
+			Inverse: false,
 			Table:   otp.AccountTable,
 			Columns: []string{otp.AccountColumn},
 			Bidi:    false,
@@ -580,7 +580,7 @@ func (_u *OTPUpdateOne) sqlSave(ctx context.Context) (_node *OTP, err error) {
 	if nodes := _u.mutation.AccountIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
-			Inverse: true,
+			Inverse: false,
 			Table:   otp.AccountTable,
 			Columns: []string{otp.AccountColumn},
 			Bidi:    false,

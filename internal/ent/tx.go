@@ -28,8 +28,14 @@ type Tx struct {
 	PMILocation *PMILocationClient
 	// Password is the client for interacting with the Password builders.
 	Password *PasswordClient
+	// Permission is the client for interacting with the Permission builders.
+	Permission *PermissionClient
 	// Province is the client for interacting with the Province builders.
 	Province *ProvinceClient
+	// Role is the client for interacting with the Role builders.
+	Role *RoleClient
+	// RolePermission is the client for interacting with the RolePermission builders.
+	RolePermission *RolePermissionClient
 	// Subdistrict is the client for interacting with the Subdistrict builders.
 	Subdistrict *SubdistrictClient
 
@@ -171,7 +177,10 @@ func (tx *Tx) init() {
 	tx.OTP = NewOTPClient(tx.config)
 	tx.PMILocation = NewPMILocationClient(tx.config)
 	tx.Password = NewPasswordClient(tx.config)
+	tx.Permission = NewPermissionClient(tx.config)
 	tx.Province = NewProvinceClient(tx.config)
+	tx.Role = NewRoleClient(tx.config)
+	tx.RolePermission = NewRolePermissionClient(tx.config)
 	tx.Subdistrict = NewSubdistrictClient(tx.config)
 }
 

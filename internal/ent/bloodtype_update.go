@@ -109,15 +109,19 @@ func (_u *BloodTypeUpdate) ClearRhesus() *BloodTypeUpdate {
 	return _u
 }
 
-// SetAccountID sets the "account" edge to the Account entity by ID.
-func (_u *BloodTypeUpdate) SetAccountID(id uuid.UUID) *BloodTypeUpdate {
-	_u.mutation.SetAccountID(id)
+// AddAccountIDs adds the "accounts" edge to the Account entity by IDs.
+func (_u *BloodTypeUpdate) AddAccountIDs(ids ...uuid.UUID) *BloodTypeUpdate {
+	_u.mutation.AddAccountIDs(ids...)
 	return _u
 }
 
-// SetAccount sets the "account" edge to the Account entity.
-func (_u *BloodTypeUpdate) SetAccount(v *Account) *BloodTypeUpdate {
-	return _u.SetAccountID(v.ID)
+// AddAccounts adds the "accounts" edges to the Account entity.
+func (_u *BloodTypeUpdate) AddAccounts(v ...*Account) *BloodTypeUpdate {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddAccountIDs(ids...)
 }
 
 // Mutation returns the BloodTypeMutation object of the builder.
@@ -125,10 +129,25 @@ func (_u *BloodTypeUpdate) Mutation() *BloodTypeMutation {
 	return _u.mutation
 }
 
-// ClearAccount clears the "account" edge to the Account entity.
-func (_u *BloodTypeUpdate) ClearAccount() *BloodTypeUpdate {
-	_u.mutation.ClearAccount()
+// ClearAccounts clears all "accounts" edges to the Account entity.
+func (_u *BloodTypeUpdate) ClearAccounts() *BloodTypeUpdate {
+	_u.mutation.ClearAccounts()
 	return _u
+}
+
+// RemoveAccountIDs removes the "accounts" edge to Account entities by IDs.
+func (_u *BloodTypeUpdate) RemoveAccountIDs(ids ...uuid.UUID) *BloodTypeUpdate {
+	_u.mutation.RemoveAccountIDs(ids...)
+	return _u
+}
+
+// RemoveAccounts removes "accounts" edges to Account entities.
+func (_u *BloodTypeUpdate) RemoveAccounts(v ...*Account) *BloodTypeUpdate {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveAccountIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -189,9 +208,6 @@ func (_u *BloodTypeUpdate) check() error {
 			return &ValidationError{Name: "rhesus", err: fmt.Errorf(`ent: validator failed for field "BloodType.rhesus": %w`, err)}
 		}
 	}
-	if _u.mutation.AccountCleared() && len(_u.mutation.AccountIDs()) > 0 {
-		return errors.New(`ent: clearing a required unique edge "BloodType.account"`)
-	}
 	return nil
 }
 
@@ -234,12 +250,12 @@ func (_u *BloodTypeUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	if _u.mutation.RhesusCleared() {
 		_spec.ClearField(bloodtype.FieldRhesus, field.TypeEnum)
 	}
-	if _u.mutation.AccountCleared() {
+	if _u.mutation.AccountsCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
+			Rel:     sqlgraph.O2M,
 			Inverse: true,
-			Table:   bloodtype.AccountTable,
-			Columns: []string{bloodtype.AccountColumn},
+			Table:   bloodtype.AccountsTable,
+			Columns: []string{bloodtype.AccountsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(account.FieldID, field.TypeUUID),
@@ -247,12 +263,28 @@ func (_u *BloodTypeUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := _u.mutation.AccountIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.RemovedAccountsIDs(); len(nodes) > 0 && !_u.mutation.AccountsCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
+			Rel:     sqlgraph.O2M,
 			Inverse: true,
-			Table:   bloodtype.AccountTable,
-			Columns: []string{bloodtype.AccountColumn},
+			Table:   bloodtype.AccountsTable,
+			Columns: []string{bloodtype.AccountsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(account.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.AccountsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   bloodtype.AccountsTable,
+			Columns: []string{bloodtype.AccountsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(account.FieldID, field.TypeUUID),
@@ -363,15 +395,19 @@ func (_u *BloodTypeUpdateOne) ClearRhesus() *BloodTypeUpdateOne {
 	return _u
 }
 
-// SetAccountID sets the "account" edge to the Account entity by ID.
-func (_u *BloodTypeUpdateOne) SetAccountID(id uuid.UUID) *BloodTypeUpdateOne {
-	_u.mutation.SetAccountID(id)
+// AddAccountIDs adds the "accounts" edge to the Account entity by IDs.
+func (_u *BloodTypeUpdateOne) AddAccountIDs(ids ...uuid.UUID) *BloodTypeUpdateOne {
+	_u.mutation.AddAccountIDs(ids...)
 	return _u
 }
 
-// SetAccount sets the "account" edge to the Account entity.
-func (_u *BloodTypeUpdateOne) SetAccount(v *Account) *BloodTypeUpdateOne {
-	return _u.SetAccountID(v.ID)
+// AddAccounts adds the "accounts" edges to the Account entity.
+func (_u *BloodTypeUpdateOne) AddAccounts(v ...*Account) *BloodTypeUpdateOne {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddAccountIDs(ids...)
 }
 
 // Mutation returns the BloodTypeMutation object of the builder.
@@ -379,10 +415,25 @@ func (_u *BloodTypeUpdateOne) Mutation() *BloodTypeMutation {
 	return _u.mutation
 }
 
-// ClearAccount clears the "account" edge to the Account entity.
-func (_u *BloodTypeUpdateOne) ClearAccount() *BloodTypeUpdateOne {
-	_u.mutation.ClearAccount()
+// ClearAccounts clears all "accounts" edges to the Account entity.
+func (_u *BloodTypeUpdateOne) ClearAccounts() *BloodTypeUpdateOne {
+	_u.mutation.ClearAccounts()
 	return _u
+}
+
+// RemoveAccountIDs removes the "accounts" edge to Account entities by IDs.
+func (_u *BloodTypeUpdateOne) RemoveAccountIDs(ids ...uuid.UUID) *BloodTypeUpdateOne {
+	_u.mutation.RemoveAccountIDs(ids...)
+	return _u
+}
+
+// RemoveAccounts removes "accounts" edges to Account entities.
+func (_u *BloodTypeUpdateOne) RemoveAccounts(v ...*Account) *BloodTypeUpdateOne {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveAccountIDs(ids...)
 }
 
 // Where appends a list predicates to the BloodTypeUpdate builder.
@@ -456,9 +507,6 @@ func (_u *BloodTypeUpdateOne) check() error {
 			return &ValidationError{Name: "rhesus", err: fmt.Errorf(`ent: validator failed for field "BloodType.rhesus": %w`, err)}
 		}
 	}
-	if _u.mutation.AccountCleared() && len(_u.mutation.AccountIDs()) > 0 {
-		return errors.New(`ent: clearing a required unique edge "BloodType.account"`)
-	}
 	return nil
 }
 
@@ -518,12 +566,12 @@ func (_u *BloodTypeUpdateOne) sqlSave(ctx context.Context) (_node *BloodType, er
 	if _u.mutation.RhesusCleared() {
 		_spec.ClearField(bloodtype.FieldRhesus, field.TypeEnum)
 	}
-	if _u.mutation.AccountCleared() {
+	if _u.mutation.AccountsCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
+			Rel:     sqlgraph.O2M,
 			Inverse: true,
-			Table:   bloodtype.AccountTable,
-			Columns: []string{bloodtype.AccountColumn},
+			Table:   bloodtype.AccountsTable,
+			Columns: []string{bloodtype.AccountsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(account.FieldID, field.TypeUUID),
@@ -531,12 +579,28 @@ func (_u *BloodTypeUpdateOne) sqlSave(ctx context.Context) (_node *BloodType, er
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := _u.mutation.AccountIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.RemovedAccountsIDs(); len(nodes) > 0 && !_u.mutation.AccountsCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
+			Rel:     sqlgraph.O2M,
 			Inverse: true,
-			Table:   bloodtype.AccountTable,
-			Columns: []string{bloodtype.AccountColumn},
+			Table:   bloodtype.AccountsTable,
+			Columns: []string{bloodtype.AccountsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(account.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.AccountsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   bloodtype.AccountsTable,
+			Columns: []string{bloodtype.AccountsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(account.FieldID, field.TypeUUID),

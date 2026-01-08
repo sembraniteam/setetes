@@ -46,10 +46,11 @@ func (OTP) Fields() []ent.Field {
 // Edges of the OTP.
 func (OTP) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.From("account", Account.Type).
-			Ref("otp").
+		edge.To("account", Account.Type).
+			Unique().
 			Required().
-			Unique(),
+			StorageKey(edge.Column("account_id")).
+			Annotations(entsql.OnDelete(entsql.Cascade)),
 	}
 }
 

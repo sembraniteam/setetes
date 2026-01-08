@@ -69,7 +69,8 @@ func (PMILocation) Edges() []ent.Edge {
 		edge.From("subdistrict", Subdistrict.Type).
 			Ref("pmi_location").
 			Unique().
-			Required(),
+			Required().
+			Annotations(entsql.OnDelete(entsql.NoAction)),
 	}
 }
 

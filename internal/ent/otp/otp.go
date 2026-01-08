@@ -158,6 +158,6 @@ func newAccountStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(AccountInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.M2O, true, AccountTable, AccountColumn),
+		sqlgraph.Edge(sqlgraph.M2O, false, AccountTable, AccountColumn),
 	)
 }

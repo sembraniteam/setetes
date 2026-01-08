@@ -19,8 +19,11 @@ import (
 	"github.com/sembraniteam/setetes/internal/ent/district"
 	"github.com/sembraniteam/setetes/internal/ent/otp"
 	"github.com/sembraniteam/setetes/internal/ent/password"
+	"github.com/sembraniteam/setetes/internal/ent/permission"
 	"github.com/sembraniteam/setetes/internal/ent/pmilocation"
 	"github.com/sembraniteam/setetes/internal/ent/province"
+	"github.com/sembraniteam/setetes/internal/ent/role"
+	"github.com/sembraniteam/setetes/internal/ent/rolepermission"
 	"github.com/sembraniteam/setetes/internal/ent/subdistrict"
 )
 
@@ -82,16 +85,19 @@ var (
 func checkColumn(t, c string) error {
 	initCheck.Do(func() {
 		columnCheck = sql.NewColumnCheck(map[string]func(string) bool{
-			account.Table:     account.ValidColumn,
-			bloodtype.Table:   bloodtype.ValidColumn,
-			casbinrule.Table:  casbinrule.ValidColumn,
-			city.Table:        city.ValidColumn,
-			district.Table:    district.ValidColumn,
-			otp.Table:         otp.ValidColumn,
-			pmilocation.Table: pmilocation.ValidColumn,
-			password.Table:    password.ValidColumn,
-			province.Table:    province.ValidColumn,
-			subdistrict.Table: subdistrict.ValidColumn,
+			account.Table:        account.ValidColumn,
+			bloodtype.Table:      bloodtype.ValidColumn,
+			casbinrule.Table:     casbinrule.ValidColumn,
+			city.Table:           city.ValidColumn,
+			district.Table:       district.ValidColumn,
+			otp.Table:            otp.ValidColumn,
+			pmilocation.Table:    pmilocation.ValidColumn,
+			password.Table:       password.ValidColumn,
+			permission.Table:     permission.ValidColumn,
+			province.Table:       province.ValidColumn,
+			role.Table:           role.ValidColumn,
+			rolepermission.Table: rolepermission.ValidColumn,
+			subdistrict.Table:    subdistrict.ValidColumn,
 		})
 	})
 	return columnCheck(t, c)

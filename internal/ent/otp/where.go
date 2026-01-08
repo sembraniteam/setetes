@@ -349,7 +349,7 @@ func HasAccount() predicate.OTP {
 	return predicate.OTP(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, AccountTable, AccountColumn),
+			sqlgraph.Edge(sqlgraph.M2O, false, AccountTable, AccountColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})

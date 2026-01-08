@@ -40,8 +40,7 @@ func (District) Edges() []ent.Edge {
 			Unique().
 			Required(),
 		edge.To("subdistrict", Subdistrict.Type).
-			StorageKey(edge.Column("district_id")).
-			Annotations(entsql.OnDelete(entsql.NoAction)),
+			StorageKey(edge.Column("district_id")),
 	}
 }
 

@@ -18,6 +18,7 @@ import (
 	"github.com/sembraniteam/setetes/internal/ent/otp"
 	"github.com/sembraniteam/setetes/internal/ent/password"
 	"github.com/sembraniteam/setetes/internal/ent/predicate"
+	"github.com/sembraniteam/setetes/internal/ent/role"
 )
 
 // AccountQuery is the builder for querying Account entities.
@@ -30,6 +31,8 @@ type AccountQuery struct {
 	withBloodType *BloodTypeQuery
 	withPassword  *PasswordQuery
 	withOtp       *OTPQuery
+	withRole      *RoleQuery
+	withFKs       bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -80,7 +83,7 @@ func (_q *AccountQuery) QueryBloodType() *BloodTypeQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(account.Table, account.FieldID, selector),
 			sqlgraph.To(bloodtype.Table, bloodtype.FieldID),
-			sqlgraph.Edge(sqlgraph.O2O, false, account.BloodTypeTable, account.BloodTypeColumn),
+			sqlgraph.Edge(sqlgraph.M2O, false, account.BloodTypeTable, account.BloodTypeColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
 		return fromU, nil
@@ -124,7 +127,29 @@ func (_q *AccountQuery) QueryOtp() *OTPQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(account.Table, account.FieldID, selector),
 			sqlgraph.To(otp.Table, otp.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, account.OtpTable, account.OtpColumn),
+			sqlgraph.Edge(sqlgraph.O2M, true, account.OtpTable, account.OtpColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryRole chains the current query on the "role" edge.
+func (_q *AccountQuery) QueryRole() *RoleQuery {
+	query := (&RoleClient{config: _q.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := _q.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := _q.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(account.Table, account.FieldID, selector),
+			sqlgraph.To(role.Table, role.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, account.RoleTable, account.RoleColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
 		return fromU, nil
@@ -327,6 +352,7 @@ func (_q *AccountQuery) Clone() *AccountQuery {
 		withBloodType: _q.withBloodType.Clone(),
 		withPassword:  _q.withPassword.Clone(),
 		withOtp:       _q.withOtp.Clone(),
+		withRole:      _q.withRole.Clone(),
 		// clone intermediate query.
 		sql:  _q.sql.Clone(),
 		path: _q.path,
@@ -363,6 +389,17 @@ func (_q *AccountQuery) WithOtp(opts ...func(*OTPQuery)) *AccountQuery {
 		opt(query)
 	}
 	_q.withOtp = query
+	return _q
+}
+
+// WithRole tells the query-builder to eager-load the nodes that are connected to
+// the "role" edge. The optional arguments are used to configure the query builder of the edge.
+func (_q *AccountQuery) WithRole(opts ...func(*RoleQuery)) *AccountQuery {
+	query := (&RoleClient{config: _q.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	_q.withRole = query
 	return _q
 }
 
@@ -443,13 +480,21 @@ func (_q *AccountQuery) prepareQuery(ctx context.Context) error {
 func (_q *AccountQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Account, error) {
 	var (
 		nodes       = []*Account{}
+		withFKs     = _q.withFKs
 		_spec       = _q.querySpec()
-		loadedTypes = [3]bool{
+		loadedTypes = [4]bool{
 			_q.withBloodType != nil,
 			_q.withPassword != nil,
 			_q.withOtp != nil,
+			_q.withRole != nil,
 		}
 	)
+	if _q.withBloodType != nil || _q.withRole != nil {
+		withFKs = true
+	}
+	if withFKs {
+		_spec.Node.Columns = append(_spec.Node.Columns, account.ForeignKeys...)
+	}
 	_spec.ScanValues = func(columns []string) ([]any, error) {
 		return (*Account).scanValues(nil, columns)
 	}
@@ -487,34 +532,44 @@ func (_q *AccountQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Acco
 			return nil, err
 		}
 	}
+	if query := _q.withRole; query != nil {
+		if err := _q.loadRole(ctx, query, nodes, nil,
+			func(n *Account, e *Role) { n.Edges.Role = e }); err != nil {
+			return nil, err
+		}
+	}
 	return nodes, nil
 }
 
 func (_q *AccountQuery) loadBloodType(ctx context.Context, query *BloodTypeQuery, nodes []*Account, init func(*Account), assign func(*Account, *BloodType)) error {
-	fks := make([]driver.Value, 0, len(nodes))
-	nodeids := make(map[uuid.UUID]*Account)
+	ids := make([]uuid.UUID, 0, len(nodes))
+	nodeids := make(map[uuid.UUID][]*Account)
 	for i := range nodes {
-		fks = append(fks, nodes[i].ID)
-		nodeids[nodes[i].ID] = nodes[i]
+		if nodes[i].blood_type_id == nil {
+			continue
+		}
+		fk := *nodes[i].blood_type_id
+		if _, ok := nodeids[fk]; !ok {
+			ids = append(ids, fk)
+		}
+		nodeids[fk] = append(nodeids[fk], nodes[i])
 	}
-	query.withFKs = true
-	query.Where(predicate.BloodType(func(s *sql.Selector) {
-		s.Where(sql.InValues(s.C(account.BloodTypeColumn), fks...))
-	}))
+	if len(ids) == 0 {
+		return nil
+	}
+	query.Where(bloodtype.IDIn(ids...))
 	neighbors, err := query.All(ctx)
 	if err != nil {
 		return err
 	}
 	for _, n := range neighbors {
-		fk := n.account_id
-		if fk == nil {
-			return fmt.Errorf(`foreign-key "account_id" is nil for node %v`, n.ID)
-		}
-		node, ok := nodeids[*fk]
+		nodes, ok := nodeids[n.ID]
 		if !ok {
-			return fmt.Errorf(`unexpected referenced foreign-key "account_id" returned %v for node %v`, *fk, n.ID)
+			return fmt.Errorf(`unexpected foreign-key "blood_type_id" returned %v`, n.ID)
 		}
-		assign(node, n)
+		for i := range nodes {
+			assign(nodes[i], n)
+		}
 	}
 	return nil
 }
@@ -574,6 +629,38 @@ func (_q *AccountQuery) loadOtp(ctx context.Context, query *OTPQuery, nodes []*A
 			return fmt.Errorf(`unexpected referenced foreign-key "account_id" returned %v for node %v`, *fk, n.ID)
 		}
 		assign(node, n)
+	}
+	return nil
+}
+func (_q *AccountQuery) loadRole(ctx context.Context, query *RoleQuery, nodes []*Account, init func(*Account), assign func(*Account, *Role)) error {
+	ids := make([]uuid.UUID, 0, len(nodes))
+	nodeids := make(map[uuid.UUID][]*Account)
+	for i := range nodes {
+		if nodes[i].role_id == nil {
+			continue
+		}
+		fk := *nodes[i].role_id
+		if _, ok := nodeids[fk]; !ok {
+			ids = append(ids, fk)
+		}
+		nodeids[fk] = append(nodeids[fk], nodes[i])
+	}
+	if len(ids) == 0 {
+		return nil
+	}
+	query.Where(role.IDIn(ids...))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nodeids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected foreign-key "role_id" returned %v`, n.ID)
+		}
+		for i := range nodes {
+			assign(nodes[i], n)
+		}
 	}
 	return nil
 }
