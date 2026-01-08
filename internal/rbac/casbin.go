@@ -75,7 +75,7 @@ func (m *Manager) AddRoleForUser(user, role string) error {
 }
 
 func (m *Manager) RemoveRoleForUser(user, role string) error {
-	_, err := m.enforcer.DeletePermissionForUser(user, role)
+	_, err := m.enforcer.DeleteRoleForUser(user, role)
 	if err != nil {
 		return err
 	}

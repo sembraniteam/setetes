@@ -20,3 +20,5 @@ atlas.hcl
 
 # Private & public key
 ed25519-*.pem
+
+AGENTS.md
