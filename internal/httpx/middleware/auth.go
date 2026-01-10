@@ -15,6 +15,8 @@ import (
 
 var log = slog.Default()
 
+const rulesLen = 3
+
 type Config struct {
 	manager  *rbac.Manager
 	verifier *pasetox.Verifier
@@ -109,9 +111,39 @@ func auth(
 		return
 	}
 
+	var domain string
+	grouping, err := enforcer.GetFilteredGroupingPolicy(0, claims.Subject)
+	if err != nil {
+		log.Error(
+			"Failed to get filtered grouping policy",
+			slog.String("method", action),
+			slog.String("url", resource),
+			slog.String("error", err.Error()),
+		)
+	}
+
+	for _, rule := range grouping {
+		if len(rule) >= rulesLen {
+			domain = rule[2]
+			break
+		}
+	}
+
+	if domain == "" {
+		log.Warn(
+			"Missing domain for subject",
+			slog.String("subject", claims.Subject),
+			slog.String("method", action),
+			slog.String("url", resource),
+		)
+		response.Forbidden(c)
+		c.Abort()
+		return
+	}
+
 	allowed, err := enforcer.Enforce(
 		claims.Subject,
-		claims.Platform,
+		domain,
 		resource,
 		action,
 	)
