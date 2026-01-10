@@ -1,2 +1,4 @@
 # Add your ACL configuration here
 user default off nopass -@all ~* &*
+user setetes_app on >YOUR_PASSWORD_HERE +@read +@write +@connection ~auth:* &*
+user healthcheck on >healthcheck_pass +ping
