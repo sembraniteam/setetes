@@ -8,14 +8,16 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/samber/do/v2"
-	"github.com/sembraniteam/setetes/internal"
+	"github.com/sembraniteam/setetes/internal/config"
 	"github.com/sembraniteam/setetes/internal/cryptox"
 	"github.com/sembraniteam/setetes/internal/cryptox/argon2x"
 	"github.com/sembraniteam/setetes/internal/cryptox/pasetox"
 	"github.com/sembraniteam/setetes/internal/ent"
 	"github.com/sembraniteam/setetes/internal/ent/account"
 	"github.com/sembraniteam/setetes/internal/ent/otp"
+	"github.com/sembraniteam/setetes/internal/ent/role"
 	"github.com/sembraniteam/setetes/internal/httpx/request"
+	"github.com/sembraniteam/setetes/internal/rbac"
 )
 
 const (
@@ -27,6 +29,7 @@ const (
 type (
 	AccountQuery struct {
 		client *ent.Client
+		rbac   *rbac.Manager
 		ctx    context.Context
 	}
 
@@ -42,6 +45,7 @@ type (
 func NewAccount(i do.Injector) (Account, error) {
 	return &AccountQuery{
 		client: do.MustInvoke[*ent.Client](i),
+		rbac:   do.MustInvoke[*rbac.Manager](i),
 		ctx:    context.Background(),
 	}, nil
 }
@@ -157,8 +161,8 @@ func (a *AccountQuery) Activate(body request.Activation) error {
 		return rollback(tx, err)
 	}
 
-	config := argon2x.Default()
-	pwd, err := config.HashString([]byte(body.Password))
+	arg := argon2x.Default()
+	pwd, err := arg.HashString([]byte(body.Password))
 	if err != nil {
 		return rollback(tx, err)
 	}
@@ -171,9 +175,27 @@ func (a *AccountQuery) Activate(body request.Activation) error {
 		return rollback(tx, err)
 	}
 
+	rl, err := tx.Role.Query().Where(role.KeyEQ("donor")).Only(a.ctx)
+	if err != nil {
+		if ent.IsNotFound(err) {
+			return rollback(tx, errors.New("role not found"))
+		}
+
+		return rollback(tx, err)
+	}
+
 	if err = tx.Account.UpdateOne(acc).
 		SetActivated(true).
+		SetRole(rl).
 		Exec(a.ctx); err != nil {
+		return rollback(tx, err)
+	}
+
+	if err = a.rbac.AddRoleForUser(
+		acc.ID.String(),
+		rl.Key,
+		rl.Domain,
+	); err != nil {
 		return rollback(tx, err)
 	}
 
@@ -243,7 +265,7 @@ func generateToken(
 	subject uuid.UUID,
 	platform string,
 ) (*pasetox.TokenPair, error) {
-	ed := internal.Get().ED25519
+	ed := config.Get().ED25519
 	privateKey, err := cryptox.LoadPrivateKey(ed.PrivateKeyPath)
 	if err != nil {
 		return nil, err

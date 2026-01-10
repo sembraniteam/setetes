@@ -8,7 +8,7 @@ import (
 	"math"
 	"strings"
 
-	"github.com/sembraniteam/setetes/internal"
+	"github.com/sembraniteam/setetes/internal/config"
 	"github.com/sembraniteam/setetes/internal/cryptox"
 	"golang.org/x/crypto/argon2"
 )
@@ -48,7 +48,7 @@ type (
 	}
 )
 
-func New(config internal.Config) Config {
+func New(config config.Config) Config {
 	p := config.Password
 	c := Config{
 		pepper:      p.Pepper,
@@ -67,7 +67,7 @@ func New(config internal.Config) Config {
 }
 
 func Default() Config {
-	p := internal.Get().Password
+	p := config.Get().Password
 	c := Config{
 		pepper:      p.Pepper,
 		memory:      p.Argon2.Memory,
@@ -232,7 +232,13 @@ func parseHashString(hashString string) (*hashParams, error) {
 
 	var memory, iterations uint32
 	var parallelism uint8
-	if _, err := fmt.Sscanf(parts[2], "m=%d,t=%d,p=%d", &memory, &iterations, &parallelism); err != nil {
+	if _, err := fmt.Sscanf(
+		parts[2],
+		"m=%d,t=%d,p=%d",
+		&memory,
+		&iterations,
+		&parallelism,
+	); err != nil {
 		return nil, fmt.Errorf("invalid parameters format: %w", err)
 	}
 

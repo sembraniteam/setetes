@@ -81,15 +81,19 @@ func (_c *BloodTypeCreate) SetID(v uuid.UUID) *BloodTypeCreate {
 	return _c
 }
 
-// SetAccountID sets the "account" edge to the Account entity by ID.
-func (_c *BloodTypeCreate) SetAccountID(id uuid.UUID) *BloodTypeCreate {
-	_c.mutation.SetAccountID(id)
+// AddAccountIDs adds the "accounts" edge to the Account entity by IDs.
+func (_c *BloodTypeCreate) AddAccountIDs(ids ...uuid.UUID) *BloodTypeCreate {
+	_c.mutation.AddAccountIDs(ids...)
 	return _c
 }
 
-// SetAccount sets the "account" edge to the Account entity.
-func (_c *BloodTypeCreate) SetAccount(v *Account) *BloodTypeCreate {
-	return _c.SetAccountID(v.ID)
+// AddAccounts adds the "accounts" edges to the Account entity.
+func (_c *BloodTypeCreate) AddAccounts(v ...*Account) *BloodTypeCreate {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _c.AddAccountIDs(ids...)
 }
 
 // Mutation returns the BloodTypeMutation object of the builder.
@@ -154,9 +158,6 @@ func (_c *BloodTypeCreate) check() error {
 			return &ValidationError{Name: "rhesus", err: fmt.Errorf(`ent: validator failed for field "BloodType.rhesus": %w`, err)}
 		}
 	}
-	if len(_c.mutation.AccountIDs()) == 0 {
-		return &ValidationError{Name: "account", err: errors.New(`ent: missing required edge "BloodType.account"`)}
-	}
 	return nil
 }
 
@@ -212,12 +213,12 @@ func (_c *BloodTypeCreate) createSpec() (*BloodType, *sqlgraph.CreateSpec) {
 		_spec.SetField(bloodtype.FieldRhesus, field.TypeEnum, value)
 		_node.Rhesus = value
 	}
-	if nodes := _c.mutation.AccountIDs(); len(nodes) > 0 {
+	if nodes := _c.mutation.AccountsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
+			Rel:     sqlgraph.O2M,
 			Inverse: true,
-			Table:   bloodtype.AccountTable,
-			Columns: []string{bloodtype.AccountColumn},
+			Table:   bloodtype.AccountsTable,
+			Columns: []string{bloodtype.AccountsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(account.FieldID, field.TypeUUID),
@@ -226,7 +227,6 @@ func (_c *BloodTypeCreate) createSpec() (*BloodType, *sqlgraph.CreateSpec) {
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
-		_node.account_id = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec

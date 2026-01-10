@@ -9,8 +9,10 @@ import (
 	"github.com/sembraniteam/setetes/internal/ent/district"
 	"github.com/sembraniteam/setetes/internal/ent/otp"
 	"github.com/sembraniteam/setetes/internal/ent/password"
+	"github.com/sembraniteam/setetes/internal/ent/permission"
 	"github.com/sembraniteam/setetes/internal/ent/pmilocation"
 	"github.com/sembraniteam/setetes/internal/ent/province"
+	"github.com/sembraniteam/setetes/internal/ent/role"
 	"github.com/sembraniteam/setetes/internal/ent/schema"
 	"github.com/sembraniteam/setetes/internal/ent/subdistrict"
 )
@@ -351,12 +353,212 @@ func init() {
 	passwordDescDeletedAt := passwordMixinFields0[3].Descriptor()
 	// password.DeletedAtValidator is a validator for the "deleted_at" field. It is called by the builders before save.
 	password.DeletedAtValidator = passwordDescDeletedAt.Validators[0].(func(int64) error)
+	permissionMixin := schema.Permission{}.Mixin()
+	permissionMixinFields0 := permissionMixin[0].Fields()
+	_ = permissionMixinFields0
+	permissionFields := schema.Permission{}.Fields()
+	_ = permissionFields
+	// permissionDescCreatedAt is the schema descriptor for created_at field.
+	permissionDescCreatedAt := permissionMixinFields0[1].Descriptor()
+	// permission.CreatedAtValidator is a validator for the "created_at" field. It is called by the builders before save.
+	permission.CreatedAtValidator = permissionDescCreatedAt.Validators[0].(func(int64) error)
+	// permissionDescUpdatedAt is the schema descriptor for updated_at field.
+	permissionDescUpdatedAt := permissionMixinFields0[2].Descriptor()
+	// permission.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	permission.UpdateDefaultUpdatedAt = permissionDescUpdatedAt.UpdateDefault.(func() int64)
+	// permission.UpdatedAtValidator is a validator for the "updated_at" field. It is called by the builders before save.
+	permission.UpdatedAtValidator = permissionDescUpdatedAt.Validators[0].(func(int64) error)
+	// permissionDescDeletedAt is the schema descriptor for deleted_at field.
+	permissionDescDeletedAt := permissionMixinFields0[3].Descriptor()
+	// permission.DeletedAtValidator is a validator for the "deleted_at" field. It is called by the builders before save.
+	permission.DeletedAtValidator = permissionDescDeletedAt.Validators[0].(func(int64) error)
+	// permissionDescName is the schema descriptor for name field.
+	permissionDescName := permissionFields[0].Descriptor()
+	// permission.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	permission.NameValidator = func() func(string) error {
+		validators := permissionDescName.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+			validators[2].(func(string) error),
+		}
+		return func(name string) error {
+			for _, fn := range fns {
+				if err := fn(name); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
+	// permissionDescKey is the schema descriptor for key field.
+	permissionDescKey := permissionFields[1].Descriptor()
+	// permission.KeyValidator is a validator for the "key" field. It is called by the builders before save.
+	permission.KeyValidator = func() func(string) error {
+		validators := permissionDescKey.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+			validators[2].(func(string) error),
+		}
+		return func(key string) error {
+			for _, fn := range fns {
+				if err := fn(key); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
+	// permissionDescDomain is the schema descriptor for domain field.
+	permissionDescDomain := permissionFields[2].Descriptor()
+	// permission.DomainValidator is a validator for the "domain" field. It is called by the builders before save.
+	permission.DomainValidator = func() func(string) error {
+		validators := permissionDescDomain.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+			validators[2].(func(string) error),
+		}
+		return func(domain string) error {
+			for _, fn := range fns {
+				if err := fn(domain); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
+	// permissionDescResource is the schema descriptor for resource field.
+	permissionDescResource := permissionFields[3].Descriptor()
+	// permission.ResourceValidator is a validator for the "resource" field. It is called by the builders before save.
+	permission.ResourceValidator = permissionDescResource.Validators[0].(func(string) error)
+	// permissionDescAction is the schema descriptor for action field.
+	permissionDescAction := permissionFields[4].Descriptor()
+	// permission.ActionValidator is a validator for the "action" field. It is called by the builders before save.
+	permission.ActionValidator = permissionDescAction.Validators[0].(func(string) error)
+	// permissionDescDescription is the schema descriptor for description field.
+	permissionDescDescription := permissionFields[5].Descriptor()
+	// permission.DescriptionValidator is a validator for the "description" field. It is called by the builders before save.
+	permission.DescriptionValidator = func() func(string) error {
+		validators := permissionDescDescription.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+		}
+		return func(description string) error {
+			for _, fn := range fns {
+				if err := fn(description); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
 	provinceFields := schema.Province{}.Fields()
 	_ = provinceFields
 	// provinceDescBpsCode is the schema descriptor for bps_code field.
 	provinceDescBpsCode := provinceFields[1].Descriptor()
 	// province.BpsCodeValidator is a validator for the "bps_code" field. It is called by the builders before save.
 	province.BpsCodeValidator = provinceDescBpsCode.Validators[0].(func(string) error)
+	roleMixin := schema.Role{}.Mixin()
+	roleMixinFields0 := roleMixin[0].Fields()
+	_ = roleMixinFields0
+	roleFields := schema.Role{}.Fields()
+	_ = roleFields
+	// roleDescCreatedAt is the schema descriptor for created_at field.
+	roleDescCreatedAt := roleMixinFields0[1].Descriptor()
+	// role.CreatedAtValidator is a validator for the "created_at" field. It is called by the builders before save.
+	role.CreatedAtValidator = roleDescCreatedAt.Validators[0].(func(int64) error)
+	// roleDescUpdatedAt is the schema descriptor for updated_at field.
+	roleDescUpdatedAt := roleMixinFields0[2].Descriptor()
+	// role.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	role.UpdateDefaultUpdatedAt = roleDescUpdatedAt.UpdateDefault.(func() int64)
+	// role.UpdatedAtValidator is a validator for the "updated_at" field. It is called by the builders before save.
+	role.UpdatedAtValidator = roleDescUpdatedAt.Validators[0].(func(int64) error)
+	// roleDescDeletedAt is the schema descriptor for deleted_at field.
+	roleDescDeletedAt := roleMixinFields0[3].Descriptor()
+	// role.DeletedAtValidator is a validator for the "deleted_at" field. It is called by the builders before save.
+	role.DeletedAtValidator = roleDescDeletedAt.Validators[0].(func(int64) error)
+	// roleDescName is the schema descriptor for name field.
+	roleDescName := roleFields[0].Descriptor()
+	// role.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	role.NameValidator = func() func(string) error {
+		validators := roleDescName.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+			validators[2].(func(string) error),
+		}
+		return func(name string) error {
+			for _, fn := range fns {
+				if err := fn(name); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
+	// roleDescKey is the schema descriptor for key field.
+	roleDescKey := roleFields[1].Descriptor()
+	// role.KeyValidator is a validator for the "key" field. It is called by the builders before save.
+	role.KeyValidator = func() func(string) error {
+		validators := roleDescKey.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+			validators[2].(func(string) error),
+		}
+		return func(key string) error {
+			for _, fn := range fns {
+				if err := fn(key); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
+	// roleDescDomain is the schema descriptor for domain field.
+	roleDescDomain := roleFields[2].Descriptor()
+	// role.DomainValidator is a validator for the "domain" field. It is called by the builders before save.
+	role.DomainValidator = func() func(string) error {
+		validators := roleDescDomain.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+			validators[2].(func(string) error),
+		}
+		return func(domain string) error {
+			for _, fn := range fns {
+				if err := fn(domain); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
+	// roleDescDescription is the schema descriptor for description field.
+	roleDescDescription := roleFields[3].Descriptor()
+	// role.DescriptionValidator is a validator for the "description" field. It is called by the builders before save.
+	role.DescriptionValidator = func() func(string) error {
+		validators := roleDescDescription.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+		}
+		return func(description string) error {
+			for _, fn := range fns {
+				if err := fn(description); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
+	// roleDescActivated is the schema descriptor for activated field.
+	roleDescActivated := roleFields[4].Descriptor()
+	// role.DefaultActivated holds the default value on creation for the activated field.
+	role.DefaultActivated = roleDescActivated.Default.(bool)
 	subdistrictFields := schema.Subdistrict{}.Fields()
 	_ = subdistrictFields
 	// subdistrictDescBpsCode is the schema descriptor for bps_code field.

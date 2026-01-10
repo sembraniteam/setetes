@@ -105,6 +105,18 @@ func (f PasswordFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, er
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.PasswordMutation", m)
 }
 
+// The PermissionFunc type is an adapter to allow the use of ordinary
+// function as Permission mutator.
+type PermissionFunc func(context.Context, *ent.PermissionMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f PermissionFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.PermissionMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.PermissionMutation", m)
+}
+
 // The ProvinceFunc type is an adapter to allow the use of ordinary
 // function as Province mutator.
 type ProvinceFunc func(context.Context, *ent.ProvinceMutation) (ent.Value, error)
@@ -115,6 +127,18 @@ func (f ProvinceFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, er
 		return f(ctx, mv)
 	}
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ProvinceMutation", m)
+}
+
+// The RoleFunc type is an adapter to allow the use of ordinary
+// function as Role mutator.
+type RoleFunc func(context.Context, *ent.RoleMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f RoleFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.RoleMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.RoleMutation", m)
 }
 
 // The SubdistrictFunc type is an adapter to allow the use of ordinary

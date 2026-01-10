@@ -26,12 +26,28 @@ var (
 		{Name: "activated", Type: field.TypeBool, Default: false},
 		{Name: "locked", Type: field.TypeBool, Comment: "Permanently locked by this account.", Default: false},
 		{Name: "temp_locked_at", Type: field.TypeInt64, Nullable: true, Comment: "Temporary locked by this account based on time milliseconds."},
+		{Name: "blood_type_id", Type: field.TypeUUID, Nullable: true},
+		{Name: "role_id", Type: field.TypeUUID, Nullable: true},
 	}
 	// AccountsTable holds the schema information for the "accounts" table.
 	AccountsTable = &schema.Table{
 		Name:       "accounts",
 		Columns:    AccountsColumns,
 		PrimaryKey: []*schema.Column{AccountsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "accounts_blood_types_blood_type",
+				Columns:    []*schema.Column{AccountsColumns[15]},
+				RefColumns: []*schema.Column{BloodTypesColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:     "accounts_roles_role",
+				Columns:    []*schema.Column{AccountsColumns[16]},
+				RefColumns: []*schema.Column{RolesColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
 		Indexes: []*schema.Index{
 			{
 				Name:    "account_deleted_at",
@@ -48,21 +64,12 @@ var (
 		{Name: "deleted_at", Type: field.TypeInt64, Nullable: true, Comment: "Represents soft delete timestamp in milliseconds."},
 		{Name: "group", Type: field.TypeEnum, Comment: "comment:The ABO blood group classification (A, B, AB, or O).", Enums: []string{"A", "B", "AB", "O"}},
 		{Name: "rhesus", Type: field.TypeEnum, Nullable: true, Comment: "The Rhesus (Rh) factor of the blood group, either POSITIVE or NEGATIVE.", Enums: []string{"POSITIVE", "NEGATIVE"}},
-		{Name: "account_id", Type: field.TypeUUID, Unique: true},
 	}
 	// BloodTypesTable holds the schema information for the "blood_types" table.
 	BloodTypesTable = &schema.Table{
 		Name:       "blood_types",
 		Columns:    BloodTypesColumns,
 		PrimaryKey: []*schema.Column{BloodTypesColumns[0]},
-		ForeignKeys: []*schema.ForeignKey{
-			{
-				Symbol:     "blood_types_accounts_blood_type",
-				Columns:    []*schema.Column{BloodTypesColumns[6]},
-				RefColumns: []*schema.Column{AccountsColumns[0]},
-				OnDelete:   schema.Cascade,
-			},
-		},
 		Indexes: []*schema.Index{
 			{
 				Name:    "bloodtype_deleted_at",
@@ -148,7 +155,7 @@ var (
 		PrimaryKey: []*schema.Column{OtpsColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
-				Symbol:     "otps_accounts_otp",
+				Symbol:     "otps_accounts_account",
 				Columns:    []*schema.Column{OtpsColumns[7]},
 				RefColumns: []*schema.Column{AccountsColumns[0]},
 				OnDelete:   schema.Cascade,
@@ -219,7 +226,7 @@ var (
 				Symbol:     "passwords_accounts_password",
 				Columns:    []*schema.Column{PasswordsColumns[5]},
 				RefColumns: []*schema.Column{AccountsColumns[0]},
-				OnDelete:   schema.Cascade,
+				OnDelete:   schema.NoAction,
 			},
 		},
 		Indexes: []*schema.Index{
@@ -227,6 +234,42 @@ var (
 				Name:    "password_deleted_at",
 				Unique:  false,
 				Columns: []*schema.Column{PasswordsColumns[3]},
+			},
+		},
+	}
+	// PermissionsColumns holds the columns for the "permissions" table.
+	PermissionsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUUID, Unique: true, Default: schema.Expr("uuid_generate_v4()")},
+		{Name: "created_at", Type: field.TypeInt64, Default: schema.Expr("FLOOR(EXTRACT(EPOCH FROM CURRENT_TIMESTAMP) * 1000)")},
+		{Name: "updated_at", Type: field.TypeInt64, Nullable: true},
+		{Name: "deleted_at", Type: field.TypeInt64, Nullable: true, Comment: "Represents soft delete timestamp in milliseconds."},
+		{Name: "name", Type: field.TypeString, Size: 164},
+		{Name: "key", Type: field.TypeString, Size: 164},
+		{Name: "domain", Type: field.TypeString, Size: 164},
+		{Name: "resource", Type: field.TypeString},
+		{Name: "action", Type: field.TypeString},
+		{Name: "description", Type: field.TypeString, Nullable: true, Size: 300},
+	}
+	// PermissionsTable holds the schema information for the "permissions" table.
+	PermissionsTable = &schema.Table{
+		Name:       "permissions",
+		Columns:    PermissionsColumns,
+		PrimaryKey: []*schema.Column{PermissionsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "permission_deleted_at",
+				Unique:  false,
+				Columns: []*schema.Column{PermissionsColumns[3]},
+			},
+			{
+				Name:    "permission_domain_resource_action",
+				Unique:  false,
+				Columns: []*schema.Column{PermissionsColumns[6], PermissionsColumns[7], PermissionsColumns[8]},
+			},
+			{
+				Name:    "permission_domain_key",
+				Unique:  true,
+				Columns: []*schema.Column{PermissionsColumns[6], PermissionsColumns[5]},
 			},
 		},
 	}
@@ -241,6 +284,36 @@ var (
 		Name:       "provinces",
 		Columns:    ProvincesColumns,
 		PrimaryKey: []*schema.Column{ProvincesColumns[0]},
+	}
+	// RolesColumns holds the columns for the "roles" table.
+	RolesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUUID, Unique: true, Default: schema.Expr("uuid_generate_v4()")},
+		{Name: "created_at", Type: field.TypeInt64, Default: schema.Expr("FLOOR(EXTRACT(EPOCH FROM CURRENT_TIMESTAMP) * 1000)")},
+		{Name: "updated_at", Type: field.TypeInt64, Nullable: true},
+		{Name: "deleted_at", Type: field.TypeInt64, Nullable: true, Comment: "Represents soft delete timestamp in milliseconds."},
+		{Name: "name", Type: field.TypeString, Size: 164},
+		{Name: "key", Type: field.TypeString, Size: 164},
+		{Name: "domain", Type: field.TypeString, Size: 164},
+		{Name: "description", Type: field.TypeString, Nullable: true, Size: 300},
+		{Name: "activated", Type: field.TypeBool, Default: false},
+	}
+	// RolesTable holds the schema information for the "roles" table.
+	RolesTable = &schema.Table{
+		Name:       "roles",
+		Columns:    RolesColumns,
+		PrimaryKey: []*schema.Column{RolesColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "role_deleted_at",
+				Unique:  false,
+				Columns: []*schema.Column{RolesColumns[3]},
+			},
+			{
+				Name:    "role_domain_key",
+				Unique:  true,
+				Columns: []*schema.Column{RolesColumns[6], RolesColumns[5]},
+			},
+		},
 	}
 	// SubdistrictsColumns holds the columns for the "subdistricts" table.
 	SubdistrictsColumns = []*schema.Column{
@@ -264,6 +337,31 @@ var (
 			},
 		},
 	}
+	// RoleParentColumns holds the columns for the "role_parent" table.
+	RoleParentColumns = []*schema.Column{
+		{Name: "role_id", Type: field.TypeUUID},
+		{Name: "child_id", Type: field.TypeUUID},
+	}
+	// RoleParentTable holds the schema information for the "role_parent" table.
+	RoleParentTable = &schema.Table{
+		Name:       "role_parent",
+		Columns:    RoleParentColumns,
+		PrimaryKey: []*schema.Column{RoleParentColumns[0], RoleParentColumns[1]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "role_parent_role_id",
+				Columns:    []*schema.Column{RoleParentColumns[0]},
+				RefColumns: []*schema.Column{RolesColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+			{
+				Symbol:     "role_parent_child_id",
+				Columns:    []*schema.Column{RoleParentColumns[1]},
+				RefColumns: []*schema.Column{RolesColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
 		AccountsTable,
@@ -274,12 +372,17 @@ var (
 		OtpsTable,
 		PmiLocationsTable,
 		PasswordsTable,
+		PermissionsTable,
 		ProvincesTable,
+		RolesTable,
 		SubdistrictsTable,
+		RoleParentTable,
 	}
 )
 
 func init() {
+	AccountsTable.ForeignKeys[0].RefTable = BloodTypesTable
+	AccountsTable.ForeignKeys[1].RefTable = RolesTable
 	AccountsTable.Annotation = &entsql.Annotation{}
 	AccountsTable.Annotation.Checks = map[string]string{
 		"country_iso_code":   "length(country_iso_code) = 2",
@@ -288,7 +391,6 @@ func init() {
 		"national_id_masked": "length(national_id_masked) = 8",
 		"phone_number":       "length(phone_number) >= 11 and length(phone_number) <= 13",
 	}
-	BloodTypesTable.ForeignKeys[0].RefTable = AccountsTable
 	CasbinRuleTable.Annotation = &entsql.Annotation{
 		Table: "casbin_rule",
 	}
@@ -317,9 +419,23 @@ func init() {
 		"phone_number": "length(phone_number) >= 11 and length(phone_number) <= 13",
 	}
 	PasswordsTable.ForeignKeys[0].RefTable = AccountsTable
+	PermissionsTable.Annotation = &entsql.Annotation{}
+	PermissionsTable.Annotation.Checks = map[string]string{
+		"description": "length(description) >= 30 and length(description) <= 300",
+		"domain":      "length(domain) >= 1 and length(domain) <= 164",
+		"key":         "length(key) >= 3 and length(key) <= 164",
+		"name":        "length(name) >= 3 and length(name) <= 164",
+	}
 	ProvincesTable.Annotation = &entsql.Annotation{}
 	ProvincesTable.Annotation.Checks = map[string]string{
 		"bps_code": "length(bps_code) = 2",
+	}
+	RolesTable.Annotation = &entsql.Annotation{}
+	RolesTable.Annotation.Checks = map[string]string{
+		"description": "length(description) >= 30 and length(description) <= 300",
+		"domain":      "length(domain) >= 1 and length(domain) <= 164",
+		"key":         "length(key) >= 3 and length(key) <= 164",
+		"name":        "length(name) >= 3 and length(name) <= 164",
 	}
 	SubdistrictsTable.ForeignKeys[0].RefTable = DistrictsTable
 	SubdistrictsTable.Annotation = &entsql.Annotation{}
@@ -327,4 +443,6 @@ func init() {
 		"bps_code":    "length(bps_code) = 10",
 		"postal_code": "length(postal_code) = 5",
 	}
+	RoleParentTable.ForeignKeys[0].RefTable = RolesTable
+	RoleParentTable.ForeignKeys[1].RefTable = RolesTable
 }

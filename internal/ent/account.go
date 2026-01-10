@@ -12,6 +12,7 @@ import (
 	"github.com/sembraniteam/setetes/internal/ent/account"
 	"github.com/sembraniteam/setetes/internal/ent/bloodtype"
 	"github.com/sembraniteam/setetes/internal/ent/password"
+	"github.com/sembraniteam/setetes/internal/ent/role"
 )
 
 // Account is the model entity for the Account schema.
@@ -49,8 +50,10 @@ type Account struct {
 	TempLockedAt int64 `json:"temp_locked_at"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the AccountQuery when eager-loading is set.
-	Edges        AccountEdges `json:"edges"`
-	selectValues sql.SelectValues
+	Edges         AccountEdges `json:"edges"`
+	blood_type_id *uuid.UUID
+	role_id       *uuid.UUID
+	selectValues  sql.SelectValues
 }
 
 // AccountEdges holds the relations/edges for other nodes in the graph.
@@ -61,9 +64,11 @@ type AccountEdges struct {
 	Password *Password `json:"password,omitempty"`
 	// Otp holds the value of the otp edge.
 	Otp []*OTP `json:"otp,omitempty"`
+	// Role holds the value of the role edge.
+	Role *Role `json:"role,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [3]bool
+	loadedTypes [4]bool
 }
 
 // BloodTypeOrErr returns the BloodType value or an error if the edge
@@ -97,6 +102,17 @@ func (e AccountEdges) OtpOrErr() ([]*OTP, error) {
 	return nil, &NotLoadedError{edge: "otp"}
 }
 
+// RoleOrErr returns the Role value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e AccountEdges) RoleOrErr() (*Role, error) {
+	if e.Role != nil {
+		return e.Role, nil
+	} else if e.loadedTypes[3] {
+		return nil, &NotFoundError{label: role.Label}
+	}
+	return nil, &NotLoadedError{edge: "role"}
+}
+
 // scanValues returns the types for scanning values from sql.Rows.
 func (*Account) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
@@ -110,6 +126,10 @@ func (*Account) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullString)
 		case account.FieldID:
 			values[i] = new(uuid.UUID)
+		case account.ForeignKeys[0]: // blood_type_id
+			values[i] = &sql.NullScanner{S: new(uuid.UUID)}
+		case account.ForeignKeys[1]: // role_id
+			values[i] = &sql.NullScanner{S: new(uuid.UUID)}
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -215,6 +235,20 @@ func (_m *Account) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				_m.TempLockedAt = value.Int64
 			}
+		case account.ForeignKeys[0]:
+			if value, ok := values[i].(*sql.NullScanner); !ok {
+				return fmt.Errorf("unexpected type %T for field blood_type_id", values[i])
+			} else if value.Valid {
+				_m.blood_type_id = new(uuid.UUID)
+				*_m.blood_type_id = *value.S.(*uuid.UUID)
+			}
+		case account.ForeignKeys[1]:
+			if value, ok := values[i].(*sql.NullScanner); !ok {
+				return fmt.Errorf("unexpected type %T for field role_id", values[i])
+			} else if value.Valid {
+				_m.role_id = new(uuid.UUID)
+				*_m.role_id = *value.S.(*uuid.UUID)
+			}
 		default:
 			_m.selectValues.Set(columns[i], values[i])
 		}
@@ -241,6 +275,11 @@ func (_m *Account) QueryPassword() *PasswordQuery {
 // QueryOtp queries the "otp" edge of the Account entity.
 func (_m *Account) QueryOtp() *OTPQuery {
 	return NewAccountClient(_m.config).QueryOtp(_m)
+}
+
+// QueryRole queries the "role" edge of the Account entity.
+func (_m *Account) QueryRole() *RoleQuery {
+	return NewAccountClient(_m.config).QueryRole(_m)
 }
 
 // Update returns a builder for updating this Account.

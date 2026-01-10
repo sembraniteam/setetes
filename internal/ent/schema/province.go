@@ -36,8 +36,7 @@ func (Province) Fields() []ent.Field {
 func (Province) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.To("city", City.Type).
-			StorageKey(edge.Column("province_id")).
-			Annotations(entsql.OnDelete(entsql.NoAction)),
+			StorageKey(edge.Column("province_id")),
 	}
 }
 

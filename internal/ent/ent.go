@@ -19,8 +19,10 @@ import (
 	"github.com/sembraniteam/setetes/internal/ent/district"
 	"github.com/sembraniteam/setetes/internal/ent/otp"
 	"github.com/sembraniteam/setetes/internal/ent/password"
+	"github.com/sembraniteam/setetes/internal/ent/permission"
 	"github.com/sembraniteam/setetes/internal/ent/pmilocation"
 	"github.com/sembraniteam/setetes/internal/ent/province"
+	"github.com/sembraniteam/setetes/internal/ent/role"
 	"github.com/sembraniteam/setetes/internal/ent/subdistrict"
 )
 
@@ -90,7 +92,9 @@ func checkColumn(t, c string) error {
 			otp.Table:         otp.ValidColumn,
 			pmilocation.Table: pmilocation.ValidColumn,
 			password.Table:    password.ValidColumn,
+			permission.Table:  permission.ValidColumn,
 			province.Table:    province.ValidColumn,
+			role.Table:        role.ValidColumn,
 			subdistrict.Table: subdistrict.ValidColumn,
 		})
 	})

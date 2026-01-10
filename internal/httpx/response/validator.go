@@ -42,7 +42,10 @@ func init() {
 		panic(err)
 	}
 
-	if err := validate.RegisterValidation("password", validatePassword); err != nil {
+	if err := validate.RegisterValidation(
+		"password",
+		validatePassword,
+	); err != nil {
 		panic(err)
 	}
 
@@ -116,7 +119,9 @@ func validateStruct(data any) *ErrorValidate {
 				dataType = dataType.Elem()
 			}
 
-			if field, found := dataType.FieldByName(firstErr.StructField()); found {
+			if field, found := dataType.FieldByName(
+				firstErr.StructField(),
+			); found {
 				if customMsg := reason(field, firstErr.Tag()); customMsg != "" {
 					errMsg = customMsg
 				}

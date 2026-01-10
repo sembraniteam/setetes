@@ -36,6 +36,7 @@ func (Password) Edges() []ent.Edge {
 		edge.From("account", Account.Type).
 			Ref("password").
 			Unique().
-			Required(),
+			Required().
+			Annotations(entsql.OnDelete(entsql.Cascade)),
 	}
 }

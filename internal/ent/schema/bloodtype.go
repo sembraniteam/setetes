@@ -46,10 +46,8 @@ func (BloodType) Fields() []ent.Field {
 // Edges of the BloodType.
 func (BloodType) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.From("account", Account.Type).
-			Ref("blood_type").
-			Unique().
-			Required(),
+		edge.From("accounts", Account.Type).
+			Ref("blood_type"),
 	}
 }
 

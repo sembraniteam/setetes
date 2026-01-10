@@ -228,7 +228,7 @@ func (_c *OTPCreate) createSpec() (*OTP, *sqlgraph.CreateSpec) {
 	if nodes := _c.mutation.AccountIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
-			Inverse: true,
+			Inverse: false,
 			Table:   otp.AccountTable,
 			Columns: []string{otp.AccountColumn},
 			Bidi:    false,

@@ -8,7 +8,7 @@ import (
 
 	"github.com/gin-contrib/gzip"
 	"github.com/samber/do/v2"
-	"github.com/sembraniteam/setetes/internal"
+	"github.com/sembraniteam/setetes/internal/config"
 	"github.com/sembraniteam/setetes/internal/cryptox"
 	"github.com/sembraniteam/setetes/internal/cryptox/pasetox"
 	"github.com/sembraniteam/setetes/internal/database/postgresx"
@@ -18,6 +18,7 @@ import (
 	"github.com/sembraniteam/setetes/internal/httpx/middleware"
 	"github.com/sembraniteam/setetes/internal/httpx/web"
 	"github.com/sembraniteam/setetes/internal/rbac"
+	"github.com/sembraniteam/setetes/internal/seed"
 	"github.com/sembraniteam/setetes/internal/service"
 )
 
@@ -28,6 +29,7 @@ type (
 
 	Bootstrap interface {
 		Init() error
+		Seeder() error
 	}
 )
 
@@ -37,7 +39,7 @@ func New(configPath string) Bootstrap {
 
 func (a App) Init() error {
 	injector := do.New(service.Packages, handler.Packages)
-	_, err := internal.LoadConfig(a.configPath)
+	_, err := config.LoadConfig(a.configPath)
 	if err != nil {
 		return err
 	}
@@ -48,17 +50,26 @@ func (a App) Init() error {
 		return err
 	}
 
-	do.Provide[*ent.Client](injector, func(_ do.Injector) (*ent.Client, error) {
-		return pcl, nil
-	})
+	do.Provide[*ent.Client](
+		injector,
+		func(_ do.Injector) (*ent.Client, error) {
+			return pcl, nil
+		})
 
 	rateLimiter := middleware.DefaultTokenBucket()
 	defer rateLimiter.Stop()
 
-	rbacMan, err := rbac.New(pcl)
+	rm, err := rbac.New(pcl)
 	if err != nil {
 		return err
 	}
+
+	do.Provide[*rbac.Manager](
+		injector,
+		func(_ do.Injector) (*rbac.Manager, error) {
+			return rm, nil
+		},
+	)
 
 	keypair, err := cryptox.DefaultKeypair()
 	if err != nil {
@@ -68,7 +79,7 @@ func (a App) Init() error {
 	verifier := pasetox.NewVerifier(keypair)
 
 	auth := middleware.NewAuthorizationConfig(
-		rbacMan,
+		rm,
 		verifier,
 		web.PublicRoutes(),
 	)
@@ -105,6 +116,41 @@ func (a App) Init() error {
 	if err = server.Stop(); err != nil {
 		return fmt.Errorf("force to shutdown server because error: %w", err)
 	}
+
+	return nil
+}
+
+func (a App) Seeder() error {
+	injector := do.New(seed.Packages)
+	_, err := config.LoadConfig(a.configPath)
+	if err != nil {
+		return err
+	}
+
+	pdb := postgresx.New()
+	pcl, err := pdb.Connect()
+	if err != nil {
+		return err
+	}
+
+	do.Provide[*ent.Client](injector, func(_ do.Injector) (*ent.Client, error) {
+		return pcl, nil
+	})
+
+	rbacMan, err := rbac.New(pcl)
+	if err != nil {
+		return err
+	}
+
+	do.Provide[*rbac.Manager](
+		injector,
+		func(_ do.Injector) (*rbac.Manager, error) {
+			return rbacMan, nil
+		},
+	)
+
+	seeder := do.MustInvoke[seed.Seeder](injector)
+	seeder.RunAll()
 
 	return nil
 }

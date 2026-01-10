@@ -14,6 +14,7 @@ import (
 	"github.com/sembraniteam/setetes/internal/ent/bloodtype"
 	"github.com/sembraniteam/setetes/internal/ent/otp"
 	"github.com/sembraniteam/setetes/internal/ent/password"
+	"github.com/sembraniteam/setetes/internal/ent/role"
 )
 
 // AccountCreate is the builder for creating a Account entity.
@@ -204,6 +205,25 @@ func (_c *AccountCreate) AddOtp(v ...*OTP) *AccountCreate {
 		ids[i] = v[i].ID
 	}
 	return _c.AddOtpIDs(ids...)
+}
+
+// SetRoleID sets the "role" edge to the Role entity by ID.
+func (_c *AccountCreate) SetRoleID(id uuid.UUID) *AccountCreate {
+	_c.mutation.SetRoleID(id)
+	return _c
+}
+
+// SetNillableRoleID sets the "role" edge to the Role entity by ID if the given value is not nil.
+func (_c *AccountCreate) SetNillableRoleID(id *uuid.UUID) *AccountCreate {
+	if id != nil {
+		_c = _c.SetRoleID(*id)
+	}
+	return _c
+}
+
+// SetRole sets the "role" edge to the Role entity.
+func (_c *AccountCreate) SetRole(v *Role) *AccountCreate {
+	return _c.SetRoleID(v.ID)
 }
 
 // Mutation returns the AccountMutation object of the builder.
@@ -436,7 +456,7 @@ func (_c *AccountCreate) createSpec() (*Account, *sqlgraph.CreateSpec) {
 	}
 	if nodes := _c.mutation.BloodTypeIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
+			Rel:     sqlgraph.M2O,
 			Inverse: false,
 			Table:   account.BloodTypeTable,
 			Columns: []string{account.BloodTypeColumn},
@@ -448,6 +468,7 @@ func (_c *AccountCreate) createSpec() (*Account, *sqlgraph.CreateSpec) {
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
+		_node.blood_type_id = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	if nodes := _c.mutation.PasswordIDs(); len(nodes) > 0 {
@@ -469,7 +490,7 @@ func (_c *AccountCreate) createSpec() (*Account, *sqlgraph.CreateSpec) {
 	if nodes := _c.mutation.OtpIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
-			Inverse: false,
+			Inverse: true,
 			Table:   account.OtpTable,
 			Columns: []string{account.OtpColumn},
 			Bidi:    false,
@@ -480,6 +501,23 @@ func (_c *AccountCreate) createSpec() (*Account, *sqlgraph.CreateSpec) {
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := _c.mutation.RoleIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   account.RoleTable,
+			Columns: []string{account.RoleColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(role.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_node.role_id = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec

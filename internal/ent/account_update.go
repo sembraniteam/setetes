@@ -16,6 +16,7 @@ import (
 	"github.com/sembraniteam/setetes/internal/ent/otp"
 	"github.com/sembraniteam/setetes/internal/ent/password"
 	"github.com/sembraniteam/setetes/internal/ent/predicate"
+	"github.com/sembraniteam/setetes/internal/ent/role"
 )
 
 // AccountUpdate is the builder for updating Account entities.
@@ -297,6 +298,25 @@ func (_u *AccountUpdate) AddOtp(v ...*OTP) *AccountUpdate {
 	return _u.AddOtpIDs(ids...)
 }
 
+// SetRoleID sets the "role" edge to the Role entity by ID.
+func (_u *AccountUpdate) SetRoleID(id uuid.UUID) *AccountUpdate {
+	_u.mutation.SetRoleID(id)
+	return _u
+}
+
+// SetNillableRoleID sets the "role" edge to the Role entity by ID if the given value is not nil.
+func (_u *AccountUpdate) SetNillableRoleID(id *uuid.UUID) *AccountUpdate {
+	if id != nil {
+		_u = _u.SetRoleID(*id)
+	}
+	return _u
+}
+
+// SetRole sets the "role" edge to the Role entity.
+func (_u *AccountUpdate) SetRole(v *Role) *AccountUpdate {
+	return _u.SetRoleID(v.ID)
+}
+
 // Mutation returns the AccountMutation object of the builder.
 func (_u *AccountUpdate) Mutation() *AccountMutation {
 	return _u.mutation
@@ -333,6 +353,12 @@ func (_u *AccountUpdate) RemoveOtp(v ...*OTP) *AccountUpdate {
 		ids[i] = v[i].ID
 	}
 	return _u.RemoveOtpIDs(ids...)
+}
+
+// ClearRole clears the "role" edge to the Role entity.
+func (_u *AccountUpdate) ClearRole() *AccountUpdate {
+	_u.mutation.ClearRole()
+	return _u
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -502,7 +528,7 @@ func (_u *AccountUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if _u.mutation.BloodTypeCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
+			Rel:     sqlgraph.M2O,
 			Inverse: false,
 			Table:   account.BloodTypeTable,
 			Columns: []string{account.BloodTypeColumn},
@@ -515,7 +541,7 @@ func (_u *AccountUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if nodes := _u.mutation.BloodTypeIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
+			Rel:     sqlgraph.M2O,
 			Inverse: false,
 			Table:   account.BloodTypeTable,
 			Columns: []string{account.BloodTypeColumn},
@@ -561,7 +587,7 @@ func (_u *AccountUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	if _u.mutation.OtpCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
-			Inverse: false,
+			Inverse: true,
 			Table:   account.OtpTable,
 			Columns: []string{account.OtpColumn},
 			Bidi:    false,
@@ -574,7 +600,7 @@ func (_u *AccountUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	if nodes := _u.mutation.RemovedOtpIDs(); len(nodes) > 0 && !_u.mutation.OtpCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
-			Inverse: false,
+			Inverse: true,
 			Table:   account.OtpTable,
 			Columns: []string{account.OtpColumn},
 			Bidi:    false,
@@ -590,12 +616,41 @@ func (_u *AccountUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	if nodes := _u.mutation.OtpIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
-			Inverse: false,
+			Inverse: true,
 			Table:   account.OtpTable,
 			Columns: []string{account.OtpColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(otp.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.RoleCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   account.RoleTable,
+			Columns: []string{account.RoleColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(role.FieldID, field.TypeUUID),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RoleIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   account.RoleTable,
+			Columns: []string{account.RoleColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(role.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
@@ -889,6 +944,25 @@ func (_u *AccountUpdateOne) AddOtp(v ...*OTP) *AccountUpdateOne {
 	return _u.AddOtpIDs(ids...)
 }
 
+// SetRoleID sets the "role" edge to the Role entity by ID.
+func (_u *AccountUpdateOne) SetRoleID(id uuid.UUID) *AccountUpdateOne {
+	_u.mutation.SetRoleID(id)
+	return _u
+}
+
+// SetNillableRoleID sets the "role" edge to the Role entity by ID if the given value is not nil.
+func (_u *AccountUpdateOne) SetNillableRoleID(id *uuid.UUID) *AccountUpdateOne {
+	if id != nil {
+		_u = _u.SetRoleID(*id)
+	}
+	return _u
+}
+
+// SetRole sets the "role" edge to the Role entity.
+func (_u *AccountUpdateOne) SetRole(v *Role) *AccountUpdateOne {
+	return _u.SetRoleID(v.ID)
+}
+
 // Mutation returns the AccountMutation object of the builder.
 func (_u *AccountUpdateOne) Mutation() *AccountMutation {
 	return _u.mutation
@@ -925,6 +999,12 @@ func (_u *AccountUpdateOne) RemoveOtp(v ...*OTP) *AccountUpdateOne {
 		ids[i] = v[i].ID
 	}
 	return _u.RemoveOtpIDs(ids...)
+}
+
+// ClearRole clears the "role" edge to the Role entity.
+func (_u *AccountUpdateOne) ClearRole() *AccountUpdateOne {
+	_u.mutation.ClearRole()
+	return _u
 }
 
 // Where appends a list predicates to the AccountUpdate builder.
@@ -1124,7 +1204,7 @@ func (_u *AccountUpdateOne) sqlSave(ctx context.Context) (_node *Account, err er
 	}
 	if _u.mutation.BloodTypeCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
+			Rel:     sqlgraph.M2O,
 			Inverse: false,
 			Table:   account.BloodTypeTable,
 			Columns: []string{account.BloodTypeColumn},
@@ -1137,7 +1217,7 @@ func (_u *AccountUpdateOne) sqlSave(ctx context.Context) (_node *Account, err er
 	}
 	if nodes := _u.mutation.BloodTypeIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
+			Rel:     sqlgraph.M2O,
 			Inverse: false,
 			Table:   account.BloodTypeTable,
 			Columns: []string{account.BloodTypeColumn},
@@ -1183,7 +1263,7 @@ func (_u *AccountUpdateOne) sqlSave(ctx context.Context) (_node *Account, err er
 	if _u.mutation.OtpCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
-			Inverse: false,
+			Inverse: true,
 			Table:   account.OtpTable,
 			Columns: []string{account.OtpColumn},
 			Bidi:    false,
@@ -1196,7 +1276,7 @@ func (_u *AccountUpdateOne) sqlSave(ctx context.Context) (_node *Account, err er
 	if nodes := _u.mutation.RemovedOtpIDs(); len(nodes) > 0 && !_u.mutation.OtpCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
-			Inverse: false,
+			Inverse: true,
 			Table:   account.OtpTable,
 			Columns: []string{account.OtpColumn},
 			Bidi:    false,
@@ -1212,12 +1292,41 @@ func (_u *AccountUpdateOne) sqlSave(ctx context.Context) (_node *Account, err er
 	if nodes := _u.mutation.OtpIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
-			Inverse: false,
+			Inverse: true,
 			Table:   account.OtpTable,
 			Columns: []string{account.OtpColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(otp.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.RoleCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   account.RoleTable,
+			Columns: []string{account.RoleColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(role.FieldID, field.TypeUUID),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RoleIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   account.RoleTable,
+			Columns: []string{account.RoleColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(role.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {

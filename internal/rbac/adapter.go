@@ -152,7 +152,8 @@ func (a *Adapter) SavePolicy(m model.Model) error {
 			end := min(i+batchSize, len(lines))
 
 			batch := lines[i:end]
-			if _, err := tx.CasbinRule.CreateBulk(batch...).Save(a.ctx); err != nil {
+			if _, err := tx.CasbinRule.CreateBulk(batch...).
+				Save(a.ctx); err != nil {
 				return err
 			}
 		}
@@ -262,7 +263,8 @@ func (a *Adapter) UpdatePolicies(
 			lines = append(lines, a.savePolicyLine(tx, ptype, policy))
 		}
 
-		if _, err := tx.CasbinRule.CreateBulk(lines...).Save(a.ctx); err != nil {
+		if _, err := tx.CasbinRule.CreateBulk(lines...).
+			Save(a.ctx); err != nil {
 			return err
 		}
 

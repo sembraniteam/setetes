@@ -76,7 +76,7 @@ func (_q *OTPQuery) QueryAccount() *AccountQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(otp.Table, otp.FieldID, selector),
 			sqlgraph.To(account.Table, account.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, otp.AccountTable, otp.AccountColumn),
+			sqlgraph.Edge(sqlgraph.M2O, false, otp.AccountTable, otp.AccountColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
 		return fromU, nil

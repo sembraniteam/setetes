@@ -30,8 +30,14 @@ type PMILocation func(*sql.Selector)
 // Password is the predicate function for password builders.
 type Password func(*sql.Selector)
 
+// Permission is the predicate function for permission builders.
+type Permission func(*sql.Selector)
+
 // Province is the predicate function for province builders.
 type Province func(*sql.Selector)
+
+// Role is the predicate function for role builders.
+type Role func(*sql.Selector)
 
 // Subdistrict is the predicate function for subdistrict builders.
 type Subdistrict func(*sql.Selector)

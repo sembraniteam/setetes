@@ -24,17 +24,17 @@ const (
 	FieldGroup = "group"
 	// FieldRhesus holds the string denoting the rhesus field in the database.
 	FieldRhesus = "rhesus"
-	// EdgeAccount holds the string denoting the account edge name in mutations.
-	EdgeAccount = "account"
+	// EdgeAccounts holds the string denoting the accounts edge name in mutations.
+	EdgeAccounts = "accounts"
 	// Table holds the table name of the bloodtype in the database.
 	Table = "blood_types"
-	// AccountTable is the table that holds the account relation/edge.
-	AccountTable = "blood_types"
-	// AccountInverseTable is the table name for the Account entity.
+	// AccountsTable is the table that holds the accounts relation/edge.
+	AccountsTable = "accounts"
+	// AccountsInverseTable is the table name for the Account entity.
 	// It exists in this package in order to avoid circular dependency with the "account" package.
-	AccountInverseTable = "accounts"
-	// AccountColumn is the table column denoting the account relation/edge.
-	AccountColumn = "account_id"
+	AccountsInverseTable = "accounts"
+	// AccountsColumn is the table column denoting the accounts relation/edge.
+	AccountsColumn = "blood_type_id"
 )
 
 // Columns holds all SQL columns for bloodtype fields.
@@ -47,21 +47,10 @@ var Columns = []string{
 	FieldRhesus,
 }
 
-// ForeignKeys holds the SQL foreign-keys that are owned by the "blood_types"
-// table and are not defined as standalone fields in the schema.
-var ForeignKeys = []string{
-	"account_id",
-}
-
 // ValidColumn reports if the column name is valid (part of the table columns).
 func ValidColumn(column string) bool {
 	for i := range Columns {
 		if column == Columns[i] {
-			return true
-		}
-	}
-	for i := range ForeignKeys {
-		if column == ForeignKeys[i] {
 			return true
 		}
 	}
@@ -160,16 +149,23 @@ func ByRhesus(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldRhesus, opts...).ToFunc()
 }
 
-// ByAccountField orders the results by account field.
-func ByAccountField(field string, opts ...sql.OrderTermOption) OrderOption {
+// ByAccountsCount orders the results by accounts count.
+func ByAccountsCount(opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newAccountStep(), sql.OrderByField(field, opts...))
+		sqlgraph.OrderByNeighborsCount(s, newAccountsStep(), opts...)
 	}
 }
-func newAccountStep() *sqlgraph.Step {
+
+// ByAccounts orders the results by accounts terms.
+func ByAccounts(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newAccountsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+func newAccountsStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(AccountInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.O2O, true, AccountTable, AccountColumn),
+		sqlgraph.To(AccountsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, true, AccountsTable, AccountsColumn),
 	)
 }
