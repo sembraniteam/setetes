@@ -251,6 +251,14 @@ func (_u *AccountUpdate) SetBloodTypeID(id uuid.UUID) *AccountUpdate {
 	return _u
 }
 
+// SetNillableBloodTypeID sets the "blood_type" edge to the BloodType entity by ID if the given value is not nil.
+func (_u *AccountUpdate) SetNillableBloodTypeID(id *uuid.UUID) *AccountUpdate {
+	if id != nil {
+		_u = _u.SetBloodTypeID(*id)
+	}
+	return _u
+}
+
 // SetBloodType sets the "blood_type" edge to the BloodType entity.
 func (_u *AccountUpdate) SetBloodType(v *BloodType) *AccountUpdate {
 	return _u.SetBloodTypeID(v.ID)
@@ -293,6 +301,14 @@ func (_u *AccountUpdate) AddOtp(v ...*OTP) *AccountUpdate {
 // SetRoleID sets the "role" edge to the Role entity by ID.
 func (_u *AccountUpdate) SetRoleID(id uuid.UUID) *AccountUpdate {
 	_u.mutation.SetRoleID(id)
+	return _u
+}
+
+// SetNillableRoleID sets the "role" edge to the Role entity by ID if the given value is not nil.
+func (_u *AccountUpdate) SetNillableRoleID(id *uuid.UUID) *AccountUpdate {
+	if id != nil {
+		_u = _u.SetRoleID(*id)
+	}
 	return _u
 }
 
@@ -437,12 +453,6 @@ func (_u *AccountUpdate) check() error {
 		if err := account.TempLockedAtValidator(v); err != nil {
 			return &ValidationError{Name: "temp_locked_at", err: fmt.Errorf(`ent: validator failed for field "Account.temp_locked_at": %w`, err)}
 		}
-	}
-	if _u.mutation.BloodTypeCleared() && len(_u.mutation.BloodTypeIDs()) > 0 {
-		return errors.New(`ent: clearing a required unique edge "Account.blood_type"`)
-	}
-	if _u.mutation.RoleCleared() && len(_u.mutation.RoleIDs()) > 0 {
-		return errors.New(`ent: clearing a required unique edge "Account.role"`)
 	}
 	return nil
 }
@@ -887,6 +897,14 @@ func (_u *AccountUpdateOne) SetBloodTypeID(id uuid.UUID) *AccountUpdateOne {
 	return _u
 }
 
+// SetNillableBloodTypeID sets the "blood_type" edge to the BloodType entity by ID if the given value is not nil.
+func (_u *AccountUpdateOne) SetNillableBloodTypeID(id *uuid.UUID) *AccountUpdateOne {
+	if id != nil {
+		_u = _u.SetBloodTypeID(*id)
+	}
+	return _u
+}
+
 // SetBloodType sets the "blood_type" edge to the BloodType entity.
 func (_u *AccountUpdateOne) SetBloodType(v *BloodType) *AccountUpdateOne {
 	return _u.SetBloodTypeID(v.ID)
@@ -929,6 +947,14 @@ func (_u *AccountUpdateOne) AddOtp(v ...*OTP) *AccountUpdateOne {
 // SetRoleID sets the "role" edge to the Role entity by ID.
 func (_u *AccountUpdateOne) SetRoleID(id uuid.UUID) *AccountUpdateOne {
 	_u.mutation.SetRoleID(id)
+	return _u
+}
+
+// SetNillableRoleID sets the "role" edge to the Role entity by ID if the given value is not nil.
+func (_u *AccountUpdateOne) SetNillableRoleID(id *uuid.UUID) *AccountUpdateOne {
+	if id != nil {
+		_u = _u.SetRoleID(*id)
+	}
 	return _u
 }
 
@@ -1086,12 +1112,6 @@ func (_u *AccountUpdateOne) check() error {
 		if err := account.TempLockedAtValidator(v); err != nil {
 			return &ValidationError{Name: "temp_locked_at", err: fmt.Errorf(`ent: validator failed for field "Account.temp_locked_at": %w`, err)}
 		}
-	}
-	if _u.mutation.BloodTypeCleared() && len(_u.mutation.BloodTypeIDs()) > 0 {
-		return errors.New(`ent: clearing a required unique edge "Account.blood_type"`)
-	}
-	if _u.mutation.RoleCleared() && len(_u.mutation.RoleIDs()) > 0 {
-		return errors.New(`ent: clearing a required unique edge "Account.role"`)
 	}
 	return nil
 }

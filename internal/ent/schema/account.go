@@ -86,7 +86,6 @@ func (Account) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.To("blood_type", BloodType.Type).
 			Unique().
-			Required().
 			StorageKey(edge.Column("blood_type_id")),
 		edge.To("password", Password.Type).
 			Unique().
@@ -95,7 +94,6 @@ func (Account) Edges() []ent.Edge {
 			Ref("account"),
 		edge.To("role", Role.Type).
 			Unique().
-			Required().
 			StorageKey(edge.Column("role_id")),
 	}
 }

@@ -33,39 +33,9 @@ type Permission struct {
 	Resource string `json:"resource"`
 	// Action holds the value of the "action" field.
 	Action string `json:"action"`
-	// Edges holds the relations/edges for other nodes in the graph.
-	// The values are being populated by the PermissionQuery when eager-loading is set.
-	Edges        PermissionEdges `json:"edges"`
+	// Description holds the value of the "description" field.
+	Description  string `json:"description"`
 	selectValues sql.SelectValues
-}
-
-// PermissionEdges holds the relations/edges for other nodes in the graph.
-type PermissionEdges struct {
-	// Roles holds the value of the roles edge.
-	Roles []*Role `json:"roles,omitempty"`
-	// RolePermissions holds the value of the role_permissions edge.
-	RolePermissions []*RolePermission `json:"role_permissions,omitempty"`
-	// loadedTypes holds the information for reporting if a
-	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [2]bool
-}
-
-// RolesOrErr returns the Roles value or an error if the edge
-// was not loaded in eager-loading.
-func (e PermissionEdges) RolesOrErr() ([]*Role, error) {
-	if e.loadedTypes[0] {
-		return e.Roles, nil
-	}
-	return nil, &NotLoadedError{edge: "roles"}
-}
-
-// RolePermissionsOrErr returns the RolePermissions value or an error if the edge
-// was not loaded in eager-loading.
-func (e PermissionEdges) RolePermissionsOrErr() ([]*RolePermission, error) {
-	if e.loadedTypes[1] {
-		return e.RolePermissions, nil
-	}
-	return nil, &NotLoadedError{edge: "role_permissions"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -75,7 +45,7 @@ func (*Permission) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case permission.FieldCreatedAt, permission.FieldUpdatedAt, permission.FieldDeletedAt:
 			values[i] = new(sql.NullInt64)
-		case permission.FieldName, permission.FieldKey, permission.FieldDomain, permission.FieldResource, permission.FieldAction:
+		case permission.FieldName, permission.FieldKey, permission.FieldDomain, permission.FieldResource, permission.FieldAction, permission.FieldDescription:
 			values[i] = new(sql.NullString)
 		case permission.FieldID:
 			values[i] = new(uuid.UUID)
@@ -148,6 +118,12 @@ func (_m *Permission) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				_m.Action = value.String
 			}
+		case permission.FieldDescription:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field description", values[i])
+			} else if value.Valid {
+				_m.Description = value.String
+			}
 		default:
 			_m.selectValues.Set(columns[i], values[i])
 		}
@@ -159,16 +135,6 @@ func (_m *Permission) assignValues(columns []string, values []any) error {
 // This includes values selected through modifiers, order, etc.
 func (_m *Permission) Value(name string) (ent.Value, error) {
 	return _m.selectValues.Get(name)
-}
-
-// QueryRoles queries the "roles" edge of the Permission entity.
-func (_m *Permission) QueryRoles() *RoleQuery {
-	return NewPermissionClient(_m.config).QueryRoles(_m)
-}
-
-// QueryRolePermissions queries the "role_permissions" edge of the Permission entity.
-func (_m *Permission) QueryRolePermissions() *RolePermissionQuery {
-	return NewPermissionClient(_m.config).QueryRolePermissions(_m)
 }
 
 // Update returns a builder for updating this Permission.
@@ -217,6 +183,9 @@ func (_m *Permission) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("action=")
 	builder.WriteString(_m.Action)
+	builder.WriteString(", ")
+	builder.WriteString("description=")
+	builder.WriteString(_m.Description)
 	builder.WriteByte(')')
 	return builder.String()
 }

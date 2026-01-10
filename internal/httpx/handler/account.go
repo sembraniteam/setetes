@@ -9,6 +9,7 @@ import (
 	"github.com/sembraniteam/setetes/internal/httpx"
 	"github.com/sembraniteam/setetes/internal/httpx/request"
 	"github.com/sembraniteam/setetes/internal/httpx/response"
+	"github.com/sembraniteam/setetes/internal/httpx/response/responsetypes"
 	"github.com/sembraniteam/setetes/internal/service"
 )
 
@@ -118,7 +119,9 @@ func (a *Account) Self(ctx *gin.Context) {
 			return
 		}
 
-		response.Ok(ctx, response.MsgSuccess, account)
+		acc := responsetypes.Account{Account: account}
+
+		response.Ok(ctx, response.MsgSuccess, acc.ToResponse())
 		return
 	}
 }

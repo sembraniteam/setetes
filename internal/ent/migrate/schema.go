@@ -26,8 +26,8 @@ var (
 		{Name: "activated", Type: field.TypeBool, Default: false},
 		{Name: "locked", Type: field.TypeBool, Comment: "Permanently locked by this account.", Default: false},
 		{Name: "temp_locked_at", Type: field.TypeInt64, Nullable: true, Comment: "Temporary locked by this account based on time milliseconds."},
-		{Name: "blood_type_id", Type: field.TypeUUID},
-		{Name: "role_id", Type: field.TypeUUID},
+		{Name: "blood_type_id", Type: field.TypeUUID, Nullable: true},
+		{Name: "role_id", Type: field.TypeUUID, Nullable: true},
 	}
 	// AccountsTable holds the schema information for the "accounts" table.
 	AccountsTable = &schema.Table{
@@ -39,13 +39,13 @@ var (
 				Symbol:     "accounts_blood_types_blood_type",
 				Columns:    []*schema.Column{AccountsColumns[15]},
 				RefColumns: []*schema.Column{BloodTypesColumns[0]},
-				OnDelete:   schema.NoAction,
+				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:     "accounts_roles_role",
 				Columns:    []*schema.Column{AccountsColumns[16]},
 				RefColumns: []*schema.Column{RolesColumns[0]},
-				OnDelete:   schema.NoAction,
+				OnDelete:   schema.SetNull,
 			},
 		},
 		Indexes: []*schema.Index{
@@ -248,6 +248,7 @@ var (
 		{Name: "domain", Type: field.TypeString, Size: 164},
 		{Name: "resource", Type: field.TypeString},
 		{Name: "action", Type: field.TypeString},
+		{Name: "description", Type: field.TypeString, Nullable: true, Size: 300},
 	}
 	// PermissionsTable holds the schema information for the "permissions" table.
 	PermissionsTable = &schema.Table{
@@ -314,39 +315,6 @@ var (
 			},
 		},
 	}
-	// RolePermissionsColumns holds the columns for the "role_permissions" table.
-	RolePermissionsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt, Increment: true},
-		{Name: "role_id", Type: field.TypeUUID},
-		{Name: "permission_id", Type: field.TypeUUID},
-	}
-	// RolePermissionsTable holds the schema information for the "role_permissions" table.
-	RolePermissionsTable = &schema.Table{
-		Name:       "role_permissions",
-		Columns:    RolePermissionsColumns,
-		PrimaryKey: []*schema.Column{RolePermissionsColumns[0]},
-		ForeignKeys: []*schema.ForeignKey{
-			{
-				Symbol:     "role_permissions_roles_role",
-				Columns:    []*schema.Column{RolePermissionsColumns[1]},
-				RefColumns: []*schema.Column{RolesColumns[0]},
-				OnDelete:   schema.Cascade,
-			},
-			{
-				Symbol:     "role_permissions_permissions_permission",
-				Columns:    []*schema.Column{RolePermissionsColumns[2]},
-				RefColumns: []*schema.Column{PermissionsColumns[0]},
-				OnDelete:   schema.Cascade,
-			},
-		},
-		Indexes: []*schema.Index{
-			{
-				Name:    "rolepermission_role_id_permission_id",
-				Unique:  true,
-				Columns: []*schema.Column{RolePermissionsColumns[1], RolePermissionsColumns[2]},
-			},
-		},
-	}
 	// SubdistrictsColumns holds the columns for the "subdistricts" table.
 	SubdistrictsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUUID, Unique: true, Default: schema.Expr("uuid_generate_v4()")},
@@ -407,7 +375,6 @@ var (
 		PermissionsTable,
 		ProvincesTable,
 		RolesTable,
-		RolePermissionsTable,
 		SubdistrictsTable,
 		RoleParentTable,
 	}
@@ -454,9 +421,10 @@ func init() {
 	PasswordsTable.ForeignKeys[0].RefTable = AccountsTable
 	PermissionsTable.Annotation = &entsql.Annotation{}
 	PermissionsTable.Annotation.Checks = map[string]string{
-		"domain": "length(domain) >= 1 and length(domain) <= 164",
-		"key":    "length(key) >= 3 and length(key) <= 164",
-		"name":   "length(name) >= 3 and length(name) <= 164",
+		"description": "length(description) >= 30 and length(description) <= 300",
+		"domain":      "length(domain) >= 1 and length(domain) <= 164",
+		"key":         "length(key) >= 3 and length(key) <= 164",
+		"name":        "length(name) >= 3 and length(name) <= 164",
 	}
 	ProvincesTable.Annotation = &entsql.Annotation{}
 	ProvincesTable.Annotation.Checks = map[string]string{
@@ -469,8 +437,6 @@ func init() {
 		"key":         "length(key) >= 3 and length(key) <= 164",
 		"name":        "length(name) >= 3 and length(name) <= 164",
 	}
-	RolePermissionsTable.ForeignKeys[0].RefTable = RolesTable
-	RolePermissionsTable.ForeignKeys[1].RefTable = PermissionsTable
 	SubdistrictsTable.ForeignKeys[0].RefTable = DistrictsTable
 	SubdistrictsTable.Annotation = &entsql.Annotation{}
 	SubdistrictsTable.Annotation.Checks = map[string]string{

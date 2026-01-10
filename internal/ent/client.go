@@ -27,7 +27,6 @@ import (
 	"github.com/sembraniteam/setetes/internal/ent/pmilocation"
 	"github.com/sembraniteam/setetes/internal/ent/province"
 	"github.com/sembraniteam/setetes/internal/ent/role"
-	"github.com/sembraniteam/setetes/internal/ent/rolepermission"
 	"github.com/sembraniteam/setetes/internal/ent/subdistrict"
 )
 
@@ -58,8 +57,6 @@ type Client struct {
 	Province *ProvinceClient
 	// Role is the client for interacting with the Role builders.
 	Role *RoleClient
-	// RolePermission is the client for interacting with the RolePermission builders.
-	RolePermission *RolePermissionClient
 	// Subdistrict is the client for interacting with the Subdistrict builders.
 	Subdistrict *SubdistrictClient
 }
@@ -84,7 +81,6 @@ func (c *Client) init() {
 	c.Permission = NewPermissionClient(c.config)
 	c.Province = NewProvinceClient(c.config)
 	c.Role = NewRoleClient(c.config)
-	c.RolePermission = NewRolePermissionClient(c.config)
 	c.Subdistrict = NewSubdistrictClient(c.config)
 }
 
@@ -176,21 +172,20 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 	cfg := c.config
 	cfg.driver = tx
 	return &Tx{
-		ctx:            ctx,
-		config:         cfg,
-		Account:        NewAccountClient(cfg),
-		BloodType:      NewBloodTypeClient(cfg),
-		CasbinRule:     NewCasbinRuleClient(cfg),
-		City:           NewCityClient(cfg),
-		District:       NewDistrictClient(cfg),
-		OTP:            NewOTPClient(cfg),
-		PMILocation:    NewPMILocationClient(cfg),
-		Password:       NewPasswordClient(cfg),
-		Permission:     NewPermissionClient(cfg),
-		Province:       NewProvinceClient(cfg),
-		Role:           NewRoleClient(cfg),
-		RolePermission: NewRolePermissionClient(cfg),
-		Subdistrict:    NewSubdistrictClient(cfg),
+		ctx:         ctx,
+		config:      cfg,
+		Account:     NewAccountClient(cfg),
+		BloodType:   NewBloodTypeClient(cfg),
+		CasbinRule:  NewCasbinRuleClient(cfg),
+		City:        NewCityClient(cfg),
+		District:    NewDistrictClient(cfg),
+		OTP:         NewOTPClient(cfg),
+		PMILocation: NewPMILocationClient(cfg),
+		Password:    NewPasswordClient(cfg),
+		Permission:  NewPermissionClient(cfg),
+		Province:    NewProvinceClient(cfg),
+		Role:        NewRoleClient(cfg),
+		Subdistrict: NewSubdistrictClient(cfg),
 	}, nil
 }
 
@@ -208,21 +203,20 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 	cfg := c.config
 	cfg.driver = &txDriver{tx: tx, drv: c.driver}
 	return &Tx{
-		ctx:            ctx,
-		config:         cfg,
-		Account:        NewAccountClient(cfg),
-		BloodType:      NewBloodTypeClient(cfg),
-		CasbinRule:     NewCasbinRuleClient(cfg),
-		City:           NewCityClient(cfg),
-		District:       NewDistrictClient(cfg),
-		OTP:            NewOTPClient(cfg),
-		PMILocation:    NewPMILocationClient(cfg),
-		Password:       NewPasswordClient(cfg),
-		Permission:     NewPermissionClient(cfg),
-		Province:       NewProvinceClient(cfg),
-		Role:           NewRoleClient(cfg),
-		RolePermission: NewRolePermissionClient(cfg),
-		Subdistrict:    NewSubdistrictClient(cfg),
+		ctx:         ctx,
+		config:      cfg,
+		Account:     NewAccountClient(cfg),
+		BloodType:   NewBloodTypeClient(cfg),
+		CasbinRule:  NewCasbinRuleClient(cfg),
+		City:        NewCityClient(cfg),
+		District:    NewDistrictClient(cfg),
+		OTP:         NewOTPClient(cfg),
+		PMILocation: NewPMILocationClient(cfg),
+		Password:    NewPasswordClient(cfg),
+		Permission:  NewPermissionClient(cfg),
+		Province:    NewProvinceClient(cfg),
+		Role:        NewRoleClient(cfg),
+		Subdistrict: NewSubdistrictClient(cfg),
 	}, nil
 }
 
@@ -253,7 +247,7 @@ func (c *Client) Close() error {
 func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
 		c.Account, c.BloodType, c.CasbinRule, c.City, c.District, c.OTP, c.PMILocation,
-		c.Password, c.Permission, c.Province, c.Role, c.RolePermission, c.Subdistrict,
+		c.Password, c.Permission, c.Province, c.Role, c.Subdistrict,
 	} {
 		n.Use(hooks...)
 	}
@@ -264,7 +258,7 @@ func (c *Client) Use(hooks ...Hook) {
 func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
 		c.Account, c.BloodType, c.CasbinRule, c.City, c.District, c.OTP, c.PMILocation,
-		c.Password, c.Permission, c.Province, c.Role, c.RolePermission, c.Subdistrict,
+		c.Password, c.Permission, c.Province, c.Role, c.Subdistrict,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -295,8 +289,6 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.Province.mutate(ctx, m)
 	case *RoleMutation:
 		return c.Role.mutate(ctx, m)
-	case *RolePermissionMutation:
-		return c.RolePermission.mutate(ctx, m)
 	case *SubdistrictMutation:
 		return c.Subdistrict.mutate(ctx, m)
 	default:
@@ -1668,38 +1660,6 @@ func (c *PermissionClient) GetX(ctx context.Context, id uuid.UUID) *Permission {
 	return obj
 }
 
-// QueryRoles queries the roles edge of a Permission.
-func (c *PermissionClient) QueryRoles(_m *Permission) *RoleQuery {
-	query := (&RoleClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := _m.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(permission.Table, permission.FieldID, id),
-			sqlgraph.To(role.Table, role.FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, true, permission.RolesTable, permission.RolesPrimaryKey...),
-		)
-		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// QueryRolePermissions queries the role_permissions edge of a Permission.
-func (c *PermissionClient) QueryRolePermissions(_m *Permission) *RolePermissionQuery {
-	query := (&RolePermissionClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := _m.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(permission.Table, permission.FieldID, id),
-			sqlgraph.To(rolepermission.Table, rolepermission.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, true, permission.RolePermissionsTable, permission.RolePermissionsColumn),
-		)
-		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
 // Hooks returns the client hooks.
 func (c *PermissionClient) Hooks() []Hook {
 	return c.hooks.Permission
@@ -1998,22 +1958,6 @@ func (c *RoleClient) QueryAccounts(_m *Role) *AccountQuery {
 	return query
 }
 
-// QueryPermissions queries the permissions edge of a Role.
-func (c *RoleClient) QueryPermissions(_m *Role) *PermissionQuery {
-	query := (&PermissionClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := _m.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(role.Table, role.FieldID, id),
-			sqlgraph.To(permission.Table, permission.FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, false, role.PermissionsTable, role.PermissionsPrimaryKey...),
-		)
-		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
 // QueryChildren queries the children edge of a Role.
 func (c *RoleClient) QueryChildren(_m *Role) *RoleQuery {
 	query := (&RoleClient{config: c.config}).Query()
@@ -2046,22 +1990,6 @@ func (c *RoleClient) QueryParent(_m *Role) *RoleQuery {
 	return query
 }
 
-// QueryRolePermissions queries the role_permissions edge of a Role.
-func (c *RoleClient) QueryRolePermissions(_m *Role) *RolePermissionQuery {
-	query := (&RolePermissionClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := _m.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(role.Table, role.FieldID, id),
-			sqlgraph.To(rolepermission.Table, rolepermission.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, true, role.RolePermissionsTable, role.RolePermissionsColumn),
-		)
-		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
 // Hooks returns the client hooks.
 func (c *RoleClient) Hooks() []Hook {
 	return c.hooks.Role
@@ -2084,171 +2012,6 @@ func (c *RoleClient) mutate(ctx context.Context, m *RoleMutation) (Value, error)
 		return (&RoleDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("ent: unknown Role mutation op: %q", m.Op())
-	}
-}
-
-// RolePermissionClient is a client for the RolePermission schema.
-type RolePermissionClient struct {
-	config
-}
-
-// NewRolePermissionClient returns a client for the RolePermission from the given config.
-func NewRolePermissionClient(c config) *RolePermissionClient {
-	return &RolePermissionClient{config: c}
-}
-
-// Use adds a list of mutation hooks to the hooks stack.
-// A call to `Use(f, g, h)` equals to `rolepermission.Hooks(f(g(h())))`.
-func (c *RolePermissionClient) Use(hooks ...Hook) {
-	c.hooks.RolePermission = append(c.hooks.RolePermission, hooks...)
-}
-
-// Intercept adds a list of query interceptors to the interceptors stack.
-// A call to `Intercept(f, g, h)` equals to `rolepermission.Intercept(f(g(h())))`.
-func (c *RolePermissionClient) Intercept(interceptors ...Interceptor) {
-	c.inters.RolePermission = append(c.inters.RolePermission, interceptors...)
-}
-
-// Create returns a builder for creating a RolePermission entity.
-func (c *RolePermissionClient) Create() *RolePermissionCreate {
-	mutation := newRolePermissionMutation(c.config, OpCreate)
-	return &RolePermissionCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// CreateBulk returns a builder for creating a bulk of RolePermission entities.
-func (c *RolePermissionClient) CreateBulk(builders ...*RolePermissionCreate) *RolePermissionCreateBulk {
-	return &RolePermissionCreateBulk{config: c.config, builders: builders}
-}
-
-// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
-// a builder and applies setFunc on it.
-func (c *RolePermissionClient) MapCreateBulk(slice any, setFunc func(*RolePermissionCreate, int)) *RolePermissionCreateBulk {
-	rv := reflect.ValueOf(slice)
-	if rv.Kind() != reflect.Slice {
-		return &RolePermissionCreateBulk{err: fmt.Errorf("calling to RolePermissionClient.MapCreateBulk with wrong type %T, need slice", slice)}
-	}
-	builders := make([]*RolePermissionCreate, rv.Len())
-	for i := 0; i < rv.Len(); i++ {
-		builders[i] = c.Create()
-		setFunc(builders[i], i)
-	}
-	return &RolePermissionCreateBulk{config: c.config, builders: builders}
-}
-
-// Update returns an update builder for RolePermission.
-func (c *RolePermissionClient) Update() *RolePermissionUpdate {
-	mutation := newRolePermissionMutation(c.config, OpUpdate)
-	return &RolePermissionUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOne returns an update builder for the given entity.
-func (c *RolePermissionClient) UpdateOne(_m *RolePermission) *RolePermissionUpdateOne {
-	mutation := newRolePermissionMutation(c.config, OpUpdateOne, withRolePermission(_m))
-	return &RolePermissionUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOneID returns an update builder for the given id.
-func (c *RolePermissionClient) UpdateOneID(id int) *RolePermissionUpdateOne {
-	mutation := newRolePermissionMutation(c.config, OpUpdateOne, withRolePermissionID(id))
-	return &RolePermissionUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// Delete returns a delete builder for RolePermission.
-func (c *RolePermissionClient) Delete() *RolePermissionDelete {
-	mutation := newRolePermissionMutation(c.config, OpDelete)
-	return &RolePermissionDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// DeleteOne returns a builder for deleting the given entity.
-func (c *RolePermissionClient) DeleteOne(_m *RolePermission) *RolePermissionDeleteOne {
-	return c.DeleteOneID(_m.ID)
-}
-
-// DeleteOneID returns a builder for deleting the given entity by its id.
-func (c *RolePermissionClient) DeleteOneID(id int) *RolePermissionDeleteOne {
-	builder := c.Delete().Where(rolepermission.ID(id))
-	builder.mutation.id = &id
-	builder.mutation.op = OpDeleteOne
-	return &RolePermissionDeleteOne{builder}
-}
-
-// Query returns a query builder for RolePermission.
-func (c *RolePermissionClient) Query() *RolePermissionQuery {
-	return &RolePermissionQuery{
-		config: c.config,
-		ctx:    &QueryContext{Type: TypeRolePermission},
-		inters: c.Interceptors(),
-	}
-}
-
-// Get returns a RolePermission entity by its id.
-func (c *RolePermissionClient) Get(ctx context.Context, id int) (*RolePermission, error) {
-	return c.Query().Where(rolepermission.ID(id)).Only(ctx)
-}
-
-// GetX is like Get, but panics if an error occurs.
-func (c *RolePermissionClient) GetX(ctx context.Context, id int) *RolePermission {
-	obj, err := c.Get(ctx, id)
-	if err != nil {
-		panic(err)
-	}
-	return obj
-}
-
-// QueryRole queries the role edge of a RolePermission.
-func (c *RolePermissionClient) QueryRole(_m *RolePermission) *RoleQuery {
-	query := (&RoleClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := _m.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(rolepermission.Table, rolepermission.FieldID, id),
-			sqlgraph.To(role.Table, role.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, false, rolepermission.RoleTable, rolepermission.RoleColumn),
-		)
-		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// QueryPermission queries the permission edge of a RolePermission.
-func (c *RolePermissionClient) QueryPermission(_m *RolePermission) *PermissionQuery {
-	query := (&PermissionClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := _m.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(rolepermission.Table, rolepermission.FieldID, id),
-			sqlgraph.To(permission.Table, permission.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, false, rolepermission.PermissionTable, rolepermission.PermissionColumn),
-		)
-		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// Hooks returns the client hooks.
-func (c *RolePermissionClient) Hooks() []Hook {
-	return c.hooks.RolePermission
-}
-
-// Interceptors returns the client interceptors.
-func (c *RolePermissionClient) Interceptors() []Interceptor {
-	return c.inters.RolePermission
-}
-
-func (c *RolePermissionClient) mutate(ctx context.Context, m *RolePermissionMutation) (Value, error) {
-	switch m.Op() {
-	case OpCreate:
-		return (&RolePermissionCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
-	case OpUpdate:
-		return (&RolePermissionUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
-	case OpUpdateOne:
-		return (&RolePermissionUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
-	case OpDelete, OpDeleteOne:
-		return (&RolePermissionDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
-	default:
-		return nil, fmt.Errorf("ent: unknown RolePermission mutation op: %q", m.Op())
 	}
 }
 
@@ -2421,10 +2184,10 @@ func (c *SubdistrictClient) mutate(ctx context.Context, m *SubdistrictMutation) 
 type (
 	hooks struct {
 		Account, BloodType, CasbinRule, City, District, OTP, PMILocation, Password,
-		Permission, Province, Role, RolePermission, Subdistrict []ent.Hook
+		Permission, Province, Role, Subdistrict []ent.Hook
 	}
 	inters struct {
 		Account, BloodType, CasbinRule, City, District, OTP, PMILocation, Password,
-		Permission, Province, Role, RolePermission, Subdistrict []ent.Interceptor
+		Permission, Province, Role, Subdistrict []ent.Interceptor
 	}
 )

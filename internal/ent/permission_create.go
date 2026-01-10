@@ -11,8 +11,6 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
 	"github.com/sembraniteam/setetes/internal/ent/permission"
-	"github.com/sembraniteam/setetes/internal/ent/role"
-	"github.com/sembraniteam/setetes/internal/ent/rolepermission"
 )
 
 // PermissionCreate is the builder for creating a Permission entity.
@@ -86,40 +84,24 @@ func (_c *PermissionCreate) SetAction(v string) *PermissionCreate {
 	return _c
 }
 
+// SetDescription sets the "description" field.
+func (_c *PermissionCreate) SetDescription(v string) *PermissionCreate {
+	_c.mutation.SetDescription(v)
+	return _c
+}
+
+// SetNillableDescription sets the "description" field if the given value is not nil.
+func (_c *PermissionCreate) SetNillableDescription(v *string) *PermissionCreate {
+	if v != nil {
+		_c.SetDescription(*v)
+	}
+	return _c
+}
+
 // SetID sets the "id" field.
 func (_c *PermissionCreate) SetID(v uuid.UUID) *PermissionCreate {
 	_c.mutation.SetID(v)
 	return _c
-}
-
-// AddRoleIDs adds the "roles" edge to the Role entity by IDs.
-func (_c *PermissionCreate) AddRoleIDs(ids ...uuid.UUID) *PermissionCreate {
-	_c.mutation.AddRoleIDs(ids...)
-	return _c
-}
-
-// AddRoles adds the "roles" edges to the Role entity.
-func (_c *PermissionCreate) AddRoles(v ...*Role) *PermissionCreate {
-	ids := make([]uuid.UUID, len(v))
-	for i := range v {
-		ids[i] = v[i].ID
-	}
-	return _c.AddRoleIDs(ids...)
-}
-
-// AddRolePermissionIDs adds the "role_permissions" edge to the RolePermission entity by IDs.
-func (_c *PermissionCreate) AddRolePermissionIDs(ids ...int) *PermissionCreate {
-	_c.mutation.AddRolePermissionIDs(ids...)
-	return _c
-}
-
-// AddRolePermissions adds the "role_permissions" edges to the RolePermission entity.
-func (_c *PermissionCreate) AddRolePermissions(v ...*RolePermission) *PermissionCreate {
-	ids := make([]int, len(v))
-	for i := range v {
-		ids[i] = v[i].ID
-	}
-	return _c.AddRolePermissionIDs(ids...)
 }
 
 // Mutation returns the PermissionMutation object of the builder.
@@ -211,6 +193,11 @@ func (_c *PermissionCreate) check() error {
 			return &ValidationError{Name: "action", err: fmt.Errorf(`ent: validator failed for field "Permission.action": %w`, err)}
 		}
 	}
+	if v, ok := _c.mutation.Description(); ok {
+		if err := permission.DescriptionValidator(v); err != nil {
+			return &ValidationError{Name: "description", err: fmt.Errorf(`ent: validator failed for field "Permission.description": %w`, err)}
+		}
+	}
 	return nil
 }
 
@@ -278,37 +265,9 @@ func (_c *PermissionCreate) createSpec() (*Permission, *sqlgraph.CreateSpec) {
 		_spec.SetField(permission.FieldAction, field.TypeString, value)
 		_node.Action = value
 	}
-	if nodes := _c.mutation.RolesIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: true,
-			Table:   permission.RolesTable,
-			Columns: permission.RolesPrimaryKey,
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(role.FieldID, field.TypeUUID),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges = append(_spec.Edges, edge)
-	}
-	if nodes := _c.mutation.RolePermissionsIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: true,
-			Table:   permission.RolePermissionsTable,
-			Columns: []string{permission.RolePermissionsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(rolepermission.FieldID, field.TypeInt),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges = append(_spec.Edges, edge)
+	if value, ok := _c.mutation.Description(); ok {
+		_spec.SetField(permission.FieldDescription, field.TypeString, value)
+		_node.Description = value
 	}
 	return _node, _spec
 }

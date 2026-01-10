@@ -160,6 +160,14 @@ func (_c *AccountCreate) SetBloodTypeID(id uuid.UUID) *AccountCreate {
 	return _c
 }
 
+// SetNillableBloodTypeID sets the "blood_type" edge to the BloodType entity by ID if the given value is not nil.
+func (_c *AccountCreate) SetNillableBloodTypeID(id *uuid.UUID) *AccountCreate {
+	if id != nil {
+		_c = _c.SetBloodTypeID(*id)
+	}
+	return _c
+}
+
 // SetBloodType sets the "blood_type" edge to the BloodType entity.
 func (_c *AccountCreate) SetBloodType(v *BloodType) *AccountCreate {
 	return _c.SetBloodTypeID(v.ID)
@@ -202,6 +210,14 @@ func (_c *AccountCreate) AddOtp(v ...*OTP) *AccountCreate {
 // SetRoleID sets the "role" edge to the Role entity by ID.
 func (_c *AccountCreate) SetRoleID(id uuid.UUID) *AccountCreate {
 	_c.mutation.SetRoleID(id)
+	return _c
+}
+
+// SetNillableRoleID sets the "role" edge to the Role entity by ID if the given value is not nil.
+func (_c *AccountCreate) SetNillableRoleID(id *uuid.UUID) *AccountCreate {
+	if id != nil {
+		_c = _c.SetRoleID(*id)
+	}
 	return _c
 }
 
@@ -346,12 +362,6 @@ func (_c *AccountCreate) check() error {
 		if err := account.TempLockedAtValidator(v); err != nil {
 			return &ValidationError{Name: "temp_locked_at", err: fmt.Errorf(`ent: validator failed for field "Account.temp_locked_at": %w`, err)}
 		}
-	}
-	if len(_c.mutation.BloodTypeIDs()) == 0 {
-		return &ValidationError{Name: "blood_type", err: errors.New(`ent: missing required edge "Account.blood_type"`)}
-	}
-	if len(_c.mutation.RoleIDs()) == 0 {
-		return &ValidationError{Name: "role", err: errors.New(`ent: missing required edge "Account.role"`)}
 	}
 	return nil
 }

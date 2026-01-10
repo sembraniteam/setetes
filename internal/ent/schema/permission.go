@@ -4,7 +4,6 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/entsql"
 	"entgo.io/ent/schema"
-	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
 )
@@ -41,25 +40,27 @@ func (Permission) Fields() []ent.Field {
 			StructTag(`json:"domain"`),
 		field.String("resource").NotEmpty().StructTag(`json:"resource"`),
 		field.String("action").NotEmpty().StructTag(`json:"action"`),
+		field.String("description").
+			Optional().
+			MinLen(30).
+			MaxLen(300).
+			StructTag(`json:"description"`),
 	}
 }
 
 // Edges of the Permission.
 func (Permission) Edges() []ent.Edge {
-	return []ent.Edge{
-		edge.From("roles", Role.Type).
-			Ref("permissions").
-			Through("role_permissions", RolePermission.Type),
-	}
+	return nil
 }
 
 func (Permission) Annotations() []schema.Annotation {
 	return []schema.Annotation{
 		&entsql.Annotation{
 			Checks: map[string]string{
-				"name":   "length(name) >= 3 and length(name) <= 164",
-				"key":    "length(key) >= 3 and length(key) <= 164",
-				"domain": "length(domain) >= 1 and length(domain) <= 164",
+				"name":        "length(name) >= 3 and length(name) <= 164",
+				"key":         "length(key) >= 3 and length(key) <= 164",
+				"domain":      "length(domain) >= 1 and length(domain) <= 164",
+				"description": "length(description) >= 30 and length(description) <= 300",
 			},
 		},
 	}

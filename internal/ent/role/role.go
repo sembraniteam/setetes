@@ -30,14 +30,10 @@ const (
 	FieldActivated = "activated"
 	// EdgeAccounts holds the string denoting the accounts edge name in mutations.
 	EdgeAccounts = "accounts"
-	// EdgePermissions holds the string denoting the permissions edge name in mutations.
-	EdgePermissions = "permissions"
 	// EdgeChildren holds the string denoting the children edge name in mutations.
 	EdgeChildren = "children"
 	// EdgeParent holds the string denoting the parent edge name in mutations.
 	EdgeParent = "parent"
-	// EdgeRolePermissions holds the string denoting the role_permissions edge name in mutations.
-	EdgeRolePermissions = "role_permissions"
 	// Table holds the table name of the role in the database.
 	Table = "roles"
 	// AccountsTable is the table that holds the accounts relation/edge.
@@ -47,22 +43,10 @@ const (
 	AccountsInverseTable = "accounts"
 	// AccountsColumn is the table column denoting the accounts relation/edge.
 	AccountsColumn = "role_id"
-	// PermissionsTable is the table that holds the permissions relation/edge. The primary key declared below.
-	PermissionsTable = "role_permissions"
-	// PermissionsInverseTable is the table name for the Permission entity.
-	// It exists in this package in order to avoid circular dependency with the "permission" package.
-	PermissionsInverseTable = "permissions"
 	// ChildrenTable is the table that holds the children relation/edge. The primary key declared below.
 	ChildrenTable = "role_parent"
 	// ParentTable is the table that holds the parent relation/edge. The primary key declared below.
 	ParentTable = "role_parent"
-	// RolePermissionsTable is the table that holds the role_permissions relation/edge.
-	RolePermissionsTable = "role_permissions"
-	// RolePermissionsInverseTable is the table name for the RolePermission entity.
-	// It exists in this package in order to avoid circular dependency with the "rolepermission" package.
-	RolePermissionsInverseTable = "role_permissions"
-	// RolePermissionsColumn is the table column denoting the role_permissions relation/edge.
-	RolePermissionsColumn = "role_id"
 )
 
 // Columns holds all SQL columns for role fields.
@@ -79,9 +63,6 @@ var Columns = []string{
 }
 
 var (
-	// PermissionsPrimaryKey and PermissionsColumn2 are the table columns denoting the
-	// primary key for the permissions relation (M2M).
-	PermissionsPrimaryKey = []string{"role_id", "permission_id"}
 	// ChildrenPrimaryKey and ChildrenColumn2 are the table columns denoting the
 	// primary key for the children relation (M2M).
 	ChildrenPrimaryKey = []string{"role_id", "child_id"}
@@ -183,20 +164,6 @@ func ByAccounts(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	}
 }
 
-// ByPermissionsCount orders the results by permissions count.
-func ByPermissionsCount(opts ...sql.OrderTermOption) OrderOption {
-	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborsCount(s, newPermissionsStep(), opts...)
-	}
-}
-
-// ByPermissions orders the results by permissions terms.
-func ByPermissions(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
-	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newPermissionsStep(), append([]sql.OrderTerm{term}, terms...)...)
-	}
-}
-
 // ByChildrenCount orders the results by children count.
 func ByChildrenCount(opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
@@ -224,32 +191,11 @@ func ByParent(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newParentStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
-
-// ByRolePermissionsCount orders the results by role_permissions count.
-func ByRolePermissionsCount(opts ...sql.OrderTermOption) OrderOption {
-	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborsCount(s, newRolePermissionsStep(), opts...)
-	}
-}
-
-// ByRolePermissions orders the results by role_permissions terms.
-func ByRolePermissions(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
-	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newRolePermissionsStep(), append([]sql.OrderTerm{term}, terms...)...)
-	}
-}
 func newAccountsStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(AccountsInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, true, AccountsTable, AccountsColumn),
-	)
-}
-func newPermissionsStep() *sqlgraph.Step {
-	return sqlgraph.NewStep(
-		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(PermissionsInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.M2M, false, PermissionsTable, PermissionsPrimaryKey...),
 	)
 }
 func newChildrenStep() *sqlgraph.Step {
@@ -264,12 +210,5 @@ func newParentStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(Table, FieldID),
 		sqlgraph.Edge(sqlgraph.M2M, false, ParentTable, ParentPrimaryKey...),
-	)
-}
-func newRolePermissionsStep() *sqlgraph.Step {
-	return sqlgraph.NewStep(
-		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(RolePermissionsInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.O2M, true, RolePermissionsTable, RolePermissionsColumn),
 	)
 }

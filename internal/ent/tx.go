@@ -34,8 +34,6 @@ type Tx struct {
 	Province *ProvinceClient
 	// Role is the client for interacting with the Role builders.
 	Role *RoleClient
-	// RolePermission is the client for interacting with the RolePermission builders.
-	RolePermission *RolePermissionClient
 	// Subdistrict is the client for interacting with the Subdistrict builders.
 	Subdistrict *SubdistrictClient
 
@@ -180,7 +178,6 @@ func (tx *Tx) init() {
 	tx.Permission = NewPermissionClient(tx.config)
 	tx.Province = NewProvinceClient(tx.config)
 	tx.Role = NewRoleClient(tx.config)
-	tx.RolePermission = NewRolePermissionClient(tx.config)
 	tx.Subdistrict = NewSubdistrictClient(tx.config)
 }
 

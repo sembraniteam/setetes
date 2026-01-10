@@ -11,9 +11,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
 	"github.com/sembraniteam/setetes/internal/ent/account"
-	"github.com/sembraniteam/setetes/internal/ent/permission"
 	"github.com/sembraniteam/setetes/internal/ent/role"
-	"github.com/sembraniteam/setetes/internal/ent/rolepermission"
 )
 
 // RoleCreate is the builder for creating a Role entity.
@@ -124,21 +122,6 @@ func (_c *RoleCreate) AddAccounts(v ...*Account) *RoleCreate {
 	return _c.AddAccountIDs(ids...)
 }
 
-// AddPermissionIDs adds the "permissions" edge to the Permission entity by IDs.
-func (_c *RoleCreate) AddPermissionIDs(ids ...uuid.UUID) *RoleCreate {
-	_c.mutation.AddPermissionIDs(ids...)
-	return _c
-}
-
-// AddPermissions adds the "permissions" edges to the Permission entity.
-func (_c *RoleCreate) AddPermissions(v ...*Permission) *RoleCreate {
-	ids := make([]uuid.UUID, len(v))
-	for i := range v {
-		ids[i] = v[i].ID
-	}
-	return _c.AddPermissionIDs(ids...)
-}
-
 // AddChildIDs adds the "children" edge to the Role entity by IDs.
 func (_c *RoleCreate) AddChildIDs(ids ...uuid.UUID) *RoleCreate {
 	_c.mutation.AddChildIDs(ids...)
@@ -167,21 +150,6 @@ func (_c *RoleCreate) AddParent(v ...*Role) *RoleCreate {
 		ids[i] = v[i].ID
 	}
 	return _c.AddParentIDs(ids...)
-}
-
-// AddRolePermissionIDs adds the "role_permissions" edge to the RolePermission entity by IDs.
-func (_c *RoleCreate) AddRolePermissionIDs(ids ...int) *RoleCreate {
-	_c.mutation.AddRolePermissionIDs(ids...)
-	return _c
-}
-
-// AddRolePermissions adds the "role_permissions" edges to the RolePermission entity.
-func (_c *RoleCreate) AddRolePermissions(v ...*RolePermission) *RoleCreate {
-	ids := make([]int, len(v))
-	for i := range v {
-		ids[i] = v[i].ID
-	}
-	return _c.AddRolePermissionIDs(ids...)
 }
 
 // Mutation returns the RoleMutation object of the builder.
@@ -357,22 +325,6 @@ func (_c *RoleCreate) createSpec() (*Role, *sqlgraph.CreateSpec) {
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if nodes := _c.mutation.PermissionsIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: false,
-			Table:   role.PermissionsTable,
-			Columns: role.PermissionsPrimaryKey,
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(permission.FieldID, field.TypeUUID),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges = append(_spec.Edges, edge)
-	}
 	if nodes := _c.mutation.ChildrenIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
@@ -398,22 +350,6 @@ func (_c *RoleCreate) createSpec() (*Role, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(role.FieldID, field.TypeUUID),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges = append(_spec.Edges, edge)
-	}
-	if nodes := _c.mutation.RolePermissionsIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: true,
-			Table:   role.RolePermissionsTable,
-			Columns: []string{role.RolePermissionsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(rolepermission.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

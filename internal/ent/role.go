@@ -43,17 +43,13 @@ type Role struct {
 type RoleEdges struct {
 	// Accounts holds the value of the accounts edge.
 	Accounts []*Account `json:"accounts,omitempty"`
-	// Permissions holds the value of the permissions edge.
-	Permissions []*Permission `json:"permissions,omitempty"`
 	// Children holds the value of the children edge.
 	Children []*Role `json:"children,omitempty"`
 	// Parent holds the value of the parent edge.
 	Parent []*Role `json:"parent,omitempty"`
-	// RolePermissions holds the value of the role_permissions edge.
-	RolePermissions []*RolePermission `json:"role_permissions,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [5]bool
+	loadedTypes [3]bool
 }
 
 // AccountsOrErr returns the Accounts value or an error if the edge
@@ -65,19 +61,10 @@ func (e RoleEdges) AccountsOrErr() ([]*Account, error) {
 	return nil, &NotLoadedError{edge: "accounts"}
 }
 
-// PermissionsOrErr returns the Permissions value or an error if the edge
-// was not loaded in eager-loading.
-func (e RoleEdges) PermissionsOrErr() ([]*Permission, error) {
-	if e.loadedTypes[1] {
-		return e.Permissions, nil
-	}
-	return nil, &NotLoadedError{edge: "permissions"}
-}
-
 // ChildrenOrErr returns the Children value or an error if the edge
 // was not loaded in eager-loading.
 func (e RoleEdges) ChildrenOrErr() ([]*Role, error) {
-	if e.loadedTypes[2] {
+	if e.loadedTypes[1] {
 		return e.Children, nil
 	}
 	return nil, &NotLoadedError{edge: "children"}
@@ -86,19 +73,10 @@ func (e RoleEdges) ChildrenOrErr() ([]*Role, error) {
 // ParentOrErr returns the Parent value or an error if the edge
 // was not loaded in eager-loading.
 func (e RoleEdges) ParentOrErr() ([]*Role, error) {
-	if e.loadedTypes[3] {
+	if e.loadedTypes[2] {
 		return e.Parent, nil
 	}
 	return nil, &NotLoadedError{edge: "parent"}
-}
-
-// RolePermissionsOrErr returns the RolePermissions value or an error if the edge
-// was not loaded in eager-loading.
-func (e RoleEdges) RolePermissionsOrErr() ([]*RolePermission, error) {
-	if e.loadedTypes[4] {
-		return e.RolePermissions, nil
-	}
-	return nil, &NotLoadedError{edge: "role_permissions"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -201,11 +179,6 @@ func (_m *Role) QueryAccounts() *AccountQuery {
 	return NewRoleClient(_m.config).QueryAccounts(_m)
 }
 
-// QueryPermissions queries the "permissions" edge of the Role entity.
-func (_m *Role) QueryPermissions() *PermissionQuery {
-	return NewRoleClient(_m.config).QueryPermissions(_m)
-}
-
 // QueryChildren queries the "children" edge of the Role entity.
 func (_m *Role) QueryChildren() *RoleQuery {
 	return NewRoleClient(_m.config).QueryChildren(_m)
@@ -214,11 +187,6 @@ func (_m *Role) QueryChildren() *RoleQuery {
 // QueryParent queries the "parent" edge of the Role entity.
 func (_m *Role) QueryParent() *RoleQuery {
 	return NewRoleClient(_m.config).QueryParent(_m)
-}
-
-// QueryRolePermissions queries the "role_permissions" edge of the Role entity.
-func (_m *Role) QueryRolePermissions() *RolePermissionQuery {
-	return NewRoleClient(_m.config).QueryRolePermissions(_m)
 }
 
 // Update returns a builder for updating this Role.

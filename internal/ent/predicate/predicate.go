@@ -39,8 +39,5 @@ type Province func(*sql.Selector)
 // Role is the predicate function for role builders.
 type Role func(*sql.Selector)
 
-// RolePermission is the predicate function for rolepermission builders.
-type RolePermission func(*sql.Selector)
-
 // Subdistrict is the predicate function for subdistrict builders.
 type Subdistrict func(*sql.Selector)
