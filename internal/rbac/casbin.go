@@ -56,8 +56,8 @@ func (m *Manager) LoadPolicy() error {
 	return m.enforcer.LoadPolicy()
 }
 
-func (m *Manager) HasRole(user, role string) (bool, error) {
-	has, err := m.enforcer.HasRoleForUser(user, role)
+func (m *Manager) HasRole(user, role string, domain ...string) (bool, error) {
+	has, err := m.enforcer.HasRoleForUser(user, role, domain...)
 	if err != nil {
 		return false, err
 	}
@@ -65,8 +65,8 @@ func (m *Manager) HasRole(user, role string) (bool, error) {
 	return has, nil
 }
 
-func (m *Manager) AddRoleForUser(user, role string) error {
-	_, err := m.enforcer.AddRoleForUser(user, role)
+func (m *Manager) AddRoleForUser(user, role string, domain ...string) error {
+	_, err := m.enforcer.AddRoleForUser(user, role, domain...)
 	if err != nil {
 		return err
 	}
@@ -74,8 +74,8 @@ func (m *Manager) AddRoleForUser(user, role string) error {
 	return m.enforcer.SavePolicy()
 }
 
-func (m *Manager) RemoveRoleForUser(user, role string) error {
-	_, err := m.enforcer.DeleteRoleForUser(user, role)
+func (m *Manager) RemoveRoleForUser(user, role string, domain ...string) error {
+	_, err := m.enforcer.DeleteRoleForUser(user, role, domain...)
 	if err != nil {
 		return err
 	}
